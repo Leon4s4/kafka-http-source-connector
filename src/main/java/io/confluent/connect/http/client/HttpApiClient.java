@@ -177,7 +177,7 @@ public class HttpApiClient {
             String processedHeaders = templateReplacer.replace(headers, templateVars);
             String separator = apiConfig.getHttpRequestHeadersSeparator();
             
-            for (String header : processedHeaders.split("\\" + separator)) {
+            for (String header : processedHeaders.split(Pattern.quote(separator))) {
                 String[] keyValue = header.split(":", 2);
                 if (keyValue.length == 2) {
                     requestBuilder.header(keyValue[0].trim(), keyValue[1].trim());
