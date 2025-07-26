@@ -94,7 +94,7 @@ public class SnapshotPaginationOffsetManager implements OffsetManager {
      * @param recordOffset The offset value from the record
      * @return true if the record should be processed, false if it should be skipped
      */
-    public boolean shouldProcessRecord(String recordOffset) {
+    boolean shouldProcessRecord(String recordOffset) {
         if (recordOffset == null || recordOffset.trim().isEmpty()) {
             log.debug("Record has no offset value, processing it");
             return true;
