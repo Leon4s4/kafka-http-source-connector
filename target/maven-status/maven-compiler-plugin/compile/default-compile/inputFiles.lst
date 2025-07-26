@@ -1,4 +1,5 @@
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/config/ApiConfig.java
+/Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/encryption/FieldEncryptionManager.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/auth/BearerTokenAuthenticator.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/offset/CursorPaginationOffsetManager.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/offset/SimpleIncrementingOffsetManager.java
@@ -11,6 +12,7 @@
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/HttpSourceConnector.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/offset/SnapshotPaginationOffsetManager.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/offset/OffsetManagerFactory.java
+/Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/error/AdvancedErrorHandler.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/auth/HttpAuthenticatorFactory.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/client/HttpApiClient.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/chaining/ApiChainingManager.java
@@ -24,3 +26,4 @@
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/auth/OAuth2Authenticator.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/converter/RecordConverterFactory.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/HttpSourceTask.java
+/Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/performance/PerformanceOptimizer.java

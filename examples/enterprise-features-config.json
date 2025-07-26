@@ -1,0 +1,73 @@
+{
+  "name": "enterprise-http-source-connector",
+  "config": {
+    "connector.class": "io.confluent.connect.http.HttpSourceConnector",
+    "tasks.max": "3",
+    "http.api.base.url": "https://api.enterprise.com/v1",
+    
+    "auth.type": "OAUTH2",
+    "oauth2.token.url": "https://auth.enterprise.com/oauth/token",
+    "oauth2.client.id": "enterprise-client-id",
+    "oauth2.client.secret": "enterprise-client-secret",
+    "oauth2.client.scope": "read:data write:metrics",
+    "oauth2.token.refresh.interval.minutes": "20",
+    
+    "apis.num": "3",
+    "api.chaining.parent.child.relationship": "api2:api1,api3:api1",
+    
+    "api1.http.api.path": "/companies",
+    "api1.topics": "companies-topic",
+    "api1.http.request.method": "GET",
+    "api1.http.offset.mode": "CURSOR_PAGINATION",
+    "api1.http.next.page.json.pointer": "/pagination/next_cursor",
+    "api1.http.response.data.json.pointer": "/companies",
+    "api1.request.interval.ms": "30000",
+    
+    "api2.http.api.path": "/companies/${parent_value}/employees",
+    "api2.topics": "employees-topic",
+    "api2.http.request.method": "GET",
+    "api2.http.offset.mode": "SIMPLE_INCREMENTING",
+    "api2.http.initial.offset": "0",
+    "api2.http.chaining.json.pointer": "/id",
+    "api2.http.response.data.json.pointer": "/employees",
+    "api2.request.interval.ms": "15000",
+    
+    "api3.http.api.path": "/companies/${parent_value}/financial-data",
+    "api3.topics": "financial-data-topic",
+    "api3.http.request.method": "GET",
+    "api3.http.offset.mode": "SIMPLE_INCREMENTING",
+    "api3.http.initial.offset": "0",
+    "api3.http.chaining.json.pointer": "/id",
+    "api3.http.response.data.json.pointer": "/financial_records",
+    "api3.request.interval.ms": "60000",
+    
+    "output.data.format": "AVRO",
+    "schema.context.name": "enterprise-context",
+    "value.subject.name.strategy": "TopicNameStrategy",
+    
+    "field.encryption.enabled": true,
+    "field.encryption.key": "your-base64-encoded-256-bit-key-here",
+    "field.encryption.rules": "salary:AES_GCM,api3.revenue:DETERMINISTIC,ssn:AES_GCM,api3.profit_margin:RANDOM",
+    
+    "circuit.breaker.failure.threshold": "3",
+    "circuit.breaker.timeout.ms": "45000",
+    "circuit.breaker.recovery.time.ms": "20000",
+    
+    "response.caching.enabled": true,
+    "response.cache.ttl.ms": "180000",
+    "max.cache.size": "500",
+    "adaptive.polling.enabled": true,
+    
+    "behavior.on.error": "IGNORE",
+    "reporter.error.topic.name": "enterprise-connector-errors",
+    "report.errors.as": "http_response",
+    
+    "https.ssl.enabled": true,
+    "https.ssl.protocol": "TLSv1.3",
+    
+    "http.proxy.host": "proxy.enterprise.com",
+    "http.proxy.port": "8080",
+    "http.proxy.user": "proxy-user",
+    "http.proxy.password": "proxy-password"
+  }
+}
