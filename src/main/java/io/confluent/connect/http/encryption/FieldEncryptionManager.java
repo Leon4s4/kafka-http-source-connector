@@ -91,12 +91,25 @@ public class FieldEncryptionManager {
     private void encryptField(Object record, String fieldPath, String encryptionType) {
         try {
             // Extract the field value using JSON pointer
-            Object fieldValue = JsonPointer.extract(record, "/" + fieldPath.replace(".", "/"));
-            
-            if (fieldValue == null) {
-                log.debug("Field {} not found in record, skipping encryption", fieldPath);
-                return;
-            }
+            Object fieldValue = null;
+            try {
+                if (record == null) {
+                    log.warn("Record is null, skipping encryption for field {}", fieldPath);
+                    return;
+                }
+               fieldValue = JsonPointer.extract(record, "/" + fieldPath.replace(".", "/"));
+           } catch (IllegalArgumentException e) {
+               log.warn("Invalid JSON pointer for field {}: {}", fieldPath, e.getMessage());
+               return;
+           } catch (Exception e) {
+               log.warn("Unexpected error while extracting field {}: {}", fieldPath, e.getMessage());
+               return;
+           }
+           
+           if (fieldValue == null) {
+               log.debug("Field {} not found in record, skipping encryption", fieldPath);
+               return;
+           }
             
             // Encrypt the field value
             String encryptedValue = encryptValue(fieldValue.toString(), encryptionType);
