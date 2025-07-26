@@ -122,14 +122,16 @@ public class RetryHandler {
      */
     private long calculateBackoffTime(int attempt) {
         long baseBackoffMs = apiConfig.getRetryBackoffMs();
+        final long MAX_BACKOFF_MS = 60_000; // Maximum backoff time of 60 seconds
         
         switch (apiConfig.getRetryBackoffPolicy()) {
             case CONSTANT_VALUE:
                 return baseBackoffMs;
                 
             case EXPONENTIAL_WITH_JITTER:
-                // Exponential backoff: baseBackoffMs * 2^(attempt-1)
+                // Exponential backoff: baseBackoffMs * 2^(attempt-1), capped at MAX_BACKOFF_MS
                 long exponentialBackoff = baseBackoffMs * (1L << (attempt - 1));
+                exponentialBackoff = Math.min(exponentialBackoff, MAX_BACKOFF_MS);
                 
                 // Add jitter: random value between 0.5 and 1.5 times the calculated backoff
                 double jitterFactor = 0.5 + random.nextDouble(); // 0.5 to 1.5
