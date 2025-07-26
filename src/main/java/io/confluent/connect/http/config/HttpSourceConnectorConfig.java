@@ -28,6 +28,7 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
     public static final String OAUTH2_TOKEN_PROPERTY = "oauth2.token.property";
     public static final String OAUTH2_CLIENT_SCOPE = "oauth2.client.scope";
     public static final String OAUTH2_CLIENT_AUTH_MODE = "oauth2.client.auth.mode";
+    public static final String OAUTH2_TOKEN_REFRESH_INTERVAL_MINUTES = "oauth2.token.refresh.interval.minutes";
     public static final String API_KEY_LOCATION = "api.key.location";
     public static final String API_KEY_NAME = "api.key.name";
     public static final String API_KEY_VALUE = "api.key.value";
@@ -204,6 +205,15 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
             ConfigDef.ValidString.in(OAuth2ClientAuthMode.HEADER.name(), OAuth2ClientAuthMode.URL.name()),
             ConfigDef.Importance.MEDIUM,
             "Specifies how to encode client_id and client_secret in the OAuth2 authorization request"
+        );
+        
+        configDef.define(
+            OAUTH2_TOKEN_REFRESH_INTERVAL_MINUTES,
+            ConfigDef.Type.INT,
+            30,
+            ConfigDef.Range.between(1, 1440), // 1 minute to 24 hours
+            ConfigDef.Importance.MEDIUM,
+            "The interval in minutes for refreshing OAuth2 tokens. Defaults to 30 minutes"
         );
         
         configDef.define(
@@ -461,6 +471,10 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
     
     public OAuth2ClientAuthMode getOauth2ClientAuthMode() {
         return OAuth2ClientAuthMode.valueOf(getString(OAUTH2_CLIENT_AUTH_MODE));
+    }
+    
+    public int getOauth2TokenRefreshIntervalMinutes() {
+        return getInt(OAUTH2_TOKEN_REFRESH_INTERVAL_MINUTES);
     }
     
     public ApiKeyLocation getApiKeyLocation() {

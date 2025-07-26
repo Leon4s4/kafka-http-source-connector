@@ -9,6 +9,7 @@
     "oauth2.client.id": "your-client-id",
     "oauth2.client.secret": "your-client-secret",
     "oauth2.client.scope": "read:data",
+    "oauth2.token.refresh.interval.minutes": "15",
     "apis.num": "2",
     "api1.http.api.path": "/users",
     "api1.topics": "users-topic",

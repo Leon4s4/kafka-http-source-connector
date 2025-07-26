@@ -223,13 +223,16 @@ public class HttpSourceTask extends SourceTask {
         
         // Schedule token refresh for OAuth2
         if (config.getAuthType() == HttpSourceConnectorConfig.AuthType.OAUTH2) {
+            int refreshIntervalMinutes = config.getOauth2TokenRefreshIntervalMinutes();
             scheduler.scheduleAtFixedRate(() -> {
                 try {
                     authenticator.refreshToken();
                 } catch (Exception e) {
                     log.error("Failed to refresh OAuth2 token", e);
                 }
-            }, 0, 30, TimeUnit.MINUTES); // Refresh every 30 minutes
+            }, 0, refreshIntervalMinutes, TimeUnit.MINUTES);
+            
+            log.info("OAuth2 token refresh scheduled every {} minutes", refreshIntervalMinutes);
         }
     }
     
