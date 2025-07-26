@@ -185,12 +185,7 @@ public class FieldEncryptionManager {
         return Base64.getEncoder().encodeToString(encryptedWithIv);
     }
     
-    /**
-     * Random encryption (same as AES_GCM)
-     */
-    private String encryptRandom(String plaintext) throws Exception {
-        return encryptWithAESGCM(plaintext);
-    }
+// Removed the encryptRandom method as it is redundant.
     
     /**
      * Generates a deterministic IV from plaintext for deterministic encryption
