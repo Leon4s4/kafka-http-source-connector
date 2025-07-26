@@ -39,6 +39,7 @@ public class ApiConfig {
     public static final String HTTP_REQUEST_PARAMETERS_SEPARATOR = ".http.request.parameters.separator";
     public static final String HTTP_PATH_PARAMETERS_SEPARATOR = ".http.path.parameters.separator";
     public static final String HTTP_RESPONSE_SCHEMA_ENFORCE = ".http.response.schema.enforce";
+    public static final String HTTP_CHAINING_JSON_POINTER = ".http.chaining.json.pointer";
     
     // Enums
     public enum HttpRequestMethod {
@@ -199,6 +200,10 @@ public class ApiConfig {
      */
     public String getHttpNextPageJsonPointer() {
         return getStringProperty(HTTP_NEXT_PAGE_JSON_POINTER);
+    }
+    
+    public String getHttpChainingJsonPointer() {
+        return getStringProperty(HTTP_CHAINING_JSON_POINTER);
     }
     
     /**

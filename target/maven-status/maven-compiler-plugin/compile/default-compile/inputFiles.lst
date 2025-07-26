@@ -13,6 +13,7 @@
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/offset/OffsetManagerFactory.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/auth/HttpAuthenticatorFactory.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/client/HttpApiClient.java
+/Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/chaining/ApiChainingManager.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/converter/JsonRecordConverter.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/error/ErrorHandler.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/auth/NoAuthenticator.java

@@ -1,6 +1,7 @@
 package io.confluent.connect.http;
 
 import io.confluent.connect.http.auth.HttpAuthenticator;
+import io.confluent.connect.http.chaining.ApiChainingManager;
 import io.confluent.connect.http.auth.HttpAuthenticatorFactory;
 import io.confluent.connect.http.client.HttpApiClient;
 import io.confluent.connect.http.config.ApiConfig;
@@ -45,6 +46,7 @@ public class HttpSourceTask extends SourceTask {
     private ErrorHandler errorHandler;
     private ScheduledExecutorService scheduler;
     private HttpAuthenticator authenticator;
+    private ApiChainingManager chainingManager;
     
     @Override
     public String version() {
@@ -68,6 +70,9 @@ public class HttpSourceTask extends SourceTask {
             // Create authenticator
             authenticator = HttpAuthenticatorFactory.create(config);
             
+            // Initialize API chaining manager
+            chainingManager = new ApiChainingManager(config);
+            
             // Initialize error handler
             errorHandler = new ErrorHandler(config);
             
@@ -76,6 +81,9 @@ public class HttpSourceTask extends SourceTask {
             
             // Initialize API clients and related components
             initializeApiComponents();
+            
+            // Validate API chaining configuration
+            chainingManager.validateChainingConfiguration(apiConfigs);
             
             // Start scheduler for polling
             startScheduler();
@@ -237,14 +245,20 @@ public class HttpSourceTask extends SourceTask {
     }
     
     /**
-     * Checks if it's time to poll the specified API based on its configured interval
+     * Checks if it's time to poll the specified API based on its configured interval and chaining dependencies
      */
     private boolean shouldPollApi(ApiConfig apiConfig) {
         long lastPollTime = lastPollTimes.get(apiConfig.getId());
         long currentTime = System.currentTimeMillis();
         long interval = apiConfig.getRequestIntervalMs();
         
-        return (currentTime - lastPollTime) >= interval;
+        // Check time-based condition
+        boolean timeCondition = (currentTime - lastPollTime) >= interval;
+        
+        // Check chaining condition for child APIs
+        boolean chainingCondition = chainingManager.shouldExecuteChildApi(apiConfig.getId());
+        
+        return timeCondition && chainingCondition;
     }
     
     /**
@@ -261,8 +275,11 @@ public class HttpSourceTask extends SourceTask {
         // Get current offset
         String currentOffset = offsetManager.getCurrentOffset();
         
-        // Make HTTP request
-        HttpApiClient.ApiResponse response = apiClient.makeRequest(currentOffset);
+        // Get chaining template variables for child APIs
+        Map<String, String> chainingVars = chainingManager.getChildApiTemplateVariables(apiConfig);
+        
+        // Make HTTP request with chaining variables
+        HttpApiClient.ApiResponse response = apiClient.makeRequest(currentOffset, chainingVars);
         
         if (response == null || response.getBody() == null) {
             log.debug("No data received from API: {}", apiId);
@@ -275,6 +292,12 @@ public class HttpSourceTask extends SourceTask {
         if (dataRecords.isEmpty()) {
             log.debug("No records extracted from API response: {}", apiId);
             return Collections.emptyList();
+        }
+        
+        // Store parent API response data for chaining
+        if (chainingManager.isParentApi(apiId)) {
+            chainingManager.storeParentResponse(apiId, response.getBody(), dataRecords);
+            log.debug("Stored parent API response for chaining: {}", apiId);
         }
         
         // Convert to source records
