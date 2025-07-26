@@ -187,7 +187,7 @@ public class ApiChainingManager {
     public void validateChainingConfiguration(List<ApiConfig> apiConfigs) {
         // Check for circular dependencies
         for (String childApi : parentChildRelationships.keySet()) {
-            if (hasCircularDependency(childApi, new java.util.HashSet<>())) {
+            if (hasCircularDependency(childApi, new HashSet<>())) {
                 throw new IllegalArgumentException("Circular dependency detected in API chaining configuration involving: " + childApi);
             }
         }
