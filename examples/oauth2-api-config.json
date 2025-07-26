@@ -1,0 +1,30 @@
+{
+  "name": "oauth2-http-source",
+  "config": {
+    "connector.class": "io.confluent.connect.http.HttpSourceConnector",
+    "tasks.max": "2",
+    "http.api.base.url": "https://api.example.com/v1",
+    "auth.type": "OAUTH2",
+    "oauth2.token.url": "https://auth.example.com/oauth/token",
+    "oauth2.client.id": "your-client-id",
+    "oauth2.client.secret": "your-client-secret",
+    "oauth2.client.scope": "read:data",
+    "apis.num": "2",
+    "api1.http.api.path": "/users",
+    "api1.topics": "users-topic",
+    "api1.http.request.method": "GET",
+    "api1.http.offset.mode": "CHAINING",
+    "api1.http.offset.json.pointer": "/pagination/next_cursor",
+    "api1.http.response.data.json.pointer": "/data",
+    "api1.request.interval.ms": "30000",
+    "api2.http.api.path": "/orders",
+    "api2.topics": "orders-topic",
+    "api2.http.request.method": "GET",
+    "api2.http.offset.mode": "CURSOR_PAGINATION",
+    "api2.http.next.page.json.pointer": "/meta/next_page_token",
+    "api2.http.response.data.json.pointer": "/orders",
+    "api2.request.interval.ms": "45000",
+    "output.data.format": "AVRO",
+    "behavior.on.error": "FAIL"
+  }
+}
