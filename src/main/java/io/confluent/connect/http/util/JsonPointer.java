@@ -143,7 +143,7 @@ public class JsonPointer {
             }
         }
         
-        if (node.isDouble()) {
+        if (node.isFloatingPointNumber()) {
             return node.asDouble();
         }
         
