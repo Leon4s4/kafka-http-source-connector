@@ -298,7 +298,9 @@ public class PerformanceOptimizer {
             long totalCalls = metrics.totalCalls.get();
             if (totalCalls > 0) {
                 double cacheHitRate = (double) metrics.cacheHits.get() / totalCalls * 100;
-                double avgResponseTime = metrics.totalResponseTime.get() / (double) metrics.cacheMisses.get();
+                double avgResponseTime = metrics.cacheMisses.get() > 0 
+                    ? metrics.totalResponseTime.get() / (double) metrics.cacheMisses.get() 
+                    : 0.0;
                 
                 log.info("Performance metrics for API {}: total calls={}, cache hit rate={:.1f}%, avg response time={:.1f}ms", 
                     apiId, totalCalls, cacheHitRate, avgResponseTime);
