@@ -238,7 +238,7 @@ public class PerformanceOptimizer {
         }
         
         String oldestKey = responseCache.entrySet().stream()
-            .min(Map.Entry.comparingByValue((a, b) -> Long.compare(a.creationTime, b.creationTime)))
+            .min(Map.Entry.comparingByValue((a, b) -> Long.compare(a.getCreationTime(), b.getCreationTime())))
             .map(Map.Entry::getKey)
             .orElse(null);
         
