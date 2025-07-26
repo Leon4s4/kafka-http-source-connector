@@ -28,5 +28,5 @@
   "documentation_url" : "https://github.com/your-org/kafka-http-source-connector",
   "docker_image" : { },
   "component_types" : [ "source" ],
-  "release_date" : "2025-07-25"
+  "release_date" : "2025-07-26"
 }

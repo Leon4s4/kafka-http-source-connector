@@ -152,16 +152,21 @@ public class AdvancedErrorHandler {
             io.confluent.connect.http.client.HttpApiClient.HttpRequestException httpError = 
                 (io.confluent.connect.http.client.HttpApiClient.HttpRequestException) error;
             
-            int statusCode = httpError.getStatusCode();
-            
-            if (statusCode == 401 || statusCode == 403) {
-                return ErrorCategory.AUTHENTICATION;
-            } else if (statusCode == 429) {
-                return ErrorCategory.RATE_LIMIT;
-            } else if (statusCode >= 400 && statusCode < 500) {
-                return ErrorCategory.CLIENT_ERROR;
-            } else if (statusCode >= 500) {
-                return ErrorCategory.TRANSIENT;
+            try {
+                int statusCode = httpError.getStatusCode();
+                
+                if (statusCode == 401 || statusCode == 403) {
+                    return ErrorCategory.AUTHENTICATION;
+                } else if (statusCode == 429) {
+                    return ErrorCategory.RATE_LIMIT;
+                } else if (statusCode >= 400 && statusCode < 500) {
+                    return ErrorCategory.CLIENT_ERROR;
+                } else if (statusCode >= 500) {
+                    return ErrorCategory.TRANSIENT;
+                }
+            } catch (Exception e) {
+                log.debug("Unable to access status code from HttpRequestException: {}", e.getMessage());
+                // Fall through to other error categorization logic
             }
         }
         
