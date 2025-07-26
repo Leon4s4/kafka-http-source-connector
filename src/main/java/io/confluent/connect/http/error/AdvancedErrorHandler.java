@@ -175,8 +175,7 @@ public class AdvancedErrorHandler {
         }
         
         // Check for data format errors
-        if (error instanceof com.fasterxml.jackson.core.JsonProcessingException ||
-            errorMessage.contains("json") ||
+        if (errorMessage.contains("json") ||
             errorMessage.contains("parse") ||
             errorMessage.contains("format")) {
             return ErrorCategory.DATA_FORMAT;
