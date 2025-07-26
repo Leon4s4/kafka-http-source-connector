@@ -65,6 +65,22 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
     public static final String REPORTER_ERROR_TOPIC_NAME = "reporter.error.topic.name";
     public static final String REPORT_ERRORS_AS = "report.errors.as";
     
+    // Field-Level Encryption
+    public static final String FIELD_ENCRYPTION_ENABLED = "field.encryption.enabled";
+    public static final String FIELD_ENCRYPTION_KEY = "field.encryption.key";
+    public static final String FIELD_ENCRYPTION_RULES = "field.encryption.rules";
+    
+    // Circuit Breaker Configuration
+    public static final String CIRCUIT_BREAKER_FAILURE_THRESHOLD = "circuit.breaker.failure.threshold";
+    public static final String CIRCUIT_BREAKER_TIMEOUT_MS = "circuit.breaker.timeout.ms";
+    public static final String CIRCUIT_BREAKER_RECOVERY_TIME_MS = "circuit.breaker.recovery.time.ms";
+    
+    // Performance Optimization
+    public static final String RESPONSE_CACHING_ENABLED = "response.caching.enabled";
+    public static final String RESPONSE_CACHE_TTL_MS = "response.cache.ttl.ms";
+    public static final String MAX_CACHE_SIZE = "max.cache.size";
+    public static final String ADAPTIVE_POLLING_ENABLED = "adaptive.polling.enabled";
+    
     // Enums
     public enum AuthType {
         NONE, BASIC, BEARER, OAUTH2, API_KEY
@@ -375,6 +391,94 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
             "Dictates the content of records produced to the error topic"
         );
         
+        // Field-Level Encryption Configuration
+        configDef.define(
+            FIELD_ENCRYPTION_ENABLED,
+            ConfigDef.Type.BOOLEAN,
+            false,
+            ConfigDef.Importance.MEDIUM,
+            "Enable field-level encryption for sensitive data"
+        );
+        
+        configDef.define(
+            FIELD_ENCRYPTION_KEY,
+            ConfigDef.Type.PASSWORD,
+            null,
+            ConfigDef.Importance.HIGH,
+            "Base64-encoded AES-256 key for field encryption. If not provided, a new key will be generated"
+        );
+        
+        configDef.define(
+            FIELD_ENCRYPTION_RULES,
+            ConfigDef.Type.STRING,
+            "",
+            ConfigDef.Importance.MEDIUM,
+            "Comma-separated list of field encryption rules in format 'field:type'. Types: AES_GCM, DETERMINISTIC, RANDOM"
+        );
+        
+        // Circuit Breaker Configuration
+        configDef.define(
+            CIRCUIT_BREAKER_FAILURE_THRESHOLD,
+            ConfigDef.Type.INT,
+            5,
+            ConfigDef.Range.between(1, 100),
+            ConfigDef.Importance.MEDIUM,
+            "Number of consecutive failures before opening circuit breaker. Defaults to 5"
+        );
+        
+        configDef.define(
+            CIRCUIT_BREAKER_TIMEOUT_MS,
+            ConfigDef.Type.LONG,
+            60000L,
+            ConfigDef.Range.between(1000L, 600000L),
+            ConfigDef.Importance.MEDIUM,
+            "Timeout in milliseconds for circuit breaker operations. Defaults to 60 seconds"
+        );
+        
+        configDef.define(
+            CIRCUIT_BREAKER_RECOVERY_TIME_MS,
+            ConfigDef.Type.LONG,
+            30000L,
+            ConfigDef.Range.between(5000L, 300000L),
+            ConfigDef.Importance.MEDIUM,
+            "Recovery time in milliseconds before attempting to close circuit breaker. Defaults to 30 seconds"
+        );
+        
+        // Performance Optimization Configuration
+        configDef.define(
+            RESPONSE_CACHING_ENABLED,
+            ConfigDef.Type.BOOLEAN,
+            true,
+            ConfigDef.Importance.MEDIUM,
+            "Enable response caching to improve performance. Defaults to true"
+        );
+        
+        configDef.define(
+            RESPONSE_CACHE_TTL_MS,
+            ConfigDef.Type.LONG,
+            300000L, // 5 minutes
+            ConfigDef.Range.between(10000L, 3600000L),
+            ConfigDef.Importance.MEDIUM,
+            "Time-to-live for cached responses in milliseconds. Defaults to 5 minutes"
+        );
+        
+        configDef.define(
+            MAX_CACHE_SIZE,
+            ConfigDef.Type.INT,
+            1000,
+            ConfigDef.Range.between(10, 10000),
+            ConfigDef.Importance.MEDIUM,
+            "Maximum number of responses to cache. Defaults to 1000"
+        );
+        
+        configDef.define(
+            ADAPTIVE_POLLING_ENABLED,
+            ConfigDef.Type.BOOLEAN,
+            true,
+            ConfigDef.Importance.MEDIUM,
+            "Enable adaptive polling intervals based on API response patterns. Defaults to true"
+        );
+        
         return configDef;
     }
     
@@ -553,5 +657,45 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
             }
         }
         return ReportErrorsAs.ERROR_STRING;
+    }
+    
+    public boolean isFieldEncryptionEnabled() {
+        return getBoolean(FIELD_ENCRYPTION_ENABLED);
+    }
+    
+    public String getFieldEncryptionKey() {
+        return getPassword(FIELD_ENCRYPTION_KEY) != null ? getPassword(FIELD_ENCRYPTION_KEY).value() : null;
+    }
+    
+    public String getFieldEncryptionRules() {
+        return getString(FIELD_ENCRYPTION_RULES);
+    }
+    
+    public int getCircuitBreakerFailureThreshold() {
+        return getInt(CIRCUIT_BREAKER_FAILURE_THRESHOLD);
+    }
+    
+    public long getCircuitBreakerTimeoutMs() {
+        return getLong(CIRCUIT_BREAKER_TIMEOUT_MS);
+    }
+    
+    public long getCircuitBreakerRecoveryTimeMs() {
+        return getLong(CIRCUIT_BREAKER_RECOVERY_TIME_MS);
+    }
+    
+    public boolean isResponseCachingEnabled() {
+        return getBoolean(RESPONSE_CACHING_ENABLED);
+    }
+    
+    public long getResponseCacheTtlMs() {
+        return getLong(RESPONSE_CACHE_TTL_MS);
+    }
+    
+    public int getMaxCacheSize() {
+        return getInt(MAX_CACHE_SIZE);
+    }
+    
+    public boolean isAdaptivePollingEnabled() {
+        return getBoolean(ADAPTIVE_POLLING_ENABLED);
     }
 }

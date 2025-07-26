@@ -8,6 +8,7 @@ import io.confluent.connect.http.config.ApiConfig;
 import io.confluent.connect.http.config.HttpSourceConnectorConfig;
 import io.confluent.connect.http.converter.RecordConverter;
 import io.confluent.connect.http.converter.RecordConverterFactory;
+import io.confluent.connect.http.encryption.FieldEncryptionManager;
 import io.confluent.connect.http.error.ErrorHandler;
 import io.confluent.connect.http.offset.OffsetManager;
 import io.confluent.connect.http.offset.OffsetManagerFactory;
@@ -47,6 +48,7 @@ public class HttpSourceTask extends SourceTask {
     private ScheduledExecutorService scheduler;
     private HttpAuthenticator authenticator;
     private ApiChainingManager chainingManager;
+    private FieldEncryptionManager encryptionManager;
     
     @Override
     public String version() {
@@ -72,6 +74,9 @@ public class HttpSourceTask extends SourceTask {
             
             // Initialize API chaining manager
             chainingManager = new ApiChainingManager(config);
+            
+            // Initialize field encryption manager
+            encryptionManager = new FieldEncryptionManager(config);
             
             // Initialize error handler
             errorHandler = new ErrorHandler(config);
@@ -305,8 +310,11 @@ public class HttpSourceTask extends SourceTask {
         
         for (Object dataRecord : dataRecords) {
             try {
+                // Encrypt sensitive fields before processing
+                Object processedRecord = encryptionManager.encryptSensitiveFields(dataRecord, apiId);
+                
                 // Extract offset from record if needed
-                String recordOffset = extractOffsetFromRecord(apiConfig, dataRecord);
+                String recordOffset = extractOffsetFromRecord(apiConfig, processedRecord);
                 
                 // Create source partition and offset
                 Map<String, String> sourcePartition = createSourcePartition(apiConfig);
@@ -320,7 +328,7 @@ public class HttpSourceTask extends SourceTask {
                     null, // key schema
                     null, // key
                     null, // value schema (will be determined by converter)
-                    dataRecord,
+                    processedRecord,
                     Instant.now().toEpochMilli()
                 );
                 
