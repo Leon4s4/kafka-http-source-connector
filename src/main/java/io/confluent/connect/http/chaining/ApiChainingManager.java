@@ -7,9 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Manages API chaining relationships where parent APIs provide data for child API requests.
@@ -215,7 +218,7 @@ public class ApiChainingManager {
     /**
      * Checks for circular dependencies in the chaining configuration
      */
-    private boolean hasCircularDependency(String apiId, Set<String> visited) {
+    private boolean hasCircularDependency(String apiId, java.util.Set<String> visited) {
         if (visited.contains(apiId)) {
             return true; // Circular dependency found
         }
