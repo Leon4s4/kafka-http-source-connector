@@ -1,0 +1,60 @@
+# GitHub Actions labeler configuration
+# Automatically labels PRs based on changed files
+
+# Source code changes
+"source":
+  - "src/main/java/**"
+
+# Test changes
+"tests":
+  - "src/test/java/**"
+
+# Documentation changes
+"documentation":
+  - "README.md"
+  - "ENTERPRISE_FEATURES.md"
+  - "*.md"
+  - "docs/**"
+
+# Configuration changes
+"config":
+  - "pom.xml"
+  - "src/main/resources/**"
+  - "examples/**"
+
+# CI/CD changes
+"ci":
+  - ".github/workflows/**"
+  - ".github/**"
+
+# Security related
+"security":
+  - "src/**/security/**"
+  - "src/**/encryption/**"
+  - "src/**/auth/**"
+
+# Performance related
+"performance":
+  - "src/**/performance/**"
+  - "src/**/benchmark/**"
+
+# Dependencies
+"dependencies":
+  - "pom.xml"
+
+# Major changes (multiple areas)
+"major":
+  - "src/main/java/**"
+  - "src/test/java/**"
+  - "pom.xml"
+  - "README.md"
+
+# Bug fixes (when title contains "fix")
+"bug":
+  - any: ['*']
+    all: ['src/**']
+
+# Features (when title contains "feat")
+"enhancement":
+  - any: ['*']
+    all: ['src/**']
