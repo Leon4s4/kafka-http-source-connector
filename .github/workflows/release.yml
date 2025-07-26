@@ -107,12 +107,27 @@ jobs:
         fi
 
     - name: Run secrets scan
+      id: trufflehog
+      continue-on-error: true
       uses: trufflesecurity/trufflehog@main
       with:
         path: ./
         base: main
         head: HEAD
-        extra_args: --debug --only-verified --exclude-paths=.trufflehogignore --exclude-detectors=dockerhub
+        extra_args: --debug --only-verified --exclude-detectors=dockerhub --exclude-globs="src/test/**" --exclude-globs="target/**" --exclude-globs="*.class" --exclude-globs="*.jar"
+
+    - name: Check secrets scan results
+      if: always()
+      run: |
+        if [ "${{ steps.trufflehog.outcome }}" = "failure" ]; then
+          echo "⚠️ TruffleHog detected potential secrets or had configuration issues"
+          
+          # For release readiness, any configuration error should block the release
+          echo "❌ Secrets scan failed - blocking release"
+          exit 1
+        else
+          echo "✅ No secrets detected - ready for release"
+        fi
 
     - name: Check code quality
       run: |
