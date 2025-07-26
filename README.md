@@ -260,6 +260,17 @@ mvn test -Dtest=PerformanceBenchmarkTest
 mvn test -Dtest=SecurityAuditTest
 ```
 
+### Dependency Vulnerability Scanning
+```bash
+# Run OWASP dependency check
+mvn org.owasp:dependency-check-maven:check
+
+# For faster scans, set up NVD API key (optional)
+# Get your free API key from: https://nvd.nist.gov/developers/request-an-api-key
+export NVD_API_KEY=your-api-key-here
+mvn org.owasp:dependency-check-maven:check
+```
+
 ## Security Considerations
 
 ### Encryption
@@ -276,6 +287,12 @@ mvn test -Dtest=SecurityAuditTest
 - Configure proxy settings if required
 - Use TLSv1.3 for secure connections
 - Monitor for unusual traffic patterns
+
+### Dependency Management
+- Regularly scan for vulnerable dependencies using OWASP dependency check
+- Keep dependencies updated to latest secure versions
+- Monitor security advisories for used libraries
+- Use dependency suppression files for false positives
 
 ## Performance Tuning
 
