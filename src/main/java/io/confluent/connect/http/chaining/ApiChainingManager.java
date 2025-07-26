@@ -215,7 +215,7 @@ public class ApiChainingManager {
     /**
      * Checks for circular dependencies in the chaining configuration
      */
-    private boolean hasCircularDependency(String apiId, java.util.Set<String> visited) {
+    private boolean hasCircularDependency(String apiId, Set<String> visited) {
         if (visited.contains(apiId)) {
             return true; // Circular dependency found
         }
