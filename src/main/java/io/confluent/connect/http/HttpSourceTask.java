@@ -1,8 +1,8 @@
 package io.confluent.connect.http;
 
 import io.confluent.connect.http.auth.HttpAuthenticator;
-import io.confluent.connect.http.auth.HttpAuthenticatorFactory;
 import io.confluent.connect.http.chaining.ApiChainingManager;
+import io.confluent.connect.http.auth.HttpAuthenticatorFactory;
 import io.confluent.connect.http.client.HttpApiClient;
 import io.confluent.connect.http.config.ApiConfig;
 import io.confluent.connect.http.config.HttpSourceConnectorConfig;
