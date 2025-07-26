@@ -8,6 +8,7 @@ io/confluent/connect/http/client/RetryHandler$1.class
 io/confluent/connect/http/HttpSourceConnector.class
 io/confluent/connect/http/auth/HttpAuthenticator.class
 io/confluent/connect/http/config/ApiConfig$HttpRequestMethod.class
+io/confluent/connect/http/chaining/ApiChainingManager.class
 io/confluent/connect/http/client/RetryHandler$StatusCodeRange.class
 io/confluent/connect/http/client/HttpApiClient$1.class
 io/confluent/connect/http/auth/HttpAuthenticatorFactory.class

@@ -65,12 +65,29 @@ public class HttpApiClient {
      * @throws Exception if the request fails after all retries
      */
     public ApiResponse makeRequest(String offset) throws Exception {
+        return makeRequest(offset, new HashMap<>());
+    }
+    
+    /**
+     * Makes an HTTP request to the API with the given offset and additional template variables
+     * 
+     * @param offset The current offset value for template variable replacement
+     * @param additionalVars Additional template variables (e.g., from API chaining)
+     * @return ApiResponse containing the response data, or null if no data
+     * @throws Exception if the request fails after all retries
+     */
+    public ApiResponse makeRequest(String offset, Map<String, String> additionalVars) throws Exception {
         log.debug("Making request to API: {} with offset: {}", apiConfig.getId(), offset);
         
         // Prepare template variables
         Map<String, String> templateVars = new HashMap<>();
         if (offset != null) {
             templateVars.put("offset", offset);
+        }
+        
+        // Add additional template variables (e.g., from API chaining)
+        if (additionalVars != null) {
+            templateVars.putAll(additionalVars);
         }
         
         // Build request

@@ -1,0 +1,46 @@
+{
+  "name": "api-chaining-http-source",
+  "config": {
+    "connector.class": "io.confluent.connect.http.HttpSourceConnector",
+    "tasks.max": "1",
+    "http.api.base.url": "https://api.example.com/v1",
+    "auth.type": "OAUTH2",
+    "oauth2.token.url": "https://auth.example.com/oauth/token",
+    "oauth2.client.id": "your-client-id",
+    "oauth2.client.secret": "your-client-secret",
+    "oauth2.client.scope": "read:data",
+    "oauth2.token.refresh.interval.minutes": "30",
+    
+    "apis.num": "3",
+    "api.chaining.parent.child.relationship": "api2:api1,api3:api1",
+    
+    "api1.http.api.path": "/companies",
+    "api1.topics": "companies-topic",
+    "api1.http.request.method": "GET",
+    "api1.http.offset.mode": "CURSOR_PAGINATION",
+    "api1.http.next.page.json.pointer": "/pagination/next_cursor",
+    "api1.http.response.data.json.pointer": "/companies",
+    "api1.request.interval.ms": "30000",
+    
+    "api2.http.api.path": "/companies/${parent_value}/employees",
+    "api2.topics": "employees-topic",
+    "api2.http.request.method": "GET",
+    "api2.http.offset.mode": "SIMPLE_INCREMENTING",
+    "api2.http.initial.offset": "0",
+    "api2.http.chaining.json.pointer": "/id",
+    "api2.http.response.data.json.pointer": "/employees",
+    "api2.request.interval.ms": "10000",
+    
+    "api3.http.api.path": "/companies/${parent_value}/departments",
+    "api3.topics": "departments-topic",
+    "api3.http.request.method": "GET",
+    "api3.http.offset.mode": "SIMPLE_INCREMENTING",
+    "api3.http.initial.offset": "0",
+    "api3.http.chaining.json.pointer": "/id",
+    "api3.http.response.data.json.pointer": "/departments",
+    "api3.request.interval.ms": "15000",
+    
+    "output.data.format": "JSON_SR",
+    "behavior.on.error": "FAIL"
+  }
+}
