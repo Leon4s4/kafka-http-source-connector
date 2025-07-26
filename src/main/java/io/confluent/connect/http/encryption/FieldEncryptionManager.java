@@ -59,6 +59,8 @@ public class FieldEncryptionManager {
             return record;
         }
         
+        log.debug("Attempting to encrypt fields for API: {} with {} rules", apiId, fieldEncryptionRules.size());
+        
         try {
             // Check if any rules apply to this API first
             boolean hasApplicableRules = false;
@@ -66,7 +68,7 @@ public class FieldEncryptionManager {
                 String fieldPath = rule.getKey();
                 
                 if (fieldPath.startsWith(apiId + ".") || 
-                    (!fieldPath.contains(".") || fieldPath.split("\\.")[0].matches("^[a-z_]+$"))) {
+                    (!fieldPath.contains(".") || !fieldPath.split("\\.")[0].matches("^api\\d+$"))) {
                     hasApplicableRules = true;
                     break;
                 }
@@ -97,7 +99,7 @@ public class FieldEncryptionManager {
                     // API-specific rule
                     actualPath = fieldPath.substring(apiId.length() + 1);
                     shouldApply = true;
-                } else if (!fieldPath.contains(".") || fieldPath.split("\\.")[0].matches("^[a-z_]+$")) {
+                } else if (!fieldPath.contains(".") || !fieldPath.split("\\.")[0].matches("^api\\d+$")) {
                     // Global rule (field name doesn't start with apiX.)
                     actualPath = fieldPath;
                     shouldApply = true;

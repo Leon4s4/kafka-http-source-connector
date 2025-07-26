@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="5.143" tests="12" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="5.127" tests="12" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="24"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -13,10 +13,9 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="CA"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/24.0.1/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/Git/kafka-http-source-connector/target/surefire/surefirebooter-20250726134713553_3.jar /Users/Git/kafka-http-source-connector/target/surefire 2025-07-26T13-47-13_519-jvmRun1 surefire-20250726134713553_1tmp surefire_0-20250726134713553_2tmp"/>
+    <property name="sun.java.command" value="/Users/Git/kafka-http-source-connector/target/surefire/surefirebooter-20250726143922165_3.jar /Users/Git/kafka-http-source-connector/target/surefire 2025-07-26T14-39-22_133-jvmRun1 surefire-20250726143922165_1tmp surefire_0-20250726143922165_2tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
-    <property name="test" value="AdvancedErrorHandlerTest,FieldEncryptionManagerTest"/>
     <property name="surefire.test.class.path" value="/Users/Git/kafka-http-source-connector/target/test-classes:/Users/Git/kafka-http-source-connector/target/classes:/Users/leonardosantana/.m2/repository/org/apache/kafka/connect-api/3.7.0/connect-api-3.7.0.jar:/Users/leonardosantana/.m2/repository/javax/ws/rs/javax.ws.rs-api/2.1.1/javax.ws.rs-api-2.1.1.jar:/Users/leonardosantana/.m2/repository/org/apache/kafka/connect-runtime/3.7.0/connect-runtime-3.7.0.jar:/Users/leonardosantana/.m2/repository/org/apache/kafka/connect-json/3.7.0/connect-json-3.7.0.jar:/Users/leonardosantana/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.16.0/jackson-datatype-jdk8-2.16.0.jar:/Users/leonardosantana/.m2/repository/org/apache/kafka/connect-transforms/3.7.0/connect-transforms-3.7.0.jar:/Users/leonardosantana/.m2/repository/ch/qos/reload4j/reload4j/1.2.25/reload4j-1.2.25.jar:/Users/leonardosantana/.m2/repository/org/bitbucket/b_c/jose4j/0.9.4/jose4j-0.9.4.jar:/Users/leonardosantana/.m2/repository/com/fasterxml/jackson/jaxrs/jackson-jaxrs-json-provider/2.16.0/jackson-jaxrs-json-provider-2.16.0.jar:/Users/leonardosantana/.m2/repository/com/fasterxml/jackson/jaxrs/jackson-jaxrs-base/2.16.0/jackson-jaxrs-base-2.16.0.jar:/Users/leonardosantana/.m2/repository/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.16.0/jackson-module-jaxb-annotations-2.16.0.jar:/Users/leonardosantana/.m2/repository/jakarta/xml/bind/jakarta.xml.bind-api/2.3.3/jakarta.xml.bind-api-2.3.3.jar:/Users/leonardosantana/.m2/repository/jakarta/activation/jakarta.activation-api/1.2.2/jakarta.activation-api-1.2.2.jar:/Users/leonardosantana/.m2/repository/org/glassfish/jersey/containers/jersey-container-servlet/2.39.1/jersey-container-servlet-2.39.1.jar:/Users/leonardosantana/.m2/repository/org/glassfish/jersey/containers/jersey-container-servlet-core/2.39.1/jersey-container-servlet-core-2.39.1.jar:/Users/leonardosantana/.m2/repository/org/glassfish/hk2/external/jakarta.inject/2.6.1/jakarta.inject-2.6.1.jar:/Users/leonardosantana/.m2/repository/org/glassfish/jersey/core/jersey-common/2.39.1/jersey-common-2.39.1.jar:/Users/leonardosantana/.m2/repository/jakarta/annotation/jakarta.annotation-api/1.3.5/jakarta.annotation-api-1.3.5.jar:/Users/leonardosantana/.m2/repository/org/glassfish/hk2/osgi-resource-locator/1.0.3/osgi-resource-locator-1.0.3.jar:/Users/leonardosantana/.m2/repository/org/glassfish/jersey/core/jersey-server/2.39.1/jersey-server-2.39.1.jar:/Users/leonardosantana/.m2/repository/org/glassfish/jersey/core/jersey-client/2.39.1/jersey-client-2.39.1.jar:/Users/leonardosantana/.m2/repository/jakarta/validation/jakarta.validation-api/2.0.2/jakarta.validation-api-2.0.2.jar:/Users/leonardosantana/.m2/repository/jakarta/ws/rs/jakarta.ws.rs-api/2.1.6/jakarta.ws.rs-api-2.1.6.jar:/Users/leonardosantana/.m2/repository/org/glassfish/jersey/inject/jersey-hk2/2.39.1/jersey-hk2-2.39.1.jar:/Users/leonardosantana/.m2/repository/org/glassfish/hk2/hk2-locator/2.6.1/hk2-locator-2.6.1.jar:/Users/leonardosantana/.m2/repository/org/glassfish/hk2/external/aopalliance-repackaged/2.6.1/aopalliance-repackaged-2.6.1.jar:/Users/leonardosantana/.m2/repository/org/glassfish/hk2/hk2-api/2.6.1/hk2-api-2.6.1.jar:/Users/leonardosantana/.m2/repository/org/glassfish/hk2/hk2-utils/2.6.1/hk2-utils-2.6.1.jar:/Users/leonardosantana/.m2/repository/org/javassist/javassist/3.29.0-GA/javassist-3.29.0-GA.jar:/Users/leonardosantana/.m2/repository/javax/xml/bind/jaxb-api/2.3.1/jaxb-api-2.3.1.jar:/Users/leonardosantana/.m2/repository/javax/activation/javax.activation-api/1.2.0/javax.activation-api-1.2.0.jar:/Users/leonardosantana/.m2/repository/javax/activation/activation/1.1.1/activation-1.1.1.jar:/Users/leonardosantana/.m2/repository/org/eclipse/jetty/jetty-server/9.4.53.v20231009/jetty-server-9.4.53.v20231009.jar:/Users/leonardosantana/.m2/repository/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar:/Users/leonardosantana/.m2/repository/org/eclipse/jetty/jetty-http/9.4.53.v20231009/jetty-http-9.4.53.v20231009.jar:/Users/leonardosantana/.m2/repository/org/eclipse/jetty/jetty-io/9.4.53.v20231009/jetty-io-9.4.53.v20231009.jar:/Users/leonardosantana/.m2/repository/org/eclipse/jetty/jetty-servlet/9.4.53.v20231009/jetty-servlet-9.4.53.v20231009.jar:/Users/leonardosantana/.m2/repository/org/eclipse/jetty/jetty-security/9.4.53.v20231009/jetty-security-9.4.53.v20231009.jar:/Users/leonardosantana/.m2/repository/org/eclipse/jetty/jetty-util-ajax/9.4.53.v20231009/jetty-util-ajax-9.4.53.v20231009.jar:/Users/leonardosantana/.m2/repository/org/eclipse/jetty/jetty-servlets/9.4.53.v20231009/jetty-servlets-9.4.53.v20231009.jar:/Users/leonardosantana/.m2/repository/org/eclipse/jetty/jetty-continuation/9.4.53.v20231009/jetty-continuation-9.4.53.v20231009.jar:/Users/leonardosantana/.m2/repository/org/eclipse/jetty/jetty-util/9.4.53.v20231009/jetty-util-9.4.53.v20231009.jar:/Users/leonardosantana/.m2/repository/org/eclipse/jetty/jetty-client/9.4.53.v20231009/jetty-client-9.4.53.v20231009.jar:/Users/leonardosantana/.m2/repository/org/reflections/reflections/0.10.2/reflections-0.10.2.jar:/Users/leonardosantana/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar:/Users/leonardosantana/.m2/repository/org/apache/maven/maven-artifact/3.8.8/maven-artifact-3.8.8.jar:/Users/leonardosantana/.m2/repository/org/codehaus/plexus/plexus-utils/3.3.1/plexus-utils-3.3.1.jar:/Users/leonardosantana/.m2/repository/org/apache/commons/commons-lang3/3.8.1/commons-lang3-3.8.1.jar:/Users/leonardosantana/.m2/repository/io/swagger/core/v3/swagger-annotations/2.2.8/swagger-annotations-2.2.8.jar:/Users/leonardosantana/.m2/repository/org/apache/kafka/kafka-clients/3.7.0/kafka-clients-3.7.0.jar:/Users/leonardosantana/.m2/repository/com/github/luben/zstd-jni/1.5.5-6/zstd-jni-1.5.5-6.jar:/Users/leonardosantana/.m2/repository/org/lz4/lz4-java/1.8.0/lz4-java-1.8.0.jar:/Users/leonardosantana/.m2/repository/org/xerial/snappy/snappy-java/1.1.10.5/snappy-java-1.1.10.5.jar:/Users/leonardosantana/.m2/repository/io/confluent/kafka-schema-registry-client/7.6.0/kafka-schema-registry-client-7.6.0.jar:/Users/leonardosantana/.m2/repository/org/yaml/snakeyaml/2.0/snakeyaml-2.0.jar:/Users/leonardosantana/.m2/repository/org/apache/avro/avro/1.11.3/avro-1.11.3.jar:/Users/leonardosantana/.m2/repository/org/apache/commons/commons-compress/1.21/commons-compress-1.21.jar:/Users/leonardosantana/.m2/repository/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.jar:/Users/leonardosantana/.m2/repository/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar:/Users/leonardosantana/.m2/repository/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/Users/leonardosantana/.m2/repository/org/checkerframework/checker-qual/3.33.0/checker-qual-3.33.0.jar:/Users/leonardosantana/.m2/repository/com/google/errorprone/error_prone_annotations/2.18.0/error_prone_annotations-2.18.0.jar:/Users/leonardosantana/.m2/repository/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar:/Users/leonardosantana/.m2/repository/io/confluent/common-utils/7.6.0/common-utils-7.6.0.jar:/Users/leonardosantana/.m2/repository/io/confluent/kafka-connect-avro-converter/7.6.0/kafka-connect-avro-converter-7.6.0.jar:/Users/leonardosantana/.m2/repository/io/confluent/kafka-avro-serializer/7.6.0/kafka-avro-serializer-7.6.0.jar:/Users/leonardosantana/.m2/repository/io/confluent/logredactor/1.0.12/logredactor-1.0.12.jar:/Users/leonardosantana/.m2/repository/io/confluent/logredactor-metrics/1.0.12/logredactor-metrics-1.0.12.jar:/Users/leonardosantana/.m2/repository/com/eclipsesource/minimal-json/minimal-json/0.9.5/minimal-json-0.9.5.jar:/Users/leonardosantana/.m2/repository/io/confluent/kafka-connect-avro-data/7.6.0/kafka-connect-avro-data-7.6.0.jar:/Users/leonardosantana/.m2/repository/io/confluent/kafka-connect-json-schema-converter/7.6.0/kafka-connect-json-schema-converter-7.6.0.jar:/Users/leonardosantana/.m2/repository/io/confluent/kafka-json-schema-provider/7.6.0/kafka-json-schema-provider-7.6.0.jar:/Users/leonardosantana/.m2/repository/com/github/erosb/json-sKema/0.10.0/json-sKema-0.10.0.jar:/Users/leonardosantana/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-guava/2.14.2/jackson-datatype-guava-2.14.2.jar:/Users/leonardosantana/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-joda/2.14.2/jackson-datatype-joda-2.14.2.jar:/Users/leonardosantana/.m2/repository/joda-time/joda-time/2.10.8/joda-time-2.10.8.jar:/Users/leonardosantana/.m2/repository/com/fasterxml/jackson/module/jackson-module-parameter-names/2.14.2/jackson-module-parameter-names-2.14.2.jar:/Users/leonardosantana/.m2/repository/com/kjetland/mbknor-jackson-jsonschema_2.13/1.0.39/mbknor-jackson-jsonschema_2.13-1.0.39.jar:/Users/leonardosantana/.m2/repository/org/scala-lang/scala-library/2.13.1/scala-library-2.13.1.jar:/Users/leonardosantana/.m2/repository/javax/validation/validation-api/2.0.1.Final/validation-api-2.0.1.Final.jar:/Users/leonardosantana/.m2/repository/io/github/classgraph/classgraph/4.8.21/classgraph-4.8.21.jar:/Users/leonardosantana/.m2/repository/org/jetbrains/kotlin/kotlin-scripting-jvm/1.9.10/kotlin-scripting-jvm-1.9.10.jar:/Users/leonardosantana/.m2/repository/org/jetbrains/kotlin/kotlin-script-runtime/1.9.10/kotlin-script-runtime-1.9.10.jar:/Users/leonardosantana/.m2/repository/org/jetbrains/kotlin/kotlin-scripting-common/1.9.10/kotlin-scripting-common-1.9.10.jar:/Users/leonardosantana/.m2/repository/org/jetbrains/kotlin/kotlin-scripting-compiler-embeddable/1.9.10/kotlin-scripting-compiler-embeddable-1.9.10.jar:/Users/leonardosantana/.m2/repository/org/jetbrains/kotlin/kotlin-scripting-compiler-impl-embeddable/1.9.10/kotlin-scripting-compiler-impl-embeddable-1.9.10.jar:/Users/leonardosantana/.m2/repository/io/confluent/kafka-json-schema-serializer/7.6.0/kafka-json-schema-serializer-7.6.0.jar:/Users/leonardosantana/.m2/repository/io/confluent/kafka-json-serializer/7.6.0/kafka-json-serializer-7.6.0.jar:/Users/leonardosantana/.m2/repository/io/confluent/common-config/7.6.0/common-config-7.6.0.jar:/Users/leonardosantana/.m2/repository/io/confluent/kafka-schema-converter/7.6.0/kafka-schema-converter-7.6.0.jar:/Users/leonardosantana/.m2/repository/io/confluent/kafka-schema-serializer/7.6.0/kafka-schema-serializer-7.6.0.jar:/Users/leonardosantana/.m2/repository/com/fasterxml/jackson/dataformat/jackson-dataformat-csv/2.14.2/jackson-dataformat-csv-2.14.2.jar:/Users/leonardosantana/.m2/repository/com/github/erosb/everit-json-schema/1.14.3/everit-json-schema-1.14.3.jar:/Users/leonardosantana/.m2/repository/org/json/json/20231013/json-20231013.jar:/Users/leonardosantana/.m2/repository/commons-validator/commons-validator/1.7/commons-validator-1.7.jar:/Users/leonardosantana/.m2/repository/commons-digester/commons-digester/2.1/commons-digester-2.1.jar:/Users/leonardosantana/.m2/repository/commons-logging/commons-logging/1.2/commons-logging-1.2.jar:/Users/leonardosantana/.m2/repository/commons-collections/commons-collections/3.2.2/commons-collections-3.2.2.jar:/Users/leonardosantana/.m2/repository/com/damnhandy/handy-uri-templates/2.1.8/handy-uri-templates-2.1.8.jar:/Users/leonardosantana/.m2/repository/com/google/re2j/re2j/1.6/re2j-1.6.jar:/Users/leonardosantana/.m2/repository/io/confluent/kafka-connect-protobuf-converter/7.6.0/kafka-connect-protobuf-converter-7.6.0.jar:/Users/leonardosantana/.m2/repository/io/confluent/kafka-protobuf-provider/7.6.0/kafka-protobuf-provider-7.6.0.jar:/Users/leonardosantana/.m2/repository/com/squareup/wire/wire-runtime-jvm/4.9.0/wire-runtime-jvm-4.9.0.jar:/Users/leonardosantana/.m2/repository/com/google/api/grpc/proto-google-common-protos/2.22.1/proto-google-common-protos-2.22.1.jar:/Users/leonardosantana/.m2/repository/io/confluent/kafka-protobuf-serializer/7.6.0/kafka-protobuf-serializer-7.6.0.jar:/Users/leonardosantana/.m2/repository/io/confluent/kafka-protobuf-types/7.6.0/kafka-protobuf-types-7.6.0.jar:/Users/leonardosantana/.m2/repository/com/squareup/wire/wire-schema-jvm/4.9.0/wire-schema-jvm-4.9.0.jar:/Users/leonardosantana/.m2/repository/com/squareup/javapoet/1.13.0/javapoet-1.13.0.jar:/Users/leonardosantana/.m2/repository/com/squareup/kotlinpoet/1.14.2/kotlinpoet-1.14.2.jar:/Users/leonardosantana/.m2/repository/org/jetbrains/kotlin/kotlin-reflect/1.8.21/kotlin-reflect-1.8.21.jar:/Users/leonardosantana/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.10/kotlin-stdlib-common-1.9.10.jar:/Users/leonardosantana/.m2/repository/com/squareup/okio/okio-jvm/3.4.0/okio-jvm-3.4.0.jar:/Users/leonardosantana/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.9.10/kotlin-stdlib-1.9.10.jar:/Users/leonardosantana/.m2/repository/org/jetbrains/annotations/13.0/annotations-13.0.jar:/Users/leonardosantana/.m2/repository/com/google/protobuf/protobuf-java/3.19.6/protobuf-java-3.19.6.jar:/Users/leonardosantana/.m2/repository/com/google/protobuf/protobuf-java-util/3.19.6/protobuf-java-util-3.19.6.jar:/Users/leonardosantana/.m2/repository/com/google/code/gson/gson/2.8.6/gson-2.8.6.jar:/Users/leonardosantana/.m2/repository/com/squareup/okhttp3/okhttp/4.12.0/okhttp-4.12.0.jar:/Users/leonardosantana/.m2/repository/com/squareup/okio/okio/3.6.0/okio-3.6.0.jar:/Users/leonardosantana/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.8.21/kotlin-stdlib-jdk8-1.8.21.jar:/Users/leonardosantana/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.8.21/kotlin-stdlib-jdk7-1.8.21.jar:/Users/leonardosantana/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.16.1/jackson-core-2.16.1.jar:/Users/leonardosantana/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.16.1/jackson-databind-2.16.1.jar:/Users/leonardosantana/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.16.1/jackson-annotations-2.16.1.jar:/Users/leonardosantana/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.16.1/jackson-datatype-jsr310-2.16.1.jar:/Users/leonardosantana/.m2/repository/com/squareup/okhttp3/okhttp-urlconnection/4.12.0/okhttp-urlconnection-4.12.0.jar:/Users/leonardosantana/.m2/repository/org/slf4j/slf4j-api/2.0.12/slf4j-api-2.0.12.jar:/Users/leonardosantana/.m2/repository/ch/qos/logback/logback-classic/1.4.14/logback-classic-1.4.14.jar:/Users/leonardosantana/.m2/repository/ch/qos/logback/logback-core/1.4.14/logback-core-1.4.14.jar:/Users/leonardosantana/.m2/repository/io/swagger/parser/v3/swagger-parser/2.1.16/swagger-parser-2.1.16.jar:/Users/leonardosantana/.m2/repository/io/swagger/parser/v3/swagger-parser-v2-converter/2.1.16/swagger-parser-v2-converter-2.1.16.jar:/Users/leonardosantana/.m2/repository/io/swagger/swagger-core/1.6.11/swagger-core-1.6.11.jar:/Users/leonardosantana/.m2/repository/io/swagger/swagger-models/1.6.11/swagger-models-1.6.11.jar:/Users/leonardosantana/.m2/repository/io/swagger/swagger-annotations/1.6.11/swagger-annotations-1.6.11.jar:/Users/leonardosantana/.m2/repository/io/swagger/swagger-parser/1.0.67/swagger-parser-1.0.67.jar:/Users/leonardosantana/.m2/repository/io/swagger/swagger-compat-spec-parser/1.0.67/swagger-compat-spec-parser-1.0.67.jar:/Users/leonardosantana/.m2/repository/com/github/java-json-tools/json-schema-validator/2.2.14/json-schema-validator-2.2.14.jar:/Users/leonardosantana/.m2/repository/com/github/java-json-tools/jackson-coreutils-equivalence/1.0/jackson-coreutils-equivalence-1.0.jar:/Users/leonardosantana/.m2/repository/com/github/java-json-tools/json-schema-core/1.2.14/json-schema-core-1.2.14.jar:/Users/leonardosantana/.m2/repository/com/github/java-json-tools/uri-template/0.10/uri-template-0.10.jar:/Users/leonardosantana/.m2/repository/org/mozilla/rhino/1.7.7.2/rhino-1.7.7.2.jar:/Users/leonardosantana/.m2/repository/com/googlecode/libphonenumber/libphonenumber/8.11.1/libphonenumber-8.11.1.jar:/Users/leonardosantana/.m2/repository/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar:/Users/leonardosantana/.m2/repository/com/github/java-json-tools/json-patch/1.13/json-patch-1.13.jar:/Users/leonardosantana/.m2/repository/com/github/java-json-tools/msg-simple/1.2/msg-simple-1.2.jar:/Users/leonardosantana/.m2/repository/com/github/java-json-tools/btf/1.3/btf-1.3.jar:/Users/leonardosantana/.m2/repository/com/github/java-json-tools/jackson-coreutils/2.0/jackson-coreutils-2.0.jar:/Users/leonardosantana/.m2/repository/org/apache/httpcomponents/httpclient/4.5.14/httpclient-4.5.14.jar:/Users/leonardosantana/.m2/repository/org/apache/httpcomponents/httpcore/4.4.16/httpcore-4.4.16.jar:/Users/leonardosantana/.m2/repository/commons-codec/commons-codec/1.11/commons-codec-1.11.jar:/Users/leonardosantana/.m2/repository/io/swagger/core/v3/swagger-models/2.2.14/swagger-models-2.2.14.jar:/Users/leonardosantana/.m2/repository/io/swagger/parser/v3/swagger-parser-core/2.1.16/swagger-parser-core-2.1.16.jar:/Users/leonardosantana/.m2/repository/io/swagger/parser/v3/swagger-parser-v3/2.1.16/swagger-parser-v3-2.1.16.jar:/Users/leonardosantana/.m2/repository/io/swagger/core/v3/swagger-core/2.2.14/swagger-core-2.2.14.jar:/Users/leonardosantana/.m2/repository/io/swagger/parser/v3/swagger-parser-safe-url-resolver/2.1.16/swagger-parser-safe-url-resolver-2.1.16.jar:/Users/leonardosantana/.m2/repository/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.15.1/jackson-dataformat-yaml-2.15.1.jar:/Users/leonardosantana/.m2/repository/commons-io/commons-io/2.11.0/commons-io-2.11.0.jar:/Users/leonardosantana/.m2/repository/io/micrometer/micrometer-core/1.11.5/micrometer-core-1.11.5.jar:/Users/leonardosantana/.m2/repository/io/micrometer/micrometer-commons/1.11.5/micrometer-commons-1.11.5.jar:/Users/leonardosantana/.m2/repository/io/micrometer/micrometer-observation/1.11.5/micrometer-observation-1.11.5.jar:/Users/leonardosantana/.m2/repository/org/hdrhistogram/HdrHistogram/2.1.12/HdrHistogram-2.1.12.jar:/Users/leonardosantana/.m2/repository/org/latencyutils/LatencyUtils/2.0.3/LatencyUtils-2.0.3.jar:/Users/leonardosantana/.m2/repository/org/junit/jupiter/junit-jupiter/5.10.1/junit-jupiter-5.10.1.jar:/Users/leonardosantana/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.1/junit-jupiter-api-5.10.1.jar:/Users/leonardosantana/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/leonardosantana/.m2/repository/org/junit/platform/junit-platform-commons/1.10.1/junit-platform-commons-1.10.1.jar:/Users/leonardosantana/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/leonardosantana/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.10.1/junit-jupiter-params-5.10.1.jar:/Users/leonardosantana/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.1/junit-jupiter-engine-5.10.1.jar:/Users/leonardosantana/.m2/repository/org/junit/platform/junit-platform-engine/1.10.1/junit-platform-engine-1.10.1.jar:/Users/leonardosantana/.m2/repository/org/mockito/mockito-core/5.8.0/mockito-core-5.8.0.jar:/Users/leonardosantana/.m2/repository/net/bytebuddy/byte-buddy/1.14.10/byte-buddy-1.14.10.jar:/Users/leonardosantana/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.10/byte-buddy-agent-1.14.10.jar:/Users/leonardosantana/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:/Users/leonardosantana/.m2/repository/org/mockito/mockito-junit-jupiter/5.8.0/mockito-junit-jupiter-5.8.0.jar:/Users/leonardosantana/.m2/repository/com/squareup/okhttp3/mockwebserver/4.12.0/mockwebserver-4.12.0.jar:/Users/leonardosantana/.m2/repository/junit/junit/4.13.2/junit-4.13.2.jar:/Users/leonardosantana/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/Users/leonardosantana/.m2/repository/org/testcontainers/junit-jupiter/1.19.3/junit-jupiter-1.19.3.jar:/Users/leonardosantana/.m2/repository/org/testcontainers/testcontainers/1.19.3/testcontainers-1.19.3.jar:/Users/leonardosantana/.m2/repository/org/rnorth/duct-tape/duct-tape/1.0.8/duct-tape-1.0.8.jar:/Users/leonardosantana/.m2/repository/com/github/docker-java/docker-java-api/3.3.4/docker-java-api-3.3.4.jar:/Users/leonardosantana/.m2/repository/com/github/docker-java/docker-java-transport-zerodep/3.3.4/docker-java-transport-zerodep-3.3.4.jar:/Users/leonardosantana/.m2/repository/com/github/docker-java/docker-java-transport/3.3.4/docker-java-transport-3.3.4.jar:/Users/leonardosantana/.m2/repository/net/java/dev/jna/jna/5.13.0/jna-5.13.0.jar:/Users/leonardosantana/.m2/repository/org/testcontainers/kafka/1.19.3/kafka-1.19.3.jar:/Users/leonardosantana/.m2/repository/org/testcontainers/nginx/1.19.3/nginx-1.19.3.jar:/Users/leonardosantana/.m2/repository/org/testcontainers/postgresql/1.19.3/postgresql-1.19.3.jar:/Users/leonardosantana/.m2/repository/org/testcontainers/jdbc/1.19.3/jdbc-1.19.3.jar:/Users/leonardosantana/.m2/repository/org/testcontainers/database-commons/1.19.3/database-commons-1.19.3.jar:/Users/leonardosantana/.m2/repository/org/assertj/assertj-core/3.24.2/assertj-core-3.24.2.jar:/Users/leonardosantana/.m2/repository/org/awaitility/awaitility/4.2.0/awaitility-4.2.0.jar:/Users/leonardosantana/.m2/repository/org/hamcrest/hamcrest/2.1/hamcrest-2.1.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="/Users/leonardosantana"/>
@@ -31,7 +30,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/Git/kafka-http-source-connector/target/surefire/surefirebooter-20250726134713553_3.jar"/>
+    <property name="surefire.real.class.path" value="/Users/Git/kafka-http-source-connector/target/surefire/surefirebooter-20250726143922165_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="24.0.1"/>
@@ -60,8 +59,8 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="68.0"/>
   </properties>
-  <testcase name="shouldTrackErrorMetricsCorrectly" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.007">
-    <system-out><![CDATA[13:47:13.947 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+  <testcase name="shouldTrackErrorMetricsCorrectly" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.009">
+    <system-out><![CDATA[14:39:22.540 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -103,13 +102,13 @@
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:47:13.947 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:47:13.947 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:47:13.947 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:47:13.948 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:47:13.948 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
-13:47:13.950 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
-13:47:13.950 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Unknown error for API api1: Network error
+14:39:22.540 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+14:39:22.540 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+14:39:22.540 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+14:39:22.540 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+14:39:22.541 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
+14:39:22.544 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:22.545 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Unknown error for API api1: Network error
 java.io.IOException: Network error
 	at io.confluent.connect.http.unit.AdvancedErrorHandlerTest.shouldTrackErrorMetricsCorrectly(AdvancedErrorHandlerTest.java:244)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
@@ -181,11 +180,11 @@ java.io.IOException: Network error
 	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
-13:47:13.951 [main] DEBUG io.confluent.connect.http.error.AdvancedErrorHandler -- Ignoring error for API api1 as configured
+14:39:22.546 [main] DEBUG io.confluent.connect.http.error.AdvancedErrorHandler -- Ignoring error for API api1 as configured
 ]]></system-out>
   </testcase>
   <testcase name="shouldHandleErrorsWhenStatusCodeAccessFails" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.003">
-    <system-out><![CDATA[13:47:13.954 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+    <system-out><![CDATA[14:39:22.549 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -227,16 +226,16 @@ java.io.IOException: Network error
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:47:13.954 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:47:13.954 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:47:13.954 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:47:13.954 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:47:13.954 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
-13:47:13.955 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: connection timeout occurred
+14:39:22.549 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+14:39:22.549 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+14:39:22.549 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+14:39:22.549 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+14:39:22.549 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
+14:39:22.550 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: connection timeout occurred
 ]]></system-out>
   </testcase>
-  <testcase name="shouldMoveToHalfOpenStateAfterRecoveryTime" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="5.108">
-    <system-out><![CDATA[13:47:13.957 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+  <testcase name="shouldMoveToHalfOpenStateAfterRecoveryTime" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="5.104">
+    <system-out><![CDATA[14:39:22.552 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -278,16 +277,16 @@ java.io.IOException: Network error
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:47:13.957 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:47:13.958 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:47:13.958 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:47:13.958 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:47:13.958 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
-13:47:13.958 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
-13:47:13.958 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
-13:47:13.958 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
-13:47:13.958 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Circuit breaker OPENED for API api1 after 3 failures
-13:47:13.958 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+14:39:22.552 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+14:39:22.552 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+14:39:22.552 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+14:39:22.552 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+14:39:22.552 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
+14:39:22.553 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:22.553 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:22.553 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:22.553 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Circuit breaker OPENED for API api1 after 3 failures
+14:39:22.553 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -329,18 +328,18 @@ java.io.IOException: Network error
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:47:13.958 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:47:13.958 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:47:13.958 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=5000ms
-13:47:13.958 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
-13:47:13.958 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
-13:47:13.958 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
-13:47:13.958 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Circuit breaker OPENED for API api1 after 3 failures
-13:47:19.061 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Circuit breaker for API api1 moved to HALF_OPEN state
+14:39:22.553 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+14:39:22.553 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+14:39:22.553 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=5000ms
+14:39:22.553 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:22.553 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:22.553 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:22.553 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Circuit breaker OPENED for API api1 after 3 failures
+14:39:27.654 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Circuit breaker for API api1 moved to HALF_OPEN state
 ]]></system-out>
   </testcase>
-  <testcase name="shouldOpenCircuitBreakerAfterThresholdFailures" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.004">
-    <system-out><![CDATA[13:47:19.067 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+  <testcase name="shouldOpenCircuitBreakerAfterThresholdFailures" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.002">
+    <system-out><![CDATA[14:39:27.656 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -382,20 +381,20 @@ java.io.IOException: Network error
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:47:19.067 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:47:19.067 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:47:19.067 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:47:19.067 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:47:19.067 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
-13:47:19.068 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
-13:47:19.068 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
-13:47:19.068 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
-13:47:19.068 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Circuit breaker OPENED for API api1 after 3 failures
-13:47:19.069 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:27.656 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+14:39:27.656 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+14:39:27.656 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+14:39:27.657 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+14:39:27.657 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
+14:39:27.657 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:27.657 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:27.657 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:27.657 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Circuit breaker OPENED for API api1 after 3 failures
+14:39:27.657 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
 ]]></system-out>
   </testcase>
-  <testcase name="shouldResetCircuitBreakerWhenRequested" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.007">
-    <system-out><![CDATA[13:47:19.072 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+  <testcase name="shouldResetCircuitBreakerWhenRequested" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.001">
+    <system-out><![CDATA[14:39:27.658 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -437,20 +436,20 @@ java.io.IOException: Network error
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:47:19.072 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:47:19.072 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:47:19.072 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:47:19.072 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:47:19.072 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
-13:47:19.078 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
-13:47:19.078 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
-13:47:19.078 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
-13:47:19.078 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Circuit breaker OPENED for API api1 after 3 failures
-13:47:19.078 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Circuit breaker reset for API: api1
+14:39:27.658 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+14:39:27.658 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+14:39:27.659 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+14:39:27.659 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+14:39:27.659 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
+14:39:27.659 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:27.659 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:27.659 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:27.659 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Circuit breaker OPENED for API api1 after 3 failures
+14:39:27.659 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Circuit breaker reset for API: api1
 ]]></system-out>
   </testcase>
   <testcase name="shouldCategorizeHttpServerErrorsAsTransient" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.001">
-    <system-out><![CDATA[13:47:19.080 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+    <system-out><![CDATA[14:39:27.660 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -492,16 +491,16 @@ java.io.IOException: Network error
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:47:19.080 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:47:19.080 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:47:19.080 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:47:19.080 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:47:19.080 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
-13:47:19.080 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:27.660 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+14:39:27.660 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+14:39:27.660 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+14:39:27.660 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+14:39:27.660 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
+14:39:27.660 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
 ]]></system-out>
   </testcase>
   <testcase name="shouldCategorizeNetworkErrorsAsTransient" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.002">
-    <system-out><![CDATA[13:47:19.081 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+    <system-out><![CDATA[14:39:27.661 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -543,17 +542,17 @@ java.io.IOException: Network error
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:47:19.081 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:47:19.081 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:47:19.081 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:47:19.081 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:47:19.081 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
-13:47:19.081 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Connection refused
-13:47:19.082 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Read timeout
+14:39:27.661 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+14:39:27.661 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+14:39:27.661 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+14:39:27.661 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+14:39:27.661 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
+14:39:27.661 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Connection refused
+14:39:27.661 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Read timeout
 ]]></system-out>
   </testcase>
   <testcase name="shouldCloseCircuitBreakerOnSuccessfulRecovery" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.001">
-    <system-out><![CDATA[13:47:19.083 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+    <system-out><![CDATA[14:39:27.662 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -595,20 +594,20 @@ java.io.IOException: Network error
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:47:19.083 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:47:19.083 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:47:19.083 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:47:19.083 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:47:19.083 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
-13:47:19.083 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
-13:47:19.083 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
-13:47:19.083 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
-13:47:19.083 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Circuit breaker OPENED for API api1 after 3 failures
-13:47:19.083 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Circuit breaker reset for API: api1
+14:39:27.662 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+14:39:27.662 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+14:39:27.662 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+14:39:27.662 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+14:39:27.662 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
+14:39:27.662 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:27.662 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:27.663 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Internal Server Error
+14:39:27.663 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Circuit breaker OPENED for API api1 after 3 failures
+14:39:27.663 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Circuit breaker reset for API: api1
 ]]></system-out>
   </testcase>
   <testcase name="shouldCategorizeHttpRateLimitErrors" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.001">
-    <system-out><![CDATA[13:47:19.084 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+    <system-out><![CDATA[14:39:27.663 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -650,16 +649,16 @@ java.io.IOException: Network error
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:47:19.084 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:47:19.084 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:47:19.084 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:47:19.084 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:47:19.085 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
-13:47:19.085 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Too Many Requests
+14:39:27.663 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+14:39:27.663 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+14:39:27.663 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+14:39:27.663 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+14:39:27.663 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
+14:39:27.663 [main] WARN io.confluent.connect.http.error.AdvancedErrorHandler -- Transient error for API api1: Too Many Requests
 ]]></system-out>
   </testcase>
-  <testcase name="shouldNotCountAuthenticationErrorsTowardCircuitBreaker" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.001">
-    <system-out><![CDATA[13:47:19.086 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+  <testcase name="shouldNotCountAuthenticationErrorsTowardCircuitBreaker" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.0">
+    <system-out><![CDATA[14:39:27.664 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -701,25 +700,25 @@ java.io.IOException: Network error
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:47:19.086 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:47:19.086 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:47:19.086 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:47:19.086 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:47:19.086 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
-13:47:19.086 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Authentication error for API api1: Unauthorized
-13:47:19.086 [main] DEBUG io.confluent.connect.http.error.AdvancedErrorHandler -- Ignoring error for API api1 as configured
-13:47:19.086 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Authentication error for API api1: Unauthorized
-13:47:19.086 [main] DEBUG io.confluent.connect.http.error.AdvancedErrorHandler -- Ignoring error for API api1 as configured
-13:47:19.086 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Authentication error for API api1: Unauthorized
-13:47:19.086 [main] DEBUG io.confluent.connect.http.error.AdvancedErrorHandler -- Ignoring error for API api1 as configured
-13:47:19.086 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Authentication error for API api1: Unauthorized
-13:47:19.086 [main] DEBUG io.confluent.connect.http.error.AdvancedErrorHandler -- Ignoring error for API api1 as configured
-13:47:19.086 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Authentication error for API api1: Unauthorized
-13:47:19.086 [main] DEBUG io.confluent.connect.http.error.AdvancedErrorHandler -- Ignoring error for API api1 as configured
+14:39:27.664 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+14:39:27.664 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+14:39:27.664 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+14:39:27.664 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+14:39:27.664 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
+14:39:27.664 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Authentication error for API api1: Unauthorized
+14:39:27.664 [main] DEBUG io.confluent.connect.http.error.AdvancedErrorHandler -- Ignoring error for API api1 as configured
+14:39:27.664 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Authentication error for API api1: Unauthorized
+14:39:27.664 [main] DEBUG io.confluent.connect.http.error.AdvancedErrorHandler -- Ignoring error for API api1 as configured
+14:39:27.664 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Authentication error for API api1: Unauthorized
+14:39:27.664 [main] DEBUG io.confluent.connect.http.error.AdvancedErrorHandler -- Ignoring error for API api1 as configured
+14:39:27.664 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Authentication error for API api1: Unauthorized
+14:39:27.664 [main] DEBUG io.confluent.connect.http.error.AdvancedErrorHandler -- Ignoring error for API api1 as configured
+14:39:27.664 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Authentication error for API api1: Unauthorized
+14:39:27.664 [main] DEBUG io.confluent.connect.http.error.AdvancedErrorHandler -- Ignoring error for API api1 as configured
 ]]></system-out>
   </testcase>
-  <testcase name="shouldHandleUnknownErrorsGracefully" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.001">
-    <system-out><![CDATA[13:47:19.087 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+  <testcase name="shouldHandleUnknownErrorsGracefully" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.0">
+    <system-out><![CDATA[14:39:27.665 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -761,12 +760,12 @@ java.io.IOException: Network error
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:47:19.087 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:47:19.087 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:47:19.087 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:47:19.087 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:47:19.087 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
-13:47:19.087 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Unknown error for API api1: Unknown error
+14:39:27.665 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+14:39:27.665 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+14:39:27.665 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+14:39:27.665 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+14:39:27.665 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
+14:39:27.665 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Unknown error for API api1: Unknown error
 java.lang.RuntimeException: Unknown error
 	at io.confluent.connect.http.unit.AdvancedErrorHandlerTest.shouldHandleUnknownErrorsGracefully(AdvancedErrorHandlerTest.java:274)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
@@ -838,11 +837,11 @@ java.lang.RuntimeException: Unknown error
 	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
-13:47:19.088 [main] DEBUG io.confluent.connect.http.error.AdvancedErrorHandler -- Ignoring error for API api1 as configured
+14:39:27.665 [main] DEBUG io.confluent.connect.http.error.AdvancedErrorHandler -- Ignoring error for API api1 as configured
 ]]></system-out>
   </testcase>
-  <testcase name="shouldCategorizeHttpAuthenticationErrors" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.001">
-    <system-out><![CDATA[13:47:19.089 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+  <testcase name="shouldCategorizeHttpAuthenticationErrors" classname="io.confluent.connect.http.unit.AdvancedErrorHandlerTest" time="0.0">
+    <system-out><![CDATA[14:39:27.666 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -884,13 +883,13 @@ java.lang.RuntimeException: Unknown error
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:47:19.089 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:47:19.089 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:47:19.089 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:47:19.089 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:47:19.089 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
-13:47:19.089 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Authentication error for API api1: Unauthorized
-13:47:19.089 [main] DEBUG io.confluent.connect.http.error.AdvancedErrorHandler -- Ignoring error for API api1 as configured
+14:39:27.666 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+14:39:27.666 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+14:39:27.666 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+14:39:27.666 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+14:39:27.666 [main] INFO io.confluent.connect.http.error.AdvancedErrorHandler -- Advanced error handler initialized with circuit breaker: threshold=3, timeout=60000ms, recovery=30000ms
+14:39:27.666 [main] ERROR io.confluent.connect.http.error.AdvancedErrorHandler -- Authentication error for API api1: Unauthorized
+14:39:27.666 [main] DEBUG io.confluent.connect.http.error.AdvancedErrorHandler -- Ignoring error for API api1 as configured
 ]]></system-out>
   </testcase>
 </testsuite>

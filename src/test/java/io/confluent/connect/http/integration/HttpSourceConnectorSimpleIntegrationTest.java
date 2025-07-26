@@ -135,9 +135,9 @@ public class HttpSourceConnectorSimpleIntegrationTest {
         
         // Configure field encryption
         connectorConfig.put("field.encryption.enabled", "true");
-        connectorConfig.put("field.encryption.key", "dGVzdC1lbmNyeXB0aW9uLWtleS0yNTYtYml0cw=="); // base64 encoded key
+        connectorConfig.put("field.encryption.key", "dGVzdC1lbmNyeXB0aW9uLWtleS0yNTYtYml0czEyMzQ="); // base64 encoded 32-byte key
         connectorConfig.put("field.encryption.rules", "ssn:AES_GCM,salary:DETERMINISTIC");
-        connectorConfig.put("http.response.data.json.pointer", "/users");
+        connectorConfig.put("api1.http.response.data.json.pointer", "/users");
         
         // Start connector
         connector.start(connectorConfig);
@@ -162,10 +162,16 @@ public class HttpSourceConnectorSimpleIntegrationTest {
     @Order(3)
     @DisplayName("Test error handling")
     void testErrorHandling() throws InterruptedException {
-        // Setup API to return server error
-        mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(500)
-                .setBody("Internal Server Error"));
+        // Setup API to return server error for multiple retries
+        for (int i = 0; i < 10; i++) {
+            mockWebServer.enqueue(new MockResponse()
+                    .setResponseCode(500)
+                    .setBody("Internal Server Error"));
+        }
+        
+        // Configure retries to be minimal for faster test
+        connectorConfig.put("api1.max.retries", "5");
+        connectorConfig.put("api1.retry.backoff.ms", "100");
         
         // Start connector
         connector.start(connectorConfig);
@@ -178,8 +184,8 @@ public class HttpSourceConnectorSimpleIntegrationTest {
         // Should return empty list on error with IGNORE behavior
         assertThat(records).isEmpty();
         
-        // Verify API was called
-        assertThat(mockWebServer.getRequestCount()).isEqualTo(1);
+        // Verify API was called (should be 1 + retries = 6 total)
+        assertThat(mockWebServer.getRequestCount()).isEqualTo(6);
     }
     
     @Test
@@ -202,7 +208,7 @@ public class HttpSourceConnectorSimpleIntegrationTest {
         connectorConfig.put("response.cache.ttl.ms", "10000");
         connectorConfig.put("max.cache.size", "100");
         connectorConfig.put("adaptive.polling.enabled", "true");
-        connectorConfig.put("http.response.data.json.pointer", "/users");
+        connectorConfig.put("api1.http.response.data.json.pointer", "/users");
         
         // Start connector
         connector.start(connectorConfig);
