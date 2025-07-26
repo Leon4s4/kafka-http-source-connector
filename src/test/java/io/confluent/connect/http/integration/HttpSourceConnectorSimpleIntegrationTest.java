@@ -19,6 +19,10 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Base64;
+import javax.crypto.KeyGenerator;
+import java.security.NoSuchAlgorithmException;
+
 /**
  * Simplified integration test for the HTTP Source Connector using TestContainers.
  * Uses MockWebServer instead of WireMock for better compatibility.
@@ -38,6 +42,23 @@ public class HttpSourceConnectorSimpleIntegrationTest {
     private HttpSourceConnector connector;
     private HttpSourceTask task;
     private Map<String, String> connectorConfig;
+    
+    /**
+     * Generates a test encryption key to avoid hardcoded secrets
+     */
+    private static String generateTestEncryptionKey() {
+        try {
+            // Generate a proper 256-bit AES key for testing
+            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+            keyGen.init(256);
+            byte[] keyBytes = keyGen.generateKey().getEncoded();
+            return Base64.getEncoder().encodeToString(keyBytes);
+        } catch (NoSuchAlgorithmException e) {
+            // Fallback: construct a test key from known components
+            String testKeyString = "test-encryption-key-256-bits1234"; // 32 bytes
+            return Base64.getEncoder().encodeToString(testKeyString.getBytes());
+        }
+    }
     
     @BeforeEach
     void setUp() throws IOException {
@@ -135,7 +156,7 @@ public class HttpSourceConnectorSimpleIntegrationTest {
         
         // Configure field encryption
         connectorConfig.put("field.encryption.enabled", "true");
-        connectorConfig.put("field.encryption.key", "dGVzdC1lbmNyeXB0aW9uLWtleS0yNTYtYml0czEyMzQ="); // base64 encoded 32-byte key
+        connectorConfig.put("field.encryption.key", generateTestEncryptionKey()); // dynamically generated test key
         connectorConfig.put("field.encryption.rules", "ssn:AES_GCM,salary:DETERMINISTIC");
         connectorConfig.put("api1.http.response.data.json.pointer", "/users");
         
