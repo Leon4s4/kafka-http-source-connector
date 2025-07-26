@@ -18,6 +18,7 @@ import java.net.SocketTimeoutException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,10 +35,10 @@ class AdvancedErrorHandlerTest {
     
     @BeforeEach
     void setUp() {
-        when(config.getCircuitBreakerFailureThreshold()).thenReturn(3);
-        when(config.getCircuitBreakerTimeoutMs()).thenReturn(60000L);
-        when(config.getCircuitBreakerRecoveryTimeMs()).thenReturn(30000L);
-        when(config.getBehaviorOnError()).thenReturn(HttpSourceConnectorConfig.BehaviorOnError.IGNORE);
+        lenient().when(config.getCircuitBreakerFailureThreshold()).thenReturn(3);
+        lenient().when(config.getCircuitBreakerTimeoutMs()).thenReturn(60000L);
+        lenient().when(config.getCircuitBreakerRecoveryTimeMs()).thenReturn(30000L);
+        lenient().when(config.getBehaviorOnError()).thenReturn(HttpSourceConnectorConfig.BehaviorOnError.IGNORE);
         
         when(apiConfig.getId()).thenReturn("test-api");
         
@@ -67,10 +68,12 @@ class AdvancedErrorHandlerTest {
         HttpApiClient.HttpRequestException rateLimitError = new HttpApiClient.HttpRequestException(
             "Too Many Requests", 429, "Rate limit exceeded");
         
-        // When
-        errorHandler.handleError(apiConfig, rateLimitError, null);
+        // When & Then - Should throw RetriableException for rate limit errors
+        assertThatThrownBy(() -> errorHandler.handleError(apiConfig, rateLimitError, null))
+                .isInstanceOf(RetriableException.class)
+                .hasMessageContaining("Retriable error for API: test-api");
         
-        // Then
+        // Verify metrics are still tracked
         AdvancedErrorHandler.ErrorMetrics metrics = errorHandler.getErrorMetrics("test-api");
         assertThat(metrics.errorsByCategory).containsKey(AdvancedErrorHandler.ErrorCategory.RATE_LIMIT);
         assertThat(metrics.errorsByCategory.get(AdvancedErrorHandler.ErrorCategory.RATE_LIMIT).get()).isEqualTo(1);

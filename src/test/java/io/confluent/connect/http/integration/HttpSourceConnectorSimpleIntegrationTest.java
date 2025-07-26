@@ -137,7 +137,7 @@ public class HttpSourceConnectorSimpleIntegrationTest {
         connectorConfig.put("field.encryption.enabled", "true");
         connectorConfig.put("field.encryption.key", "dGVzdC1lbmNyeXB0aW9uLWtleS0yNTYtYml0cw=="); // base64 encoded key
         connectorConfig.put("field.encryption.rules", "ssn:AES_GCM,salary:DETERMINISTIC");
-        connectorConfig.put("api1.http.response.data.json.pointer", "/users");
+        connectorConfig.put("http.response.data.json.pointer", "/users");
         
         // Start connector
         connector.start(connectorConfig);
@@ -202,7 +202,7 @@ public class HttpSourceConnectorSimpleIntegrationTest {
         connectorConfig.put("response.cache.ttl.ms", "10000");
         connectorConfig.put("max.cache.size", "100");
         connectorConfig.put("adaptive.polling.enabled", "true");
-        connectorConfig.put("api1.http.response.data.json.pointer", "/users");
+        connectorConfig.put("http.response.data.json.pointer", "/users");
         
         // Start connector
         connector.start(connectorConfig);

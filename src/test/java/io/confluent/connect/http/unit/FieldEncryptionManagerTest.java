@@ -28,7 +28,7 @@ class FieldEncryptionManagerTest {
     @BeforeEach
     void setUp() {
         when(config.isFieldEncryptionEnabled()).thenReturn(true);
-        when(config.getFieldEncryptionKey()).thenReturn("dGVzdC1lbmNyeXB0aW9uLWtleS0yNTYtYml0cw=="); // base64 encoded test key
+        when(config.getFieldEncryptionKey()).thenReturn("dGVzdC1lbmNyeXB0aW9uLWtleS0yNTYtYml0czEyMzQ="); // base64 encoded 32-byte test key
         when(config.getFieldEncryptionRules()).thenReturn("ssn:AES_GCM,salary:DETERMINISTIC,notes:RANDOM");
         
         encryptionManager = new FieldEncryptionManager(config);
