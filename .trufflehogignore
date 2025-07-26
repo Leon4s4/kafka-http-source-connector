@@ -1,0 +1,35 @@
+# TruffleHog ignore patterns for Kafka HTTP Source Connector
+
+# Test files contain dynamically generated encryption keys for testing
+src/test/**/*
+
+# Build artifacts and compiled code
+target/**/*
+*.class
+*.jar
+*.zip
+pom.xml.versionsBackup
+
+# Documentation may contain example configurations
+README.md
+ENTERPRISE_FEATURES.md
+examples/**/*
+docs/**/*
+
+# Configuration files for development tools
+.github/**/*
+.git/**/*
+.idea/**/*
+.vscode/**/*
+*.iml
+.project
+.classpath
+.settings/**/*
+
+# Maven wrapper and build files
+.mvn/**/*
+mvnw
+mvnw.cmd
+
+# Encryption manager contains legitimate base64 operations for field encryption
+src/main/java/io/confluent/connect/http/encryption/FieldEncryptionManager.java

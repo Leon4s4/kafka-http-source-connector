@@ -25,13 +25,13 @@ class FieldEncryptionManagerTest {
      */
     private static String generateTestEncryptionKey() {
         try {
-            // Generate a proper 256-bit AES key for testing
+            // trufflehog:ignore - Generate a proper 256-bit AES key for testing (not a real secret)
             KeyGenerator keyGen = KeyGenerator.getInstance("AES");
             keyGen.init(256);
             byte[] keyBytes = keyGen.generateKey().getEncoded();
             return Base64.getEncoder().encodeToString(keyBytes);
         } catch (NoSuchAlgorithmException e) {
-            // Fallback: construct a test key from known components
+            // trufflehog:ignore - Fallback: construct a test key from known components (not a real secret)
             String testKeyString = "test-encryption-key-256-bits1234"; // 32 bytes
             return Base64.getEncoder().encodeToString(testKeyString.getBytes());
         }

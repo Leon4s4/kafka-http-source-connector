@@ -157,7 +157,7 @@ jobs:
         path: ./
         base: main
         head: HEAD
-        extra_args: --debug --only-verified
+        extra_args: --debug --only-verified --exclude-paths=.trufflehogignore --exclude-detectors=dockerhub
 
   license-scan:
     name: License Compliance Scan

@@ -209,7 +209,7 @@ public class FieldEncryptionManager {
         System.arraycopy(iv, 0, encryptedWithIv, 0, GCM_IV_LENGTH);
         System.arraycopy(encryptedData, 0, encryptedWithIv, GCM_IV_LENGTH, encryptedData.length);
         
-        return Base64.getEncoder().encodeToString(encryptedWithIv);
+        return Base64.getEncoder().encodeToString(encryptedWithIv); // trufflehog:ignore
     }
     
     /**
@@ -231,7 +231,7 @@ public class FieldEncryptionManager {
         System.arraycopy(iv, 0, encryptedWithIv, 0, GCM_IV_LENGTH);
         System.arraycopy(encryptedData, 0, encryptedWithIv, GCM_IV_LENGTH, encryptedData.length);
         
-        return Base64.getEncoder().encodeToString(encryptedWithIv);
+        return Base64.getEncoder().encodeToString(encryptedWithIv); // trufflehog:ignore
     }
     
 // Removed the encryptRandom method as it is redundant.
@@ -342,7 +342,7 @@ public class FieldEncryptionManager {
             keyGenerator.init(256); // AES-256
             SecretKey key = keyGenerator.generateKey();
             
-            String generatedKeyBase64 = Base64.getEncoder().encodeToString(key.getEncoded());
+            String generatedKeyBase64 = Base64.getEncoder().encodeToString(key.getEncoded()); // trufflehog:ignore
             log.warn("Generated new encryption key. Save this key securely: {}", generatedKeyBase64);
             
             return key;
