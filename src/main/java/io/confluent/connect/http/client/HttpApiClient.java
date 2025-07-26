@@ -26,6 +26,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 /**
  * HTTP client for making requests to APIs with retry logic, authentication, and template variable support.

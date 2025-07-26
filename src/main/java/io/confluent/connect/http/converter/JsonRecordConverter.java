@@ -53,7 +53,7 @@ public class JsonRecordConverter implements RecordConverter {
             sourceOffset,
             topic,
             null, // partition - let Kafka decide
-            keySchema,
+            (Schema) keySchema,
             key,
             recordValueSchema,
             recordValue,
