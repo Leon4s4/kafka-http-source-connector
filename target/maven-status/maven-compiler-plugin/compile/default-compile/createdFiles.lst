@@ -20,10 +20,8 @@ io/confluent/connect/http/config/HttpSourceConnectorConfig$AuthType.class
 io/confluent/connect/http/auth/ApiKeyAuthenticator.class
 io/confluent/connect/http/config/HttpSourceConnectorConfig$OAuth2ClientAuthMode.class
 io/confluent/connect/http/util/JsonPointer.class
-io/confluent/connect/http/auth/OAuth2Authenticator$1.class
 io/confluent/connect/http/auth/ApiKeyAuthenticator$1.class
 io/confluent/connect/http/auth/OAuth2Authenticator.class
-io/confluent/connect/http/client/HttpApiClient$2.class
 io/confluent/connect/http/client/RetryHandler.class
 io/confluent/connect/http/auth/BasicAuthenticator.class
 io/confluent/connect/http/offset/OffsetManagerFactory$1.class

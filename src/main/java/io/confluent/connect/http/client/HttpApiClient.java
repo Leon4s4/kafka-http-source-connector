@@ -274,6 +274,23 @@ public class HttpApiClient {
     }
     
     /**
+     * Gets the default system TrustManager for proper certificate validation
+     */
+    private X509TrustManager getDefaultTrustManager() throws Exception {
+        javax.net.ssl.TrustManagerFactory trustManagerFactory = 
+            javax.net.ssl.TrustManagerFactory.getInstance(javax.net.ssl.TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init((java.security.KeyStore) null);
+        
+        for (TrustManager trustManager : trustManagerFactory.getTrustManagers()) {
+            if (trustManager instanceof X509TrustManager) {
+                return (X509TrustManager) trustManager;
+            }
+        }
+        
+        throw new IllegalStateException("No X509TrustManager found");
+    }
+    
+    /**
      * Configures proxy settings for the HTTP client
      */
     private void configureProxy(OkHttpClient.Builder clientBuilder) {

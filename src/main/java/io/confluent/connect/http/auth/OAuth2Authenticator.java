@@ -116,7 +116,7 @@ public class OAuth2Authenticator implements HttpAuthenticator {
             tokenRefreshInProgress = true;
             log.debug("Refreshing OAuth2 token from: {}", tokenUrl);
             
-            // Build token request
+            // Build token request with auth mode-specific form body
             FormBody.Builder formBuilder = new FormBody.Builder()
                 .add("grant_type", "client_credentials");
             
@@ -124,35 +124,20 @@ public class OAuth2Authenticator implements HttpAuthenticator {
                 formBuilder.add("scope", scope.trim());
             }
             
+            // Add client credentials to form body if using URL auth mode
+            if (authMode == HttpSourceConnectorConfig.OAuth2ClientAuthMode.URL) {
+                formBuilder.add("client_id", clientId);
+                formBuilder.add("client_secret", clientSecret);
+            }
+            
             Request.Builder requestBuilder = new Request.Builder()
                 .url(tokenUrl)
                 .post(formBuilder.build());
             
-            // Add client authentication based on auth mode
-            switch (authMode) {
-                case HEADER:
-                    String credentials = Credentials.basic(clientId, clientSecret);
-                    requestBuilder.header("Authorization", credentials);
-                    break;
-                
-                case URL:
-                    FormBody formBody = (FormBody) requestBuilder.build().body();
-                    FormBody.Builder newFormBuilder = new FormBody.Builder();
-                    
-                    // Copy existing form parameters
-                    for (int i = 0; i < formBody.size(); i++) {
-                        newFormBuilder.add(formBody.name(i), formBody.value(i));
-                    }
-                    
-                    // Add client credentials as form parameters
-                    newFormBuilder.add("client_id", clientId);
-                    newFormBuilder.add("client_secret", clientSecret);
-                    
-                    requestBuilder.post(newFormBuilder.build());
-                    break;
-                    
-                default:
-                    throw new IllegalArgumentException("Unsupported OAuth2 client auth mode: " + authMode);
+            // Add header-based authentication if using HEADER auth mode
+            if (authMode == HttpSourceConnectorConfig.OAuth2ClientAuthMode.HEADER) {
+                String credentials = Credentials.basic(clientId, clientSecret);
+                requestBuilder.header("Authorization", credentials);
             }
             
             // Execute token request

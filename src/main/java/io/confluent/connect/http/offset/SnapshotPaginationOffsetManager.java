@@ -105,18 +105,19 @@ public class SnapshotPaginationOffsetManager implements OffsetManager {
             return true;
         }
         
-        if (isLastProcessedOffsetNumeric) {
-            try {
-                long recordOffsetLong = Long.parseLong(recordOffset.trim());
-                long lastProcessedOffsetLong = Long.parseLong(lastProcessedOffset);
-                
-                boolean shouldProcess = recordOffsetLong > lastProcessedOffsetLong;
-                log.trace("Comparing record offset {} with last processed {}: shouldProcess = {}", 
-                    recordOffsetLong, lastProcessedOffsetLong, shouldProcess);
-                return shouldProcess;
-            } catch (NumberFormatException e) {
-                log.warn("Record offset '{}' is not numeric, falling back to string comparison", recordOffset);
-            }
+        try {
+            // Try to compare as numbers if possible
+            long recordOffsetLong = Long.parseLong(recordOffset.trim());
+            long lastProcessedOffsetLong = Long.parseLong(lastProcessedOffset);
+            
+            boolean shouldProcess = recordOffsetLong > lastProcessedOffsetLong;
+            log.trace("Comparing record offset {} with last processed {}: shouldProcess = {}", 
+                recordOffsetLong, lastProcessedOffsetLong, shouldProcess);
+            return shouldProcess;
+            
+        } catch (NumberFormatException e) {
+            // Fall back to string comparison
+            log.trace("Using string comparison for offsets");
         }
         
         // Fall back to string comparison
