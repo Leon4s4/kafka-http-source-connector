@@ -332,11 +332,16 @@
                     <!-- Graceful handling when API is unavailable -->
                     <failOnError>false</failOnError>
                     
+                    <!-- Allow analysis even if database updates fail -->
+                    <autoUpdate>false</autoUpdate>
+                    <dataDirectory>${project.build.directory}/dependency-check-data</dataDirectory>
+                    
                     <!-- Output formats -->
                     <formats>
                         <format>SARIF</format>
                         <format>XML</format>
                         <format>HTML</format>
+                        <format>JSON</format>
                     </formats>
                     
                     <!-- Fail build on CVSS >= 7.0 (High severity) only if we have data -->

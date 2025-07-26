@@ -86,7 +86,7 @@ jobs:
           -DskipTests \
           -DfailOnError=false \
           -DfailBuildOnCVSS=7.0 \
-          -Dformats=SARIF,XML,HTML \
+          -Dformats=SARIF,XML,HTML,JSON \
           -DskipProvidedScope=true \
           -DskipTestScope=true \
           -DossindexAnalyzerEnabled=true \
@@ -97,10 +97,13 @@ jobs:
           HIGH_VULNS=$(jq '.dependencies[].vulnerabilities[]? | select(.severity == "HIGH" or .severity == "CRITICAL") | .name' target/dependency-check-report.json | wc -l || echo "0")
           if [ "$HIGH_VULNS" -gt 0 ]; then
             echo "❌ High/Critical vulnerabilities found: $HIGH_VULNS"
+            jq '.dependencies[].vulnerabilities[]? | select(.severity == "HIGH" or .severity == "CRITICAL") | {name: .name, severity: .severity, description: .description}' target/dependency-check-report.json
             exit 1
           else
             echo "✅ No high/critical vulnerabilities found"
           fi
+        else
+          echo "⚠️ No vulnerability report generated - dependency check may have failed to fetch data"
         fi
 
     - name: Run secrets scan
