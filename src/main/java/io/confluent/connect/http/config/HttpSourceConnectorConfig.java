@@ -287,7 +287,17 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
             HTTP_PROXY_PORT,
             ConfigDef.Type.INT,
             null,
-            ConfigDef.Range.between(0, 65535),
+            new ConfigDef.Validator() {
+                @Override
+                public void ensureValid(String name, Object value) {
+                    if (value != null) {
+                        int port = (Integer) value;
+                        if (port < 0 || port > 65535) {
+                            throw new ConfigException(name, value, "Port must be between 0 and 65535");
+                        }
+                    }
+                }
+            },
             ConfigDef.Importance.MEDIUM,
             "The port number of the HTTP proxy"
         );

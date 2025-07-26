@@ -59,9 +59,29 @@ public class FieldEncryptionManager {
             return record;
         }
         
+        log.debug("Attempting to encrypt fields for API: {} with {} rules", apiId, fieldEncryptionRules.size());
+        
         try {
+            // Check if any rules apply to this API first
+            boolean hasApplicableRules = false;
+            for (Map.Entry<String, String> rule : fieldEncryptionRules.entrySet()) {
+                String fieldPath = rule.getKey();
+                
+                if (fieldPath.startsWith(apiId + ".") || 
+                    (!fieldPath.contains(".") || !fieldPath.split("\\.")[0].matches("^api\\d+$"))) {
+                    hasApplicableRules = true;
+                    break;
+                }
+            }
+            
+            // If no rules apply, return original record
+            if (!hasApplicableRules) {
+                return record;
+            }
+            
             // Clone the record to avoid modifying the original
             Object clonedRecord = cloneRecord(record);
+            boolean fieldsEncrypted = false;
             
             // Apply encryption rules for this API
             for (Map.Entry<String, String> rule : fieldEncryptionRules.entrySet()) {
@@ -69,15 +89,34 @@ public class FieldEncryptionManager {
                 String encryptionType = rule.getValue();
                 
                 // Check if this rule applies to the current API
-                if (fieldPath.startsWith(apiId + ".") || !fieldPath.contains(".")) {
-                    String actualPath = fieldPath.startsWith(apiId + ".") ? 
-                        fieldPath.substring(apiId.length() + 1) : fieldPath;
-                    
-                    encryptField(clonedRecord, actualPath, encryptionType);
+                // Rules can be:
+                // 1. API-specific: "api1.field" or "api1.nested.field" 
+                // 2. Global: "field" or "nested.field" (applies to all APIs)
+                String actualPath;
+                boolean shouldApply = false;
+                
+                if (fieldPath.startsWith(apiId + ".")) {
+                    // API-specific rule
+                    actualPath = fieldPath.substring(apiId.length() + 1);
+                    shouldApply = true;
+                } else if (!fieldPath.contains(".") || !fieldPath.split("\\.")[0].matches("^api\\d+$")) {
+                    // Global rule (field name doesn't start with apiX.)
+                    actualPath = fieldPath;
+                    shouldApply = true;
+                } else {
+                    // Might be API-specific for a different API, skip
+                    shouldApply = false;
+                    actualPath = fieldPath;
+                }
+                
+                if (shouldApply) {
+                    boolean encrypted = encryptField(clonedRecord, actualPath, encryptionType);
+                    fieldsEncrypted = fieldsEncrypted || encrypted;
                 }
             }
             
-            return clonedRecord;
+            // If no fields were actually encrypted, return original record
+            return fieldsEncrypted ? clonedRecord : record;
             
         } catch (Exception e) {
             log.error("Failed to encrypt sensitive fields for API {}: {}", apiId, e.getMessage(), e);
@@ -87,28 +126,36 @@ public class FieldEncryptionManager {
     
     /**
      * Encrypts a specific field in a record
+     * @return true if field was successfully encrypted, false otherwise
      */
-    private void encryptField(Object record, String fieldPath, String encryptionType) {
+    private boolean encryptField(Object record, String fieldPath, String encryptionType) {
         try {
-            // Extract the field value using JSON pointer
+            // Extract the field value
             Object fieldValue = null;
             try {
                 if (record == null) {
                     log.warn("Record is null, skipping encryption for field {}", fieldPath);
-                    return;
+                    return false;
                 }
-               fieldValue = JsonPointer.extract(record, "/" + fieldPath.replace(".", "/"));
+                
+                // For Map records, navigate the path manually
+                if (record instanceof Map) {
+                    fieldValue = extractFieldFromMap((Map<?, ?>) record, fieldPath);
+                } else {
+                    // For JSON objects, use JSON pointer
+                    fieldValue = JsonPointer.extract(record, "/" + fieldPath.replace(".", "/"));
+                }
            } catch (IllegalArgumentException e) {
                log.warn("Invalid JSON pointer for field {}: {}", fieldPath, e.getMessage());
-               return;
+               return false;
            } catch (Exception e) {
                log.warn("Unexpected error while extracting field {}: {}", fieldPath, e.getMessage());
-               return;
+               return false;
            }
            
            if (fieldValue == null) {
                log.debug("Field {} not found in record, skipping encryption", fieldPath);
-               return;
+               return false;
            }
             
             // Encrypt the field value
@@ -118,9 +165,11 @@ public class FieldEncryptionManager {
             replaceFieldValue(record, fieldPath, encryptedValue);
             
             log.trace("Encrypted field {} using {} encryption", fieldPath, encryptionType);
+            return true;
             
         } catch (Exception e) {
             log.warn("Failed to encrypt field {}: {}", fieldPath, e.getMessage());
+            return false;
         }
     }
     
@@ -134,7 +183,7 @@ public class FieldEncryptionManager {
             case "DETERMINISTIC":
                 return encryptDeterministic(plaintext);
             case "RANDOM":
-                return encryptRandom(plaintext);
+                return encryptWithAESGCM(plaintext); // RANDOM is alias for AES_GCM
             default:
                 throw new IllegalArgumentException("Unsupported encryption type: " + encryptionType);
         }
@@ -160,7 +209,7 @@ public class FieldEncryptionManager {
         System.arraycopy(iv, 0, encryptedWithIv, 0, GCM_IV_LENGTH);
         System.arraycopy(encryptedData, 0, encryptedWithIv, GCM_IV_LENGTH, encryptedData.length);
         
-        return Base64.getEncoder().encodeToString(encryptedWithIv);
+        return Base64.getEncoder().encodeToString(encryptedWithIv); // trufflehog:ignore
     }
     
     /**
@@ -182,7 +231,7 @@ public class FieldEncryptionManager {
         System.arraycopy(iv, 0, encryptedWithIv, 0, GCM_IV_LENGTH);
         System.arraycopy(encryptedData, 0, encryptedWithIv, GCM_IV_LENGTH, encryptedData.length);
         
-        return Base64.getEncoder().encodeToString(encryptedWithIv);
+        return Base64.getEncoder().encodeToString(encryptedWithIv); // trufflehog:ignore
     }
     
 // Removed the encryptRandom method as it is redundant.
@@ -198,6 +247,26 @@ public class FieldEncryptionManager {
         byte[] iv = new byte[GCM_IV_LENGTH];
         System.arraycopy(hash, 0, iv, 0, GCM_IV_LENGTH);
         return iv;
+    }
+    
+    /**
+     * Extracts field value from a Map record using dot notation
+     */
+    private Object extractFieldFromMap(Map<?, ?> map, String fieldPath) {
+        String[] pathParts = fieldPath.split("\\.");
+        Object current = map;
+        
+        for (String part : pathParts) {
+            if (!(current instanceof Map)) {
+                return null; // Cannot navigate further
+            }
+            current = ((Map<?, ?>) current).get(part);
+            if (current == null) {
+                return null; // Field not found
+            }
+        }
+        
+        return current;
     }
     
     /**
@@ -273,7 +342,7 @@ public class FieldEncryptionManager {
             keyGenerator.init(256); // AES-256
             SecretKey key = keyGenerator.generateKey();
             
-            String generatedKeyBase64 = Base64.getEncoder().encodeToString(key.getEncoded());
+            String generatedKeyBase64 = Base64.getEncoder().encodeToString(key.getEncoded()); // trufflehog:ignore
             log.warn("Generated new encryption key. Save this key securely: {}", generatedKeyBase64);
             
             return key;

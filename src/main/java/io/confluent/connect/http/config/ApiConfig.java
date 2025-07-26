@@ -335,23 +335,40 @@ public class ApiConfig {
     }
     
     private String getStringProperty(String suffix) {
-        return globalConfig.getString(apiPrefix + suffix);
+        String key = apiPrefix + suffix;
+        Object value = globalConfig.originals().get(key);
+        return value != null ? value.toString() : null;
     }
     
     private String getStringProperty(String suffix, String defaultValue) {
-        String value = globalConfig.getString(apiPrefix + suffix);
-        return value != null ? value : defaultValue;
+        String key = apiPrefix + suffix;
+        Object value = globalConfig.originals().get(key);
+        return value != null ? value.toString() : defaultValue;
     }
     
     private int getIntProperty(String suffix, int defaultValue) {
         String key = apiPrefix + suffix;
-        return globalConfig.originals().containsKey(key) ? 
-               globalConfig.getInt(key) : defaultValue;
+        Object value = globalConfig.originals().get(key);
+        if (value != null) {
+            if (value instanceof Integer) {
+                return (Integer) value;
+            } else {
+                return Integer.parseInt(value.toString());
+            }
+        }
+        return defaultValue;
     }
     
     private long getLongProperty(String suffix, long defaultValue) {
         String key = apiPrefix + suffix;
-        return globalConfig.originals().containsKey(key) ? 
-               globalConfig.getLong(key) : defaultValue;
+        Object value = globalConfig.originals().get(key);
+        if (value != null) {
+            if (value instanceof Long) {
+                return (Long) value;
+            } else {
+                return Long.parseLong(value.toString());
+            }
+        }
+        return defaultValue;
     }
 }

@@ -1,0 +1,4 @@
+io/confluent/connect/http/unit/FieldEncryptionManagerTest.class
+io/confluent/connect/http/unit/AdvancedErrorHandlerTest.class
+io/confluent/connect/http/unit/AdvancedErrorHandlerTest$1.class
+io/confluent/connect/http/integration/HttpSourceConnectorSimpleIntegrationTest.class

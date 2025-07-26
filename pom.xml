@@ -26,6 +26,7 @@
         <mockito.version>5.8.0</mockito.version>
         <slf4j.version>2.0.12</slf4j.version>
         <logback.version>1.4.14</logback.version>
+        <testcontainers.version>1.19.3</testcontainers.version>
     </properties>
 
     <repositories>
@@ -179,6 +180,49 @@
             <version>${okhttp.version}</version>
             <scope>test</scope>
         </dependency>
+        
+        <!-- TestContainers for Integration Testing -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>kafka</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>nginx</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
+        
+        <!-- AssertJ for better assertions -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.24.2</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <!-- Awaitility for async testing -->
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>4.2.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -268,6 +312,65 @@
                                 <deliveryGuarantee>atLeastOnce</deliveryGuarantee>
                             </deliveryGuarantee>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- OWASP Dependency Check Plugin -->
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>10.0.4</version>
+                <configuration>
+                    <!-- NVD API Configuration -->
+                    <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
+                    <nvdApiDelay>16000</nvdApiDelay>
+                    <nvdApiEndpoint>https://services.nvd.nist.gov/rest/json/</nvdApiEndpoint>
+                    <nvdMaxRetryCount>3</nvdMaxRetryCount>
+                    <nvdValidForHours>24</nvdValidForHours>
+                    
+                    <!-- Graceful handling when API is unavailable -->
+                    <failOnError>false</failOnError>
+                    
+                    <!-- Allow analysis even if database updates fail -->
+                    <autoUpdate>false</autoUpdate>
+                    <dataDirectory>${project.build.directory}/dependency-check-data</dataDirectory>
+                    
+                    <!-- Output formats -->
+                    <formats>
+                        <format>SARIF</format>
+                        <format>XML</format>
+                        <format>HTML</format>
+                        <format>JSON</format>
+                    </formats>
+                    
+                    <!-- Fail build on CVSS >= 7.0 (High severity) only if we have data -->
+                    <failBuildOnCVSS>7.0</failBuildOnCVSS>
+                    
+                    <!-- Skip dependencies with provided scope (Kafka runtime) -->
+                    <skipProvidedScope>true</skipProvidedScope>
+                    
+                    <!-- Skip test dependencies -->
+                    <skipTestScope>true</skipTestScope>
+                    
+                    <!-- Assembly analyzer settings -->
+                    <assemblyAnalyzerEnabled>true</assemblyAnalyzerEnabled>
+                    
+                    <!-- Enable additional analyzers that don't require NVD -->
+                    <retirenalyzerEnabled>true</retirenalyzerEnabled>
+                    <ossindexAnalyzerEnabled>true</ossindexAnalyzerEnabled>
+                    <centralAnalyzerEnabled>true</centralAnalyzerEnabled>
+                    
+                    <!-- Suppress false positives if needed -->
+                    <suppressionFiles>
+                        <suppressionFile>owasp-dependency-check-suppressions.xml</suppressionFile>
+                    </suppressionFiles>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

@@ -33,6 +33,7 @@ io/confluent/connect/http/offset/OffsetManager.class
 io/confluent/connect/http/config/HttpSourceConnectorConfig$ReportErrorsAs.class
 io/confluent/connect/http/encryption/FieldEncryptionManager.class
 io/confluent/connect/http/auth/HttpAuthenticator.class
+io/confluent/connect/http/config/HttpSourceConnectorConfig$1.class
 io/confluent/connect/http/auth/HttpAuthenticatorFactory.class
 io/confluent/connect/http/client/HttpApiClient.class
 io/confluent/connect/http/HttpSourceTask.class

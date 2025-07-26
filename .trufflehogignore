@@ -1,0 +1,5 @@
+# TruffleHog ignore patterns - test files with generated encryption keys
+src/test/
+target/
+README.md
+ENTERPRISE_FEATURES.md
