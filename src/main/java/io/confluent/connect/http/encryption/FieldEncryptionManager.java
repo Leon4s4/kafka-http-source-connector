@@ -134,7 +134,7 @@ public class FieldEncryptionManager {
             case "DETERMINISTIC":
                 return encryptDeterministic(plaintext);
             case "RANDOM":
-                return encryptRandom(plaintext);
+                return encryptWithAESGCM(plaintext); // RANDOM is alias for AES_GCM
             default:
                 throw new IllegalArgumentException("Unsupported encryption type: " + encryptionType);
         }

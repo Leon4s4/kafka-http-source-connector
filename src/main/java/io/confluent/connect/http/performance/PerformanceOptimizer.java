@@ -349,6 +349,10 @@ public class PerformanceOptimizer {
         public boolean isExpired() {
             return System.currentTimeMillis() > expirationTime;
         }
+        
+        public long getCreationTime() {
+            return creationTime;
+        }
     }
     
     /**

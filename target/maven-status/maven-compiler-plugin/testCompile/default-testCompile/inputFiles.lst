@@ -1,0 +1,3 @@
+/Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/unit/FieldEncryptionManagerTest.java
+/Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/integration/HttpSourceConnectorSimpleIntegrationTest.java
+/Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/unit/AdvancedErrorHandlerTest.java
