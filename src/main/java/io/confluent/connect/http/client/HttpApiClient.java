@@ -65,7 +65,7 @@ public class HttpApiClient {
      * @throws Exception if the request fails after all retries
      */
     public ApiResponse makeRequest(String offset) throws Exception {
-        return makeRequest(offset, new HashMap<>());
+        return makeRequest(offset, Collections.emptyMap());
     }
     
     /**
