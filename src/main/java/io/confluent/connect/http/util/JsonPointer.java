@@ -135,12 +135,12 @@ public class JsonPointer {
             return node.asBoolean();
         }
         
-        if (node.isInt()) {
-            return node.asInt();
-        }
-        
-        if (node.isLong()) {
-            return node.asLong();
+        if (node.isIntegralNumber()) {
+            if (node.canConvertToInt()) {
+                return node.asInt();
+            } else {
+                return node.asLong();
+            }
         }
         
         if (node.isDouble()) {
