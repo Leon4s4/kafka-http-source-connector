@@ -223,11 +223,14 @@ public class ApiChainingManager {
             return true; // Circular dependency found
         }
         
-        visited.add(apiId);
+        // Create a copy of the visited set for the recursive call
+        java.util.Set<String> newVisited = new HashSet<>(visited);
+        newVisited.add(apiId);
+        
         String parentApi = parentChildRelationships.get(apiId);
         
         if (parentApi != null) {
-            return hasCircularDependency(parentApi, visited);
+            return hasCircularDependency(parentApi, newVisited);
         }
         
         return false;
