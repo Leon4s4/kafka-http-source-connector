@@ -29,7 +29,7 @@ jobs:
         cache: maven
 
     - name: Cache OWASP NVD data
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.m2/repository/org/owasp/dependency-check-data
         key: ${{ runner.os }}-nvd-${{ hashFiles('**/pom.xml') }}
@@ -55,7 +55,7 @@ jobs:
         sarif_file: target/dependency-check-report.sarif
 
     - name: Upload vulnerability report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: vulnerability-report
@@ -163,7 +163,7 @@ jobs:
         python3 check_licenses.py
 
     - name: Upload license report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: license-report
         path: target/generated-resources/licenses.xml
@@ -194,7 +194,7 @@ jobs:
           -Dspotbugs.xmlOutput=true
 
     - name: Upload SpotBugs report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: spotbugs-security-report
@@ -209,7 +209,7 @@ jobs:
     
     steps:
     - name: Download all artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
 
     - name: Create security summary
       run: |
@@ -260,7 +260,7 @@ jobs:
         echo "4. Monitor security advisories for used dependencies" >> security-summary.md
 
     - name: Upload security summary
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: security-summary
         path: security-summary.md

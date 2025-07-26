@@ -29,7 +29,7 @@ jobs:
         cache: maven
 
     - name: Cache Maven dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -52,7 +52,7 @@ jobs:
         reporter: java-junit
 
     - name: Upload test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: test-results-java-${{ matrix.java-version }}
@@ -77,7 +77,7 @@ jobs:
         cache: maven
 
     - name: Cache Maven dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -98,7 +98,7 @@ jobs:
         ls -la target/*.jar >> build-info.md
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: kafka-http-source-connector
         path: |
@@ -131,7 +131,7 @@ jobs:
           -Dformats=HTML,JSON
 
     - name: Upload security scan results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: security-scan-results
@@ -156,7 +156,7 @@ jobs:
         cache: maven
 
     - name: Cache SonarCloud packages
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.sonar/cache
         key: ${{ runner.os }}-sonar
@@ -250,7 +250,7 @@ jobs:
         echo "- **Test Date**: $(date)" >> compatibility-${{ matrix.kafka-version }}.md
 
     - name: Upload compatibility results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: compatibility-kafka-${{ matrix.kafka-version }}
         path: compatibility-${{ matrix.kafka-version }}.md

@@ -1,17 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: io.confluent.connect.http.unit.AdvancedErrorHandlerTest
 -------------------------------------------------------------------------------
-Tests run: 12, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.234 s <<< FAILURE! -- in io.confluent.connect.http.unit.AdvancedErrorHandlerTest
-io.confluent.connect.http.unit.AdvancedErrorHandlerTest.shouldMoveToHalfOpenStateAfterRecoveryTime -- Time elapsed: 0.160 s <<< FAILURE!
-org.opentest4j.AssertionFailedError: 
-
-Expecting value to be true but was false
-	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
-	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
-	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:500)
-	at io.confluent.connect.http.unit.AdvancedErrorHandlerTest.shouldMoveToHalfOpenStateAfterRecoveryTime(AdvancedErrorHandlerTest.java:167)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.143 s -- in io.confluent.connect.http.unit.AdvancedErrorHandlerTest

@@ -5,32 +5,30 @@ import io.confluent.connect.http.encryption.FieldEncryptionManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 @DisplayName("Field Encryption Manager Unit Tests")
 class FieldEncryptionManagerTest {
     
-    @Mock
     private HttpSourceConnectorConfig config;
-    
     private FieldEncryptionManager encryptionManager;
     
     @BeforeEach
     void setUp() {
-        when(config.isFieldEncryptionEnabled()).thenReturn(true);
-        when(config.getFieldEncryptionKey()).thenReturn("dGVzdC1lbmNyeXB0aW9uLWtleS0yNTYtYml0czEyMzQ="); // base64 encoded 32-byte test key
-        when(config.getFieldEncryptionRules()).thenReturn("ssn:AES_GCM,salary:DETERMINISTIC,notes:RANDOM");
+        // Create real config instead of mocking
+        Map<String, String> configMap = new HashMap<>();
+        configMap.put("http.api.base.url", "http://localhost:8080");
+        configMap.put("apis.num", "1");
+        configMap.put("api1.http.api.path", "/test");
+        configMap.put("api1.topics", "test-topic");
+        configMap.put("field.encryption.enabled", "true");
+        configMap.put("field.encryption.key", "dGVzdC1lbmNyeXB0aW9uLWtleS0yNTYtYml0czEyMzQ="); // base64 encoded 32-byte test key
+        configMap.put("field.encryption.rules", "ssn:AES_GCM,salary:DETERMINISTIC,notes:RANDOM");
         
+        config = new HttpSourceConnectorConfig(configMap);
         encryptionManager = new FieldEncryptionManager(config);
     }
     
@@ -73,8 +71,17 @@ class FieldEncryptionManagerTest {
     @Test
     @DisplayName("Should handle API-specific field rules")
     void shouldHandleApiSpecificFieldRules() {
-        // Given
-        when(config.getFieldEncryptionRules()).thenReturn("salary:AES_GCM,api2.employee_id:DETERMINISTIC");
+        // Given - create new config with API-specific rules
+        Map<String, String> configMap = new HashMap<>();
+        configMap.put("http.api.base.url", "http://localhost:8080");
+        configMap.put("apis.num", "1");
+        configMap.put("api1.http.api.path", "/test");
+        configMap.put("api1.topics", "test-topic");
+        configMap.put("field.encryption.enabled", "true");
+        configMap.put("field.encryption.key", "dGVzdC1lbmNyeXB0aW9uLWtleS0yNTYtYml0czEyMzQ=");
+        configMap.put("field.encryption.rules", "salary:AES_GCM,api2.employee_id:DETERMINISTIC");
+        
+        config = new HttpSourceConnectorConfig(configMap);
         encryptionManager = new FieldEncryptionManager(config);
         
         Map<String, Object> record = new HashMap<>();
@@ -105,8 +112,17 @@ class FieldEncryptionManagerTest {
     @Test
     @DisplayName("Should handle nested field encryption")
     void shouldHandleNestedFieldEncryption() {
-        // Given
-        when(config.getFieldEncryptionRules()).thenReturn("user.ssn:AES_GCM,user.address.street:DETERMINISTIC");
+        // Given - create new config with nested field rules
+        Map<String, String> configMap = new HashMap<>();
+        configMap.put("http.api.base.url", "http://localhost:8080");
+        configMap.put("apis.num", "1");
+        configMap.put("api1.http.api.path", "/test");
+        configMap.put("api1.topics", "test-topic");
+        configMap.put("field.encryption.enabled", "true");
+        configMap.put("field.encryption.key", "dGVzdC1lbmNyeXB0aW9uLWtleS0yNTYtYml0czEyMzQ=");
+        configMap.put("field.encryption.rules", "user.ssn:AES_GCM,user.address.street:DETERMINISTIC");
+        
+        config = new HttpSourceConnectorConfig(configMap);
         encryptionManager = new FieldEncryptionManager(config);
         
         Map<String, Object> address = new HashMap<>();
@@ -145,8 +161,15 @@ class FieldEncryptionManagerTest {
     @Test
     @DisplayName("Should handle disabled encryption")
     void shouldHandleDisabledEncryption() {
-        // Given
-        when(config.isFieldEncryptionEnabled()).thenReturn(false);
+        // Given - create config with encryption disabled
+        Map<String, String> configMap = new HashMap<>();
+        configMap.put("http.api.base.url", "http://localhost:8080");
+        configMap.put("apis.num", "1");
+        configMap.put("api1.http.api.path", "/test");
+        configMap.put("api1.topics", "test-topic");
+        configMap.put("field.encryption.enabled", "false");
+        
+        config = new HttpSourceConnectorConfig(configMap);
         encryptionManager = new FieldEncryptionManager(config);
         
         Map<String, Object> record = new HashMap<>();
@@ -176,8 +199,17 @@ class FieldEncryptionManagerTest {
     @Test
     @DisplayName("Should generate encryption key when not provided")
     void shouldGenerateEncryptionKeyWhenNotProvided() {
-        // Given
-        when(config.getFieldEncryptionKey()).thenReturn(null);
+        // Given - create config without encryption key
+        Map<String, String> configMap = new HashMap<>();
+        configMap.put("http.api.base.url", "http://localhost:8080");
+        configMap.put("apis.num", "1");
+        configMap.put("api1.http.api.path", "/test");
+        configMap.put("api1.topics", "test-topic");
+        configMap.put("field.encryption.enabled", "true");
+        configMap.put("field.encryption.rules", "ssn:AES_GCM");
+        // No encryption key provided
+        
+        config = new HttpSourceConnectorConfig(configMap);
         
         // When/Then - should not throw exception
         FieldEncryptionManager manager = new FieldEncryptionManager(config);
@@ -192,8 +224,17 @@ class FieldEncryptionManagerTest {
     @Test
     @DisplayName("Should handle deterministic encryption consistency")
     void shouldHandleDeterministicEncryptionConsistency() {
-        // Given
-        when(config.getFieldEncryptionRules()).thenReturn("customer_id:DETERMINISTIC");
+        // Given - create config with deterministic encryption
+        Map<String, String> configMap = new HashMap<>();
+        configMap.put("http.api.base.url", "http://localhost:8080");
+        configMap.put("apis.num", "1");
+        configMap.put("api1.http.api.path", "/test");
+        configMap.put("api1.topics", "test-topic");
+        configMap.put("field.encryption.enabled", "true");
+        configMap.put("field.encryption.key", "dGVzdC1lbmNyeXB0aW9uLWtleS0yNTYtYml0czEyMzQ=");
+        configMap.put("field.encryption.rules", "customer_id:DETERMINISTIC");
+        
+        config = new HttpSourceConnectorConfig(configMap);
         encryptionManager = new FieldEncryptionManager(config);
         
         Map<String, Object> record1 = new HashMap<>();
@@ -218,8 +259,17 @@ class FieldEncryptionManagerTest {
     @Test
     @DisplayName("Should handle invalid encryption rules gracefully")
     void shouldHandleInvalidEncryptionRulesGracefully() {
-        // Given
-        when(config.getFieldEncryptionRules()).thenReturn("field1:INVALID_TYPE,field2:AES_GCM");
+        // Given - create config with invalid encryption rules
+        Map<String, String> configMap = new HashMap<>();
+        configMap.put("http.api.base.url", "http://localhost:8080");
+        configMap.put("apis.num", "1");
+        configMap.put("api1.http.api.path", "/test");
+        configMap.put("api1.topics", "test-topic");
+        configMap.put("field.encryption.enabled", "true");
+        configMap.put("field.encryption.key", "dGVzdC1lbmNyeXB0aW9uLWtleS0yNTYtYml0czEyMzQ=");
+        configMap.put("field.encryption.rules", "field1:INVALID_TYPE,field2:AES_GCM");
+        
+        config = new HttpSourceConnectorConfig(configMap);
         
         // When/Then - should not throw exception during initialization
         FieldEncryptionManager manager = new FieldEncryptionManager(config);

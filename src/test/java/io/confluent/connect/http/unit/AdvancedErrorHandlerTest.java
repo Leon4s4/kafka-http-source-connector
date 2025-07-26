@@ -9,38 +9,38 @@ import org.apache.kafka.connect.errors.RetriableException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 @DisplayName("Advanced Error Handler Unit Tests")
 class AdvancedErrorHandlerTest {
     
-    @Mock
-    private HttpSourceConnectorConfig config;
-    
-    @Mock
     private ApiConfig apiConfig;
-    
+    private HttpSourceConnectorConfig config;
     private AdvancedErrorHandler errorHandler;
     
     @BeforeEach
     void setUp() {
-        lenient().when(config.getCircuitBreakerFailureThreshold()).thenReturn(3);
-        lenient().when(config.getCircuitBreakerTimeoutMs()).thenReturn(60000L);
-        lenient().when(config.getCircuitBreakerRecoveryTimeMs()).thenReturn(30000L);
-        lenient().when(config.getBehaviorOnError()).thenReturn(HttpSourceConnectorConfig.BehaviorOnError.IGNORE);
+        // Create real config instead of mocking
+        Map<String, String> configMap = new HashMap<>();
+        configMap.put("http.api.base.url", "http://localhost:8080");
+        configMap.put("apis.num", "1");
+        configMap.put("api1.http.api.path", "/test");
+        configMap.put("api1.topics", "test-topic");
+        configMap.put("circuit.breaker.failure.threshold", "3");
+        configMap.put("circuit.breaker.timeout.ms", "60000");
+        configMap.put("circuit.breaker.recovery.time.ms", "30000");
+        configMap.put("behavior.on.error", "IGNORE");
         
-        when(apiConfig.getId()).thenReturn("test-api");
+        config = new HttpSourceConnectorConfig(configMap);
+        
+        // Create real ApiConfig instead of mocking
+        apiConfig = new ApiConfig(config, 1);
         
         errorHandler = new AdvancedErrorHandler(config);
     }
@@ -56,7 +56,7 @@ class AdvancedErrorHandlerTest {
         errorHandler.handleError(apiConfig, authError, null);
         
         // Then
-        AdvancedErrorHandler.ErrorMetrics metrics = errorHandler.getErrorMetrics("test-api");
+        AdvancedErrorHandler.ErrorMetrics metrics = errorHandler.getErrorMetrics(apiConfig.getId());
         assertThat(metrics.errorsByCategory).containsKey(AdvancedErrorHandler.ErrorCategory.AUTHENTICATION);
         assertThat(metrics.errorsByCategory.get(AdvancedErrorHandler.ErrorCategory.AUTHENTICATION).get()).isEqualTo(1);
     }
@@ -71,10 +71,10 @@ class AdvancedErrorHandlerTest {
         // When & Then - Should throw RetriableException for rate limit errors
         assertThatThrownBy(() -> errorHandler.handleError(apiConfig, rateLimitError, null))
                 .isInstanceOf(RetriableException.class)
-                .hasMessageContaining("Retriable error for API: test-api");
+                .hasMessageContaining("Retriable error for API: " + apiConfig.getId());
         
         // Verify metrics are still tracked
-        AdvancedErrorHandler.ErrorMetrics metrics = errorHandler.getErrorMetrics("test-api");
+        AdvancedErrorHandler.ErrorMetrics metrics = errorHandler.getErrorMetrics(apiConfig.getId());
         assertThat(metrics.errorsByCategory).containsKey(AdvancedErrorHandler.ErrorCategory.RATE_LIMIT);
         assertThat(metrics.errorsByCategory.get(AdvancedErrorHandler.ErrorCategory.RATE_LIMIT).get()).isEqualTo(1);
     }
@@ -90,7 +90,7 @@ class AdvancedErrorHandlerTest {
         assertThatThrownBy(() -> errorHandler.handleError(apiConfig, serverError, null))
             .isInstanceOf(RetriableException.class);
         
-        AdvancedErrorHandler.ErrorMetrics metrics = errorHandler.getErrorMetrics("test-api");
+        AdvancedErrorHandler.ErrorMetrics metrics = errorHandler.getErrorMetrics(apiConfig.getId());
         assertThat(metrics.errorsByCategory).containsKey(AdvancedErrorHandler.ErrorCategory.TRANSIENT);
     }
     
@@ -108,7 +108,7 @@ class AdvancedErrorHandlerTest {
         assertThatThrownBy(() -> errorHandler.handleError(apiConfig, timeoutError, null))
             .isInstanceOf(RetriableException.class);
         
-        AdvancedErrorHandler.ErrorMetrics metrics = errorHandler.getErrorMetrics("test-api");
+        AdvancedErrorHandler.ErrorMetrics metrics = errorHandler.getErrorMetrics(apiConfig.getId());
         assertThat(metrics.errorsByCategory.get(AdvancedErrorHandler.ErrorCategory.TRANSIENT).get()).isEqualTo(2);
     }
     
@@ -129,11 +129,11 @@ class AdvancedErrorHandlerTest {
         }
         
         // Then - circuit should be open
-        assertThat(errorHandler.getCircuitBreakerState("test-api"))
+        assertThat(errorHandler.getCircuitBreakerState(apiConfig.getId()))
             .isEqualTo(AdvancedErrorHandler.CircuitBreakerState.OPEN);
         
         // API calls should not be allowed
-        assertThat(errorHandler.canCallApi("test-api")).isFalse();
+        assertThat(errorHandler.canCallApi(apiConfig.getId())).isFalse();
         
         // Further errors should fail fast
         assertThatThrownBy(() -> errorHandler.handleError(apiConfig, serverError, null))
@@ -156,15 +156,38 @@ class AdvancedErrorHandlerTest {
             }
         }
         
-        assertThat(errorHandler.getCircuitBreakerState("test-api"))
+        assertThat(errorHandler.getCircuitBreakerState(apiConfig.getId()))
             .isEqualTo(AdvancedErrorHandler.CircuitBreakerState.OPEN);
         
-        // When - simulate recovery time passage (mock by creating new handler with shorter recovery time)
-        when(config.getCircuitBreakerRecoveryTimeMs()).thenReturn(100L);
-        Thread.sleep(150); // Wait for recovery time
+        // When - simulate recovery time passage (create new handler with shorter recovery time)
+        Map<String, String> newConfigMap = new HashMap<>();
+        newConfigMap.put("http.api.base.url", "http://localhost:8080");
+        newConfigMap.put("apis.num", "1");
+        newConfigMap.put("api1.http.api.path", "/test");
+        newConfigMap.put("api1.topics", "test-topic");
+        newConfigMap.put("circuit.breaker.failure.threshold", "3");
+        newConfigMap.put("circuit.breaker.timeout.ms", "60000");
+        newConfigMap.put("circuit.breaker.recovery.time.ms", "5000");
+        newConfigMap.put("behavior.on.error", "IGNORE");
+        
+        HttpSourceConnectorConfig newConfig = new HttpSourceConnectorConfig(newConfigMap);
+        AdvancedErrorHandler newErrorHandler = new AdvancedErrorHandler(newConfig);
+        
+        // Copy the circuit breaker state to new handler
+        newErrorHandler.getCircuitBreakerState(apiConfig.getId()); // Initialize
+        // Trigger the same failures to get to OPEN state
+        for (int i = 0; i < 3; i++) {
+            try {
+                newErrorHandler.handleError(apiConfig, serverError, null);
+            } catch (Exception e) {
+                // Expected
+            }
+        }
+        
+        Thread.sleep(5100); // Wait for recovery time
         
         // Then - should allow API call (moving to half-open)
-        assertThat(errorHandler.canCallApi("test-api")).isTrue();
+        assertThat(newErrorHandler.canCallApi(apiConfig.getId())).isTrue();
     }
     
     @Test
@@ -183,15 +206,15 @@ class AdvancedErrorHandlerTest {
         }
         
         // Manually set to half-open for testing
-        errorHandler.resetCircuitBreaker("test-api");
+        errorHandler.resetCircuitBreaker(apiConfig.getId());
         
         // When - record successful call
-        errorHandler.recordSuccess("test-api");
+        errorHandler.recordSuccess(apiConfig.getId());
         
         // Then - circuit should be closed
-        assertThat(errorHandler.getCircuitBreakerState("test-api"))
+        assertThat(errorHandler.getCircuitBreakerState(apiConfig.getId()))
             .isEqualTo(AdvancedErrorHandler.CircuitBreakerState.CLOSED);
-        assertThat(errorHandler.canCallApi("test-api")).isTrue();
+        assertThat(errorHandler.canCallApi(apiConfig.getId())).isTrue();
     }
     
     @Test
@@ -207,9 +230,9 @@ class AdvancedErrorHandlerTest {
         }
         
         // Then - circuit should remain closed
-        assertThat(errorHandler.getCircuitBreakerState("test-api"))
+        assertThat(errorHandler.getCircuitBreakerState(apiConfig.getId()))
             .isEqualTo(AdvancedErrorHandler.CircuitBreakerState.CLOSED);
-        assertThat(errorHandler.canCallApi("test-api")).isTrue();
+        assertThat(errorHandler.canCallApi(apiConfig.getId())).isTrue();
     }
     
     @Test
@@ -233,11 +256,11 @@ class AdvancedErrorHandlerTest {
             // Expected
         }
         
-        errorHandler.recordSuccess("test-api");
-        errorHandler.recordSuccess("test-api");
+        errorHandler.recordSuccess(apiConfig.getId());
+        errorHandler.recordSuccess(apiConfig.getId());
         
         // Then
-        AdvancedErrorHandler.ErrorMetrics metrics = errorHandler.getErrorMetrics("test-api");
+        AdvancedErrorHandler.ErrorMetrics metrics = errorHandler.getErrorMetrics(apiConfig.getId());
         assertThat(metrics.totalErrors.get()).isEqualTo(2);
         assertThat(metrics.successCount.get()).isEqualTo(2);
         assertThat(metrics.getErrorRate()).isEqualTo(0.5); // 2 errors out of 4 total
@@ -254,7 +277,7 @@ class AdvancedErrorHandlerTest {
         errorHandler.handleError(apiConfig, unknownError, null);
         
         // Then
-        AdvancedErrorHandler.ErrorMetrics metrics = errorHandler.getErrorMetrics("test-api");
+        AdvancedErrorHandler.ErrorMetrics metrics = errorHandler.getErrorMetrics(apiConfig.getId());
         assertThat(metrics.errorsByCategory).containsKey(AdvancedErrorHandler.ErrorCategory.UNKNOWN);
         assertThat(metrics.errorsByCategory.get(AdvancedErrorHandler.ErrorCategory.UNKNOWN).get()).isEqualTo(1);
     }
@@ -274,16 +297,16 @@ class AdvancedErrorHandlerTest {
             }
         }
         
-        assertThat(errorHandler.getCircuitBreakerState("test-api"))
+        assertThat(errorHandler.getCircuitBreakerState(apiConfig.getId()))
             .isEqualTo(AdvancedErrorHandler.CircuitBreakerState.OPEN);
         
         // When
-        errorHandler.resetCircuitBreaker("test-api");
+        errorHandler.resetCircuitBreaker(apiConfig.getId());
         
         // Then
-        assertThat(errorHandler.getCircuitBreakerState("test-api"))
+        assertThat(errorHandler.getCircuitBreakerState(apiConfig.getId()))
             .isEqualTo(AdvancedErrorHandler.CircuitBreakerState.CLOSED);
-        assertThat(errorHandler.canCallApi("test-api")).isTrue();
+        assertThat(errorHandler.canCallApi(apiConfig.getId())).isTrue();
     }
     
     @Test
@@ -305,7 +328,7 @@ class AdvancedErrorHandlerTest {
         }
         
         // Then - should categorize as transient based on message content
-        AdvancedErrorHandler.ErrorMetrics metrics = errorHandler.getErrorMetrics("test-api");
+        AdvancedErrorHandler.ErrorMetrics metrics = errorHandler.getErrorMetrics(apiConfig.getId());
         assertThat(metrics.errorsByCategory).containsKey(AdvancedErrorHandler.ErrorCategory.TRANSIENT);
     }
 }

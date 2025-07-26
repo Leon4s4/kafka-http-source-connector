@@ -13,10 +13,8 @@ io/confluent/connect/http/util/JsonPointer.class
 io/confluent/connect/http/auth/ApiKeyAuthenticator$1.class
 io/confluent/connect/http/auth/OAuth2Authenticator.class
 io/confluent/connect/http/error/AdvancedErrorHandler$CircuitBreakerState.class
-io/confluent/connect/http/config/HttpSourceConnectorConfig$2.class
 io/confluent/connect/http/client/RetryHandler.class
 io/confluent/connect/http/offset/OffsetManagerFactory$1.class
-io/confluent/connect/http/error/AdvancedErrorHandler$1.class
 io/confluent/connect/http/client/HttpApiClient$HttpRequestException.class
 io/confluent/connect/http/HttpSourceConnector$1.class
 io/confluent/connect/http/config/HttpSourceConnectorConfig$ApiKeyLocation.class
@@ -49,7 +47,6 @@ io/confluent/connect/http/converter/JsonRecordConverter.class
 io/confluent/connect/http/error/AdvancedErrorHandler$ErrorCategory.class
 io/confluent/connect/http/performance/PerformanceOptimizer$PerformanceMetrics.class
 io/confluent/connect/http/config/HttpSourceConnectorConfig$BehaviorOnError.class
-io/confluent/connect/http/config/ApiConfig$1.class
 io/confluent/connect/http/auth/NoAuthenticator.class
 io/confluent/connect/http/config/ApiConfig$RetryBackoffPolicy.class
 io/confluent/connect/http/offset/SimpleIncrementingOffsetManager.class
