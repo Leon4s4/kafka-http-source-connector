@@ -258,30 +258,13 @@ public class HttpApiClient {
     private void configureSsl(OkHttpClient.Builder clientBuilder) {
         if (globalConfig.isHttpsSslEnabled()) {
             try {
-                // Create trust manager that trusts all certificates (for development)
-                // In production, you should use proper certificate validation
-                TrustManager[] trustAllCerts = new TrustManager[] {
-                    new X509TrustManager() {
-                        @Override
-                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
-                        
-                        @Override
-                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
-                        
-                        @Override
-                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                            return new java.security.cert.X509Certificate[]{};
-                        }
-                    }
-                };
-                
+                // Use the default system TrustManager for proper certificate validation
                 SSLContext sslContext = SSLContext.getInstance(globalConfig.getHttpsSslProtocol());
-                sslContext.init(null, trustAllCerts, new SecureRandom());
+                sslContext.init(null, null, new SecureRandom());
                 
-                clientBuilder.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustAllCerts[0]);
-                clientBuilder.hostnameVerifier((hostname, session) -> true);
+                clientBuilder.sslSocketFactory(sslContext.getSocketFactory(), getDefaultTrustManager());
                 
-                log.debug("SSL configured with protocol: {}", globalConfig.getHttpsSslProtocol());
+                log.debug("SSL configured with protocol: {} and default TrustManager", globalConfig.getHttpsSslProtocol());
                 
             } catch (Exception e) {
                 log.error("Failed to configure SSL", e);
