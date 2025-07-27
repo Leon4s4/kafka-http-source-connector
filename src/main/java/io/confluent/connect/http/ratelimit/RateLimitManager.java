@@ -192,11 +192,12 @@ public class RateLimitManager {
     // Configuration extraction methods
     
     private boolean isRateLimitingEnabled(HttpSourceConnectorConfig config) {
-        return Boolean.parseBoolean(System.getProperty("ratelimit.enabled", "true"));
+        String value = config.originalsStrings().get("ratelimit.enabled");
+        return value != null ? Boolean.parseBoolean(value) : true;
     }
     
     private RateLimitAlgorithm getRateLimitAlgorithm(HttpSourceConnectorConfig config) {
-        String algorithm = System.getProperty("ratelimit.algorithm", "TOKEN_BUCKET");
+        String algorithm = config.originalsStrings().getOrDefault("ratelimit.algorithm", "TOKEN_BUCKET");
         try {
             return RateLimitAlgorithm.valueOf(algorithm.toUpperCase());
         } catch (IllegalArgumentException e) {
@@ -206,7 +207,7 @@ public class RateLimitManager {
     }
     
     private RateLimitScope getRateLimitScope(HttpSourceConnectorConfig config) {
-        String scope = System.getProperty("ratelimit.scope", "PER_API");
+        String scope = config.originalsStrings().getOrDefault("ratelimit.scope", "PER_API");
         try {
             return RateLimitScope.valueOf(scope.toUpperCase());
         } catch (IllegalArgumentException e) {
@@ -216,45 +217,65 @@ public class RateLimitManager {
     }
     
     private long getGlobalRequestsPerSecond(HttpSourceConnectorConfig config) {
-        try {
-            return Long.parseLong(System.getProperty("ratelimit.requests.per.second", "100"));
-        } catch (NumberFormatException e) {
-            return 100;
+        String value = config.originalsStrings().get("ratelimit.requests.per.second");
+        if (value != null) {
+            try {
+                return Long.parseLong(value);
+            } catch (NumberFormatException e) {
+                log.warn("Invalid global requests per second: {}, using default 100", value);
+            }
         }
+        return 100;
     }
     
     private long getGlobalBurstSize(HttpSourceConnectorConfig config) {
-        try {
-            return Long.parseLong(System.getProperty("ratelimit.burst.size", "200"));
-        } catch (NumberFormatException e) {
-            return 200;
+        String value = config.originalsStrings().get("ratelimit.burst.size");
+        if (value != null) {
+            try {
+                return Long.parseLong(value);
+            } catch (NumberFormatException e) {
+                log.warn("Invalid global burst size: {}, using default 200", value);
+            }
         }
+        return 200;
     }
     
     private long getWindowSizeMs(HttpSourceConnectorConfig config) {
-        try {
-            return Long.parseLong(System.getProperty("ratelimit.window.size.ms", "60000"));
-        } catch (NumberFormatException e) {
-            return 60000; // 1 minute default
+        String value = config.originalsStrings().get("ratelimit.window.size.ms");
+        if (value != null) {
+            try {
+                return Long.parseLong(value);
+            } catch (NumberFormatException e) {
+                log.warn("Invalid window size: {}, using default 60000ms", value);
+            }
         }
+        return 60000; // 1 minute default
     }
     
     private long getApiRequestsPerSecond(String apiId, long defaultValue) {
         String key = "ratelimit.api." + apiId + ".requests.per.second";
-        try {
-            return Long.parseLong(System.getProperty(key, String.valueOf(defaultValue)));
-        } catch (NumberFormatException e) {
-            return defaultValue;
+        String value = config.originalsStrings().get(key);
+        if (value != null) {
+            try {
+                return Long.parseLong(value);
+            } catch (NumberFormatException e) {
+                log.warn("Invalid API requests per second for {}: {}, using default {}", apiId, value, defaultValue);
+            }
         }
+        return defaultValue;
     }
     
     private long getApiBurstSize(String apiId, long defaultValue) {
         String key = "ratelimit.api." + apiId + ".burst.size";
-        try {
-            return Long.parseLong(System.getProperty(key, String.valueOf(defaultValue)));
-        } catch (NumberFormatException e) {
-            return defaultValue;
+        String value = config.originalsStrings().get(key);
+        if (value != null) {
+            try {
+                return Long.parseLong(value);
+            } catch (NumberFormatException e) {
+                log.warn("Invalid API burst size for {}: {}, using default {}", apiId, value, defaultValue);
+            }
         }
+        return defaultValue;
     }
     
     public void close() {
