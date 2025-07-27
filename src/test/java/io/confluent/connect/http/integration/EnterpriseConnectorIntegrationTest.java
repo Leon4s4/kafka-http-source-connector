@@ -2,14 +2,11 @@ package io.confluent.connect.http.integration;
 
 import io.confluent.connect.http.HttpSourceConnector;
 import io.confluent.connect.http.HttpSourceTask;
-import io.confluent.connect.http.config.HttpSourceConnectorConfig;
 import io.confluent.connect.http.operational.OperationalFeaturesManager;
 import io.confluent.connect.http.config.EnhancedConfigValidator;
-import io.confluent.connect.http.cache.IntelligentCacheManager;
 import io.confluent.connect.http.client.EnhancedHttpClient;
 import io.confluent.connect.http.performance.EnhancedStreamingProcessor;
 
-import org.apache.kafka.connect.runtime.ConnectorConfig;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
@@ -26,7 +23,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.RecordedRequest;
 
 import java.io.IOException;
 import java.net.http.HttpClient;
@@ -34,9 +30,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Comprehensive integration test suite for all enterprise features using TestContainers.
@@ -307,9 +300,15 @@ public class EnterpriseConnectorIntegrationTest {
             assertThat(response.statusCode()).isEqualTo(200);
             
             JsonNode spec = objectMapper.readTree(response.body());
-            assertThat(spec.get("openapi")).isNotNull();
-            assertThat(spec.get("info").get("title").asText())
-                .contains("Enterprise HTTP Source Connector");
+            JsonNode openApiNode = spec.get("openapi");
+            if (openApiNode == null) {
+                throw new AssertionError("OpenAPI node should not be null");
+            }
+            
+            JsonNode titleNode = spec.get("info").get("title");
+            if (titleNode == null || !titleNode.asText().contains("Enterprise HTTP Source Connector")) {
+                throw new AssertionError("Title should contain 'Enterprise HTTP Source Connector'");
+            }
             
         } catch (Exception e) {
             log.warn("OpenAPI endpoint not available yet (expected during testing): {}", e.getMessage());
@@ -491,8 +490,10 @@ public class EnterpriseConnectorIntegrationTest {
         EnhancedHttpClient client = new EnhancedHttpClient(config);
         
         // Test client statistics
-        var stats = client.getStatistics();
-        assertThat(stats).isNotNull();
+        EnhancedHttpClient.ClientStatistics stats = client.getStatistics();
+        if (stats == null) {
+            throw new AssertionError("Client statistics should not be null");
+        }
         
         client.shutdown();
         
@@ -515,8 +516,10 @@ public class EnterpriseConnectorIntegrationTest {
         EnhancedStreamingProcessor processor = new EnhancedStreamingProcessor(config);
         
         // Test processor statistics
-        var stats = processor.getStatistics();
-        assertThat(stats).isNotNull();
+        EnhancedStreamingProcessor.ProcessingStatistics stats = processor.getStatistics();
+        if (stats == null) {
+            throw new AssertionError("Processing statistics should not be null");
+        }
         
         log.info("✅ Enhanced Streaming Processor test passed");
     }
@@ -539,9 +542,13 @@ public class EnterpriseConnectorIntegrationTest {
         manager.start();
         
         // Test operational status
-        var status = manager.getOperationalStatus();
-        assertThat(status).isNotNull();
-        assertThat(status.getOverallHealth()).isNotNull();
+        OperationalFeaturesManager.OperationalStatus status = manager.getOperationalStatus();
+        if (status == null) {
+            throw new AssertionError("Operational status should not be null");
+        }
+        if (status.getOverallHealth() == null) {
+            throw new AssertionError("Overall health should not be null");
+        }
         
         // Test service availability
         boolean available = manager.isServiceAvailable("test-service");
@@ -665,15 +672,6 @@ public class EnterpriseConnectorIntegrationTest {
     }
     
     // Custom assertion methods
-    private static void assertThat(Object actual) {
-        if (actual == null) {
-            throw new AssertionError("Expected non-null value");
-        }
-    }
-    
-    private static ObjectAssertion assertThatObject(Object actual) {
-        return new ObjectAssertion(actual);
-    }
     
     private static IntegerAssertion assertThat(int actual) {
         return new IntegerAssertion(actual);

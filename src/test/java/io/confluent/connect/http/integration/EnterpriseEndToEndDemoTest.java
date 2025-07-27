@@ -330,12 +330,13 @@ public class EnterpriseEndToEndDemoTest {
         config.put("connector.class", "io.confluent.connect.http.HttpSourceConnector");
         config.put("tasks.max", "1");
         config.put("http.api.base.url", "http://localhost:" + mockApiServer.getPort());
-        config.put("http.apis.num", "1");
-        config.put("http.api.1.endpoint", "/api/data");
-        config.put("http.api.1.topic", "enterprise-basic-topic");
-        config.put("http.api.1.method", "GET");
-        config.put("http.poll.interval.ms", "1000");
+        config.put("apis.num", "1");
+        config.put("api1.http.api.path", "/api/data");
+        config.put("api1.topics", "enterprise-basic-topic");
+        config.put("api1.http.request.method", "GET");
+        config.put("api1.request.interval.ms", "1000");
         config.put("auth.type", "NONE");
+        config.put("output.data.format", "JSON_SR");
         
         // Enable basic enterprise features
         config.put("metrics.jmx.enabled", "true");
@@ -347,7 +348,7 @@ public class EnterpriseEndToEndDemoTest {
     private Map<String, String> createAdvancedEnterpriseConfig() {
         Map<String, String> config = createEnterpriseConfig();
         config.put("name", "enterprise-demo-advanced");
-        config.put("http.api.1.topic", "enterprise-advanced-topic");
+        config.put("api1.topics", "enterprise-advanced-topic");
         
         // Enable advanced features
         config.put("cache.enabled", "true");
@@ -362,7 +363,7 @@ public class EnterpriseEndToEndDemoTest {
     private Map<String, String> createSecurityEnterpriseConfig() {
         Map<String, String> config = createEnterpriseConfig();
         config.put("name", "enterprise-demo-security");
-        config.put("http.api.1.topic", "enterprise-security-topic");
+        config.put("api1.topics", "enterprise-security-topic");
         
         // Enable security features
         config.put("ssl.enabled", "false"); // Disabled for testing
@@ -376,7 +377,7 @@ public class EnterpriseEndToEndDemoTest {
     private Map<String, String> createPerformanceEnterpriseConfig() {
         Map<String, String> config = createEnterpriseConfig();
         config.put("name", "enterprise-demo-performance");
-        config.put("http.api.1.topic", "enterprise-performance-topic");
+        config.put("api1.topics", "enterprise-performance-topic");
         config.put("http.poll.interval.ms", "500");
         
         // Enable performance features
@@ -391,7 +392,7 @@ public class EnterpriseEndToEndDemoTest {
     private Map<String, String> createFullEnterpriseShowcaseConfig() {
         Map<String, String> config = createEnterpriseConfig();
         config.put("name", "enterprise-demo-full-showcase");
-        config.put("http.api.1.topic", "enterprise-showcase-topic");
+        config.put("api1.topics", "enterprise-showcase-topic");
         config.put("http.poll.interval.ms", "200");
         
         // Enable ALL enterprise features (safe settings for testing)

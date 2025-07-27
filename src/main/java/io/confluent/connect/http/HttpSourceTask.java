@@ -13,7 +13,6 @@ import io.confluent.connect.http.error.ErrorHandler;
 import io.confluent.connect.http.offset.OffsetManager;
 import io.confluent.connect.http.offset.OffsetManagerFactory;
 import io.confluent.connect.http.util.JsonPointer;
-import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
 import org.slf4j.Logger;
@@ -358,7 +357,9 @@ public class HttpSourceTask extends SourceTask {
                 Object extractedData = JsonPointer.extract(responseBody, dataJsonPointer);
                 
                 if (extractedData instanceof List) {
-                    return (List<Object>) extractedData;
+                    @SuppressWarnings("unchecked")
+                    List<Object> list = (List<Object>) extractedData;
+                    return list;
                 } else if (extractedData != null) {
                     return Collections.singletonList(extractedData);
                 }
@@ -366,7 +367,9 @@ public class HttpSourceTask extends SourceTask {
                 // If no JSON pointer specified, parse the entire response
                 Object parsedResponse = JsonPointer.parse(responseBody);
                 if (parsedResponse instanceof List) {
-                    return (List<Object>) parsedResponse;
+                    @SuppressWarnings("unchecked")
+                    List<Object> list = (List<Object>) parsedResponse;
+                    return list;
                 } else if (parsedResponse != null) {
                     return Collections.singletonList(parsedResponse);
                 }

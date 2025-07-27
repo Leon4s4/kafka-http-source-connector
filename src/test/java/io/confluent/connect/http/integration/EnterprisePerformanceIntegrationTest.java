@@ -417,12 +417,13 @@ public class EnterprisePerformanceIntegrationTest {
         config.put("connector.class", "io.confluent.connect.http.HttpSourceConnector");
         config.put("tasks.max", "1");
         config.put("http.api.base.url", "http://localhost:" + mockApiServer.getPort());
-        config.put("http.apis.num", "1");
-        config.put("http.api.1.endpoint", "/api/data");
-        config.put("http.api.1.topic", "performance-topic");
-        config.put("http.api.1.method", "GET");
-        config.put("http.poll.interval.ms", "100"); // Fast polling for performance test
+        config.put("apis.num", "1");
+        config.put("api1.http.api.path", "/api/data");
+        config.put("api1.topics", "performance-topic");
+        config.put("api1.http.request.method", "GET");
+        config.put("api1.request.interval.ms", "100"); // Fast polling for performance test
         config.put("auth.type", "NONE");
+        config.put("output.data.format", "JSON_SR");
         
         // Enable performance-oriented enterprise features
         config.put("cache.enabled", "true");

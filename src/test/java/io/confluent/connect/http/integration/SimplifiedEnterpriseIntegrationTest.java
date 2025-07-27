@@ -342,12 +342,15 @@ public class SimplifiedEnterpriseIntegrationTest {
         config.put("connector.class", "io.confluent.connect.http.HttpSourceConnector");
         config.put("tasks.max", "1");
         config.put("http.api.base.url", "http://localhost:" + mockApiServer.getPort());
-        config.put("http.apis.num", "1");
-        config.put("http.api.1.endpoint", "/api/data");
-        config.put("http.api.1.topic", "test-topic");
-        config.put("http.api.1.method", "GET");
-        config.put("http.poll.interval.ms", "5000");
+        config.put("apis.num", "1");
+        config.put("api1.http.api.path", "/api/data");
+        config.put("api1.topics", "test-topic");
+        config.put("api1.http.request.method", "GET");
+        config.put("api1.http.offset.mode", "SIMPLE_INCREMENTING");
+        config.put("api1.http.initial.offset", "0");
+        config.put("api1.request.interval.ms", "5000");
         config.put("auth.type", "NONE");
+        config.put("output.data.format", "JSON_SR");
         return config;
     }
     

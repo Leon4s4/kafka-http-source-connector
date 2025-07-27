@@ -182,34 +182,17 @@ public class EnhancedConfigValidator {
      */
     private void validateWithSchema(JsonNode configJson, ValidationResult result) {
         // Simplified schema validation without external library
-        // Check required fields exist
-        String[] requiredFields = {"http.source.url", "kafka.topic"};
+        // Check required fields exist - note: configJson contains flat key-value pairs
+        String[] requiredFields = {"http.api.base.url"};
         
         for (String field : requiredFields) {
-            if (!configJson.has(field.replace(".", "_")) && 
-                !hasNestedField(configJson, field)) {
+            if (!configJson.has(field)) {
                 result.addError("SCHEMA_VALIDATION", "Required field missing: " + field);
             }
         }
         
         // Basic type validation
         validateFieldTypes(configJson, result);
-    }
-    
-    /**
-     * Check if nested field exists in JSON.
-     */
-    private boolean hasNestedField(JsonNode json, String fieldPath) {
-        String[] parts = fieldPath.split("\\.");
-        JsonNode current = json;
-        
-        for (String part : parts) {
-            if (current == null || !current.has(part)) {
-                return false;
-            }
-            current = current.get(part);
-        }
-        return true;
     }
     
     /**
@@ -383,13 +366,13 @@ public class EnhancedConfigValidator {
         customRules.put("url_validation", new ValidationRule() {
             @Override
             public boolean validate(Map<String, String> config) {
-                String url = config.get("http.source.url");
+                String url = config.get("http.api.base.url");
                 return url == null || URL_PATTERN.matcher(url).matches();
             }
             
             @Override
             public String getMessage() {
-                return "http.source.url must be a valid HTTP/HTTPS URL";
+                return "http.api.base.url must be a valid HTTP/HTTPS URL";
             }
             
             @Override
@@ -402,7 +385,7 @@ public class EnhancedConfigValidator {
         customRules.put("required_fields", new ValidationRule() {
             @Override
             public boolean validate(Map<String, String> config) {
-                String[] requiredFields = {"http.source.url", "kafka.topic"};
+                String[] requiredFields = {"http.api.base.url"};
                 for (String field : requiredFields) {
                     if (!config.containsKey(field) || config.get(field).trim().isEmpty()) {
                         return false;
@@ -413,7 +396,7 @@ public class EnhancedConfigValidator {
             
             @Override
             public String getMessage() {
-                return "Required fields missing: http.source.url, kafka.topic";
+                return "Required fields missing: http.api.base.url";
             }
             
             @Override
@@ -704,14 +687,6 @@ public class EnhancedConfigValidator {
     }
     
     /**
-     * Load feature-specific schemas (simplified).
-     */
-    private void loadFeatureSchemas() {
-        // Simplified implementation - schemas marked as loaded
-        log.debug("Feature schemas loaded");
-    }
-    
-    /**
      * OAuth2 configuration validation.
      */
     private void validateOAuth2Configuration(Map<String, String> config, ValidationResult result) {
@@ -799,14 +774,14 @@ public class EnhancedConfigValidator {
         }
         
         // URL changes
-        if ("http.source.url".equals(key)) {
+        if ("http.api.base.url".equals(key)) {
             return true;
         }
         
-        // Topic changes
-        if ("kafka.topic".equals(key)) {
-            return true;
-        }
+        // Topic changes (disabled since we don't require specific topic field)
+        // if ("kafka.topic".equals(key)) {
+        //     return true;
+        // }
         
         // SSL changes
         if (key.startsWith("ssl.") && "true".equals(oldValue) && "false".equals(newValue)) {

@@ -210,9 +210,9 @@ public class HttpSourceConnector extends SourceConnector {
         
         // Validate each API configuration
         for (int i = 1; i <= config.getApisNum(); i++) {
-            String endpoint = config.getString(String.format("http.api.%d.endpoint", i));
+            String endpoint = config.originalsStrings().get(String.format("api%d.http.api.path", i));
             if (endpoint == null || endpoint.trim().isEmpty()) {
-                throw new ConfigException(String.format("API %d endpoint is required", i));
+                throw new ConfigException(String.format("API %d path is required", i));
             }
         }
         

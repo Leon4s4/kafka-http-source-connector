@@ -314,7 +314,7 @@ public class EnhancedHttpClient {
         }
         
         int corePoolSize = Math.max(2, Runtime.getRuntime().availableProcessors());
-        int maxPoolSize = config.getMaxConnections();
+        int maxPoolSize = Math.max(corePoolSize, config.getMaxConnections());
         
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
             corePoolSize,
