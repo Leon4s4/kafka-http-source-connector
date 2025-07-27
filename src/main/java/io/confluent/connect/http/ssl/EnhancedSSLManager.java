@@ -329,7 +329,7 @@ public class EnhancedSSLManager {
     private void loadCertificatePins(HttpSourceConnectorConfig config) {
         // Load certificate pins from configuration
         // This would typically be done from connector properties
-        String pinsConfig = System.getProperty("ssl.certificate.pins");
+        String pinsConfig = config.originalsStrings().get("ssl.certificate.pins");
         if (pinsConfig != null && !pinsConfig.trim().isEmpty()) {
             String[] pinEntries = pinsConfig.split(";");
             for (String entry : pinEntries) {
@@ -351,11 +351,12 @@ public class EnhancedSSLManager {
     // Configuration extraction methods
     
     private boolean isSSLEnabled(HttpSourceConnectorConfig config) {
-        return Boolean.parseBoolean(System.getProperty("ssl.enabled", "true"));
+        String value = config.originalsStrings().get("ssl.enabled");
+        return value != null ? Boolean.parseBoolean(value) : true;
     }
     
     private SSLVersion getSSLVersion(HttpSourceConnectorConfig config) {
-        String version = System.getProperty("ssl.version", "TLS_1_2_1_3");
+        String version = config.originalsStrings().getOrDefault("ssl.version", "TLS_1_2_1_3");
         try {
             return SSLVersion.valueOf(version);
         } catch (IllegalArgumentException e) {
@@ -365,7 +366,7 @@ public class EnhancedSSLManager {
     }
     
     private CertificateValidation getCertificateValidation(HttpSourceConnectorConfig config) {
-        String validation = System.getProperty("ssl.certificate.validation", "STRICT");
+        String validation = config.originalsStrings().getOrDefault("ssl.certificate.validation", "STRICT");
         try {
             return CertificateValidation.valueOf(validation);
         } catch (IllegalArgumentException e) {
@@ -375,31 +376,31 @@ public class EnhancedSSLManager {
     }
     
     private String getKeyStorePath(HttpSourceConnectorConfig config) {
-        return System.getProperty("ssl.keystore.path");
+        return config.originalsStrings().get("ssl.keystore.path");
     }
     
     private String getKeyStorePassword(HttpSourceConnectorConfig config) {
-        return System.getProperty("ssl.keystore.password");
+        return config.originalsStrings().get("ssl.keystore.password");
     }
     
     private String getKeyStoreType(HttpSourceConnectorConfig config) {
-        return System.getProperty("ssl.keystore.type", "JKS");
+        return config.originalsStrings().getOrDefault("ssl.keystore.type", "JKS");
     }
     
     private String getTrustStorePath(HttpSourceConnectorConfig config) {
-        return System.getProperty("ssl.truststore.path");
+        return config.originalsStrings().get("ssl.truststore.path");
     }
     
     private String getTrustStorePassword(HttpSourceConnectorConfig config) {
-        return System.getProperty("ssl.truststore.password");
+        return config.originalsStrings().get("ssl.truststore.password");
     }
     
     private String getTrustStoreType(HttpSourceConnectorConfig config) {
-        return System.getProperty("ssl.truststore.type", "JKS");
+        return config.originalsStrings().getOrDefault("ssl.truststore.type", "JKS");
     }
     
     private String[] getEnabledCipherSuites(HttpSourceConnectorConfig config) {
-        String ciphers = System.getProperty("ssl.enabled.cipher.suites");
+        String ciphers = config.originalsStrings().get("ssl.enabled.cipher.suites");
         if (ciphers != null && !ciphers.trim().isEmpty()) {
             return ciphers.split(",");
         }
@@ -407,15 +408,20 @@ public class EnhancedSSLManager {
     }
     
     private boolean isHostnameVerificationEnabled(HttpSourceConnectorConfig config) {
-        return Boolean.parseBoolean(System.getProperty("ssl.hostname.verification", "true"));
+        String value = config.originalsStrings().get("ssl.hostname.verification");
+        return value != null ? Boolean.parseBoolean(value) : true;
     }
     
     private int getCertificateRefreshInterval(HttpSourceConnectorConfig config) {
-        try {
-            return Integer.parseInt(System.getProperty("ssl.certificate.refresh.interval.ms", "3600000"));
-        } catch (NumberFormatException e) {
-            return 3600000; // 1 hour default
+        String value = config.originalsStrings().get("ssl.certificate.refresh.interval.ms");
+        if (value != null) {
+            try {
+                return Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+                log.warn("Invalid certificate refresh interval: {}, using default 3600000ms", value);
+            }
         }
+        return 3600000; // 1 hour default
     }
     
     public void close() {

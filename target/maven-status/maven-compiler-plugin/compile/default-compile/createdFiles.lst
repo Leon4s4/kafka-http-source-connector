@@ -61,7 +61,6 @@ io/confluent/connect/http/config/HttpSourceConnectorConfig$ApiKeyLocation.class
 io/confluent/connect/http/error/ErrorHandler$1.class
 io/confluent/connect/http/client/EnhancedHttpClient.class
 io/confluent/connect/http/offset/CursorPaginationOffsetManager.class
-io/confluent/connect/http/ssl/EnhancedSSLManager$SSLVersion.class
 io/confluent/connect/http/auth/HttpAuthenticator.class
 io/confluent/connect/http/config/HttpSourceConnectorConfig$1.class
 io/confluent/connect/http/transformation/TransformationRule$Builder.class
@@ -92,7 +91,6 @@ io/confluent/connect/http/offset/SimpleIncrementingOffsetManager.class
 io/confluent/connect/http/config/HttpSourceConnectorConfig.class
 io/confluent/connect/http/auth/enhanced/AzureAdAuthenticator.class
 io/confluent/connect/http/ratelimit/RateLimitManager$LeakyBucketRateLimiter.class
-io/confluent/connect/http/ssl/EnhancedSSLManager.class
 io/confluent/connect/http/openapi/APIParameter.class
 io/confluent/connect/http/config/ApiConfig.class
 io/confluent/connect/http/transformation/FilterExpression$FilterOperator.class
@@ -122,7 +120,6 @@ io/confluent/connect/http/transformation/FieldEnrichment$EnrichmentType.class
 io/confluent/connect/http/openapi/APIParameter$Location.class
 io/confluent/connect/http/cache/IntelligentCacheManager$CacheStatistics.class
 io/confluent/connect/http/config/ConfigurationDiff$ConfigChange.class
-io/confluent/connect/http/ssl/EnhancedSSLManager$CertificateValidation.class
 io/confluent/connect/http/metrics/HttpSourceConnectorMetrics$ErrorType.class
 io/confluent/connect/http/offset/OffsetManager.class
 io/confluent/connect/http/config/EnhancedConfigValidator$3.class
