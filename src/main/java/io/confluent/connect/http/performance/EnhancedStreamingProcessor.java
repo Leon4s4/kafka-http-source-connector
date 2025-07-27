@@ -134,8 +134,8 @@ public class EnhancedStreamingProcessor {
             return new StreamingResult(totalBytes, totalRecords, duration, 0);
             
         } finally {
-            // Clean up direct buffer - let GC handle it for compatibility
-            buffer = null;
+            // Explicitly clean up the direct buffer to prevent memory leaks
+            cleanDirectBuffer(buffer);
         }
     }
     
