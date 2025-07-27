@@ -134,8 +134,13 @@ public class EnhancedStreamingProcessor {
             return new StreamingResult(totalBytes, totalRecords, duration, 0);
             
         } finally {
-            // Explicitly clean up the direct buffer to prevent memory leaks
-            cleanDirectBuffer(buffer);
+            // Clear the buffer and let GC handle cleanup
+            // Note: Explicit cleaning of direct buffers requires internal APIs
+            // which are restricted in modern Java. The JVM will clean up direct
+            // buffers automatically during GC.
+            if (buffer != null) {
+                buffer.clear();
+            }
         }
     }
     

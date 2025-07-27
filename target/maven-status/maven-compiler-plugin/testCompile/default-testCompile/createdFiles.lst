@@ -1,7 +1,7 @@
 io/confluent/connect/http/unit/FieldEncryptionManagerTest.class
-io/confluent/connect/http/integration/SimplifiedEnterpriseIntegrationTest.class
 io/confluent/connect/http/unit/AdvancedErrorHandlerTest.class
 io/confluent/connect/http/integration/EnterprisePerformanceIntegrationTest.class
 io/confluent/connect/http/integration/HttpSourceConnectorSimpleIntegrationTest.class
 io/confluent/connect/http/integration/EnterpriseEndToEndDemoTest.class
+io/confluent/connect/http/integration/SimplifiedEnterpriseIntegrationTest.class
 io/confluent/connect/http/unit/AdvancedErrorHandlerTest$1.class
