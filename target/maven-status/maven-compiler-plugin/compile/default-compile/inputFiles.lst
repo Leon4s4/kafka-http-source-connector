@@ -21,11 +21,13 @@
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/transformation/FilterExpression.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/operational/OperationalFeaturesManager.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/auth/enhanced/EnhancedAuthenticationManager.java
+/Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/operational/OperationalStatus.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/client/RetryHandler.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/ssl/EnhancedSSLManager.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/HttpSourceConnector.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/offset/SnapshotPaginationOffsetManager.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/offset/OffsetManagerFactory.java
+/Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/client/ClientStatistics.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/client/ByteBufferPool.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/ratelimit/RateLimitStats.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/error/AdvancedErrorHandler.java
@@ -60,6 +62,7 @@
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/auth/BasicAuthenticator.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/config/HttpSourceConnectorConfig.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/ssl/SSLValidationResult.java
+/Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/performance/ProcessingStatistics.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/auth/HttpAuthenticatorFactory.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/client/HttpApiClient.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/pagination/PaginationManager.java
