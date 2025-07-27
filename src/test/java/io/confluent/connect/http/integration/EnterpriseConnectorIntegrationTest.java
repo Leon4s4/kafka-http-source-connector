@@ -31,6 +31,8 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * Comprehensive integration test suite for all enterprise features using TestContainers.
  * This test validates that all 15 implemented enterprise features are fully functional.
@@ -142,15 +144,11 @@ public class EnterpriseConnectorIntegrationTest {
         // Verify JMX beans are registered
         // In a real test, we would check MBean server for registered beans
         // For now, verify connector starts successfully with metrics enabled
-        if (connector.version() == null || !connector.version().equals("2.0.0-enterprise")) {
-            throw new AssertionError("Expected version 2.0.0-enterprise but got " + connector.version());
-        }
+        assertThat(connector.version()).isEqualTo("2.0.0-enterprise");
         
         // Create and start task
         List<Map<String, String>> taskConfigs = connector.taskConfigs(1);
-        if (taskConfigs == null || taskConfigs.size() != 1) {
-            throw new AssertionError("Expected 1 task config but got " + (taskConfigs == null ? "null" : taskConfigs.size()));
-        }
+        assertThat(taskConfigs).isNotNull().hasSize(1);
         
         task.start(taskConfigs.get(0));
         
@@ -305,14 +303,11 @@ public class EnterpriseConnectorIntegrationTest {
             
             JsonNode spec = objectMapper.readTree(response.body());
             JsonNode openApiNode = spec.get("openapi");
-            if (openApiNode == null) {
-                throw new AssertionError("OpenAPI node should not be null");
-            }
+            assertThat(openApiNode).isNotNull();
             
             JsonNode titleNode = spec.get("info").get("title");
-            if (titleNode == null || !titleNode.asText().contains("Enterprise HTTP Source Connector")) {
-                throw new AssertionError("Title should contain 'Enterprise HTTP Source Connector'");
-            }
+            assertThat(titleNode).isNotNull();
+            assertThat(titleNode.asText()).contains("Enterprise HTTP Source Connector");
             
         } catch (Exception e) {
             log.warn("OpenAPI endpoint not available yet (expected during testing): {}", e.getMessage());
@@ -499,9 +494,7 @@ public class EnterpriseConnectorIntegrationTest {
         
         // Test client statistics
         EnhancedHttpClient.ClientStatistics stats = client.getStatistics();
-        if (stats == null) {
-            throw new AssertionError("Client statistics should not be null");
-        }
+        assertThat(stats).isNotNull();
         
         client.shutdown();
         
@@ -525,9 +518,7 @@ public class EnterpriseConnectorIntegrationTest {
         
         // Test processor statistics
         EnhancedStreamingProcessor.ProcessingStatistics stats = processor.getStatistics();
-        if (stats == null) {
-            throw new AssertionError("Processing statistics should not be null");
-        }
+        assertThat(stats).isNotNull();
         
         log.info("✅ Enhanced Streaming Processor test passed");
     }
@@ -551,12 +542,8 @@ public class EnterpriseConnectorIntegrationTest {
         
         // Test operational status
         OperationalFeaturesManager.OperationalStatus status = manager.getOperationalStatus();
-        if (status == null) {
-            throw new AssertionError("Operational status should not be null");
-        }
-        if (status.getOverallHealth() == null) {
-            throw new AssertionError("Overall health should not be null");
-        }
+        assertThat(status).isNotNull();
+        assertThat(status.getOverallHealth()).isNotNull();
         
         // Test service availability
         boolean available = manager.isServiceAvailable("test-service");
@@ -681,147 +668,5 @@ public class EnterpriseConnectorIntegrationTest {
                 .setBody("{\"id\": 1, \"data\": \"protected content\"}"));
     }
     
-    // Custom assertion methods
-    
-    private static IntegerAssertion assertThat(int actual) {
-        return new IntegerAssertion(actual);
-    }
-    
-    private static LongAssertion assertThat(long actual) {
-        return new LongAssertion(actual);
-    }
-    
-    private static BooleanAssertion assertThat(boolean actual) {
-        return new BooleanAssertion(actual);
-    }
-    
-    private static StringAssertion assertThat(String actual) {
-        return new StringAssertion(actual);
-    }
-    
-    private static <T> ListAssertion<T> assertThat(List<T> actual) {
-        return new ListAssertion<>(actual);
-    }
-    
-    // Simple assertion classes
-    static class ObjectAssertion {
-        private final Object actual;
-        
-        ObjectAssertion(Object actual) {
-            this.actual = actual;
-        }
-        
-        public ObjectAssertion isNotNull() {
-            if (actual == null) {
-                throw new AssertionError("Expected non-null value");
-            }
-            return this;
-        }
-        
-        public ObjectAssertion isEqualTo(Object expected) {
-            if (!Objects.equals(actual, expected)) {
-                throw new AssertionError("Expected " + expected + " but was " + actual);
-            }
-            return this;
-        }
-    }
-    
-    static class IntegerAssertion {
-        private final int actual;
-        
-        IntegerAssertion(int actual) {
-            this.actual = actual;
-        }
-        
-        public IntegerAssertion isEqualTo(int expected) {
-            if (actual != expected) {
-                throw new AssertionError("Expected " + expected + " but was " + actual);
-            }
-            return this;
-        }
-    }
-    
-    static class LongAssertion {
-        private final long actual;
-        
-        LongAssertion(long actual) {
-            this.actual = actual;
-        }
-        
-        public LongAssertion isGreaterThan(long threshold) {
-            if (actual <= threshold) {
-                throw new AssertionError("Expected " + actual + " to be greater than " + threshold);
-            }
-            return this;
-        }
-    }
-    
-    static class BooleanAssertion {
-        private final boolean actual;
-        
-        BooleanAssertion(boolean actual) {
-            this.actual = actual;
-        }
-        
-        public BooleanAssertion isTrue() {
-            if (!actual) {
-                throw new AssertionError("Expected true but was false");
-            }
-            return this;
-        }
-        
-        public BooleanAssertion isFalse() {
-            if (actual) {
-                throw new AssertionError("Expected false but was true");
-            }
-            return this;
-        }
-    }
-    
-    static class StringAssertion {
-        private final String actual;
-        
-        StringAssertion(String actual) {
-            this.actual = actual;
-        }
-        
-        public StringAssertion contains(String substring) {
-            if (actual == null || !actual.contains(substring)) {
-                throw new AssertionError("Expected string to contain '" + substring + "' but was '" + actual + "'");
-            }
-            return this;
-        }
-        
-        public StringAssertion isEqualTo(String expected) {
-            if (!Objects.equals(actual, expected)) {
-                throw new AssertionError("Expected '" + expected + "' but was '" + actual + "'");
-            }
-            return this;
-        }
-    }
-    
-    static class ListAssertion<T> {
-        private final List<T> actual;
-        
-        ListAssertion(List<T> actual) {
-            this.actual = actual;
-        }
-        
-        public ListAssertion<T> hasSize(int expectedSize) {
-            if (actual == null) {
-                throw new AssertionError("Expected list with size " + expectedSize + " but was null");
-            }
-            if (actual.size() != expectedSize) {
-                throw new AssertionError("Expected list with size " + expectedSize + " but was " + actual.size());
-            }
-            return this;
-        }
-        
-        public ListAssertion<T> isNotNull() {
-            if (actual == null) {
-                throw new AssertionError("Expected non-null list");
-            }
-            return this;
-        }
-    }
+    // Helper methods - custom assertion classes removed, using AssertJ instead
 }
