@@ -680,12 +680,20 @@ public class AdvancedTransformationEngine {
     /**
      * Get system hostname.
      */
-    private String getHostname() {
+    private static final String cachedHostname;
+
+    static {
+        String hostname;
         try {
-            return java.net.InetAddress.getLocalHost().getHostName();
+            hostname = java.net.InetAddress.getLocalHost().getHostName();
         } catch (Exception e) {
-            return "unknown";
+            hostname = "unknown";
         }
+        cachedHostname = hostname;
+    }
+
+    private String getHostname() {
+        return cachedHostname;
     }
     
     /**
