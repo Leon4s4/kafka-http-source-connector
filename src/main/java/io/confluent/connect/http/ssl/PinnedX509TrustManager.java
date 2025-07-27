@@ -20,12 +20,11 @@ public class PinnedX509TrustManager implements X509TrustManager {
     private final List<String> pinnedCertificates;
     
     public PinnedX509TrustManager(List<String> pinnedCertificates) {
-        this.pinnedCertificates = pinnedCertificates;
         if (pinnedCertificates == null || pinnedCertificates.isEmpty()) {
-            log.warn("No certificate pins provided - all connections will be rejected");
-        } else {
-            log.info("Certificate pinning enabled with {} pins", pinnedCertificates.size());
+            throw new IllegalArgumentException("No certificate pins provided. Certificate pinning requires at least one pin.");
         }
+        this.pinnedCertificates = pinnedCertificates;
+        log.info("Certificate pinning enabled with {} pins", pinnedCertificates.size());
     }
     
     @Override
