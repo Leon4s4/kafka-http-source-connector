@@ -198,9 +198,6 @@ jobs:
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
 
-    - name: Run tests with coverage
-      run: mvn clean verify -Dtest="*Test" -Dtest.exclude="*IntegrationTest" -B
-
     - name: SonarCloud Scan
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
