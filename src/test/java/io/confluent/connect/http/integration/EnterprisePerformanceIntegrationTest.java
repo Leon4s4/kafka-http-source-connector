@@ -13,6 +13,7 @@ import org.apache.kafka.connect.source.SourceRecord;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -209,9 +210,7 @@ public class EnterprisePerformanceIntegrationTest {
             // Test multiple concurrent-like operations
             for (int i = 0; i < 50; i++) {
                 var stats = client.getStatistics();
-                if (stats == null) {
-                    throw new AssertionError("Client statistics should not be null");
-                }
+                assertThat(stats).isNotNull();
             }
             
             long duration = System.currentTimeMillis() - startTime;
@@ -247,9 +246,7 @@ public class EnterprisePerformanceIntegrationTest {
             // Test processing throughput
             for (int i = 0; i < 100; i++) {
                 var stats = processor.getStatistics();
-                if (stats == null) {
-                    throw new AssertionError("Processor statistics should not be null");
-                }
+                assertThat(stats).isNotNull();
             }
             
             long duration = System.currentTimeMillis() - startTime;

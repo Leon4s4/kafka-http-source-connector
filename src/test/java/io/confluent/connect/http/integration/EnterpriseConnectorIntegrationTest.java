@@ -11,6 +11,7 @@ import org.apache.kafka.connect.source.SourceRecord;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
@@ -1141,12 +1142,8 @@ public class EnterpriseConnectorIntegrationTest {
         // Verify authentication header was sent
         RecordedRequest request = mockApiServer.takeRequest();
         String authHeader = request.getHeader("Authorization");
-        if (authHeader == null) {
-            throw new AssertionError("Authorization header should not be null");
-        }
-        if (!authHeader.startsWith("Basic")) {
-            throw new AssertionError("Authorization header should start with 'Basic' but was: " + authHeader);
-        }
+        assertThat(authHeader).isNotNull();
+        assertThat(authHeader).startsWith("Basic");
         
         log.info("✅ Basic Authentication test 1 passed");
     }
@@ -1209,9 +1206,7 @@ public class EnterpriseConnectorIntegrationTest {
         // Verify API key header was sent
         RecordedRequest request = mockApiServer.takeRequest();
         String apiKeyHeader = request.getHeader("X-API-KEY"); // Using the default header name
-        if (apiKeyHeader == null || !apiKeyHeader.equals("test-api-key-12345")) {
-            throw new AssertionError("Expected X-API-KEY header to be 'test-api-key-12345' but was: " + apiKeyHeader);
-        }
+        assertThat(apiKeyHeader).isEqualTo("test-api-key-12345");
         
         log.info("✅ API Key Authentication test 1 passed");
     }
@@ -1243,9 +1238,7 @@ public class EnterpriseConnectorIntegrationTest {
         // Verify API key was sent as query parameter
         RecordedRequest request = mockApiServer.takeRequest();
         String apiKeyParam = request.getRequestUrl().queryParameter("apikey");
-        if (apiKeyParam == null || !apiKeyParam.equals("query-api-key-67890")) {
-            throw new AssertionError("Expected apikey query parameter to be 'query-api-key-67890' but was: " + apiKeyParam);
-        }
+        assertThat(apiKeyParam).isEqualTo("query-api-key-67890");
         
         log.info("✅ API Key Authentication test 2 passed");
     }

@@ -13,6 +13,7 @@ import org.apache.kafka.connect.source.SourceRecord;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -94,27 +95,21 @@ public class SimplifiedEnterpriseIntegrationTest {
         
         // Test connector version
         String version = connector.version();
-        if (version == null) {
-            throw new AssertionError("Connector version should not be null");
-        }
+        assertThat(version).isNotNull();
         
         // Start connector
         connector.start(config);
         
         // Test task configuration
         List<Map<String, String>> taskConfigs = connector.taskConfigs(1);
-        if (taskConfigs == null || taskConfigs.size() != 1) {
-            throw new AssertionError("Expected 1 task config");
-        }
+        assertThat(taskConfigs).isNotNull().hasSize(1);
         
         // Start task
         task.start(taskConfigs.get(0));
         
         // Test polling
         List<SourceRecord> records = task.poll();
-        if (records == null) {
-            throw new AssertionError("Expected non-null records");
-        }
+        assertThat(records).isNotNull();
         
         log.info("✅ Enterprise Connector Basic Functionality test passed");
     }
@@ -131,22 +126,15 @@ public class SimplifiedEnterpriseIntegrationTest {
         Map<String, String> validConfig = createBaseConnectorConfig();
         var validResult = validator.validateConfiguration(validConfig);
         
-        if (!validResult.isValid()) {
-            throw new AssertionError("Valid configuration should pass validation");
-        }
-        
-        if (validResult.hasErrors()) {
-            throw new AssertionError("Valid configuration should not have errors");
-        }
+        assertThat(validResult.isValid()).isTrue();
+        assertThat(validResult.hasErrors()).isFalse();
         
         // Test invalid configuration
         Map<String, String> invalidConfig = new HashMap<>();
         invalidConfig.put("invalid.key", "invalid.value");
         var invalidResult = validator.validateConfiguration(invalidConfig);
         
-        if (!invalidResult.hasErrors()) {
-            throw new AssertionError("Invalid configuration should have errors");
-        }
+        assertThat(invalidResult.hasErrors()).isTrue();
         
         log.info("✅ Enhanced Configuration Validation test passed");
     }
@@ -168,9 +156,7 @@ public class SimplifiedEnterpriseIntegrationTest {
         try {
             // Test client statistics
             var stats = client.getStatistics();
-            if (stats == null) {
-                throw new AssertionError("Client statistics should not be null");
-            }
+            assertThat(stats).isNotNull();
             
             log.info("HTTP Client statistics: {}", stats);
             
@@ -198,9 +184,7 @@ public class SimplifiedEnterpriseIntegrationTest {
         try {
             // Test processor statistics
             var stats = processor.getStatistics();
-            if (stats == null) {
-                throw new AssertionError("Processor statistics should not be null");
-            }
+            assertThat(stats).isNotNull();
             
             log.info("Streaming processor statistics: {}", stats);
             
@@ -235,15 +219,11 @@ public class SimplifiedEnterpriseIntegrationTest {
             cacheManager.put(IntelligentCacheManager.CacheType.RESPONSE, testKey, testValue);
             Object cachedValue = cacheManager.get(IntelligentCacheManager.CacheType.RESPONSE, testKey, String.class);
             
-            if (!testValue.equals(cachedValue)) {
-                throw new AssertionError("Cache should return the stored value");
-            }
+            assertThat(cachedValue).isEqualTo(testValue);
             
             // Test cache statistics
             var stats = cacheManager.getStatistics();
-            if (stats == null) {
-                throw new AssertionError("Cache statistics should not be null");
-            }
+            assertThat(stats).isNotNull();
             
             log.info("Cache statistics: {}", stats);
             
@@ -274,13 +254,8 @@ public class SimplifiedEnterpriseIntegrationTest {
             
             // Test operational status
             var status = manager.getOperationalStatus();
-            if (status == null) {
-                throw new AssertionError("Operational status should not be null");
-            }
-            
-            if (status.getOverallHealth() == null) {
-                throw new AssertionError("Overall health should not be null");
-            }
+            assertThat(status).isNotNull();
+            assertThat(status.getOverallHealth()).isNotNull();
             
             // Test service availability
             boolean available = manager.isServiceAvailable("test-service");
@@ -309,9 +284,7 @@ public class SimplifiedEnterpriseIntegrationTest {
         connector.start(fullConfig);
         
         List<Map<String, String>> taskConfigs = connector.taskConfigs(1);
-        if (taskConfigs == null || taskConfigs.size() != 1) {
-            throw new AssertionError("Expected 1 task config");
-        }
+        assertThat(taskConfigs).isNotNull().hasSize(1);
         
         task.start(taskConfigs.get(0));
         
@@ -324,9 +297,7 @@ public class SimplifiedEnterpriseIntegrationTest {
                     .setBody("{\"id\": " + (i + 1) + ", \"iteration\": " + i + "}"));
             
             List<SourceRecord> records = task.poll();
-            if (records == null) {
-                throw new AssertionError("Expected non-null records in iteration " + i);
-            }
+            assertThat(records).as("Expected non-null records in iteration %d", i).isNotNull();
             
             Thread.sleep(100); // Small delay between polls
         }

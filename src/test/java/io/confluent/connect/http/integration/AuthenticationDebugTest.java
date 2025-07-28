@@ -6,6 +6,7 @@ import org.apache.kafka.connect.source.SourceRecord;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -142,10 +143,10 @@ public class AuthenticationDebugTest {
         // Replicate the exact assertion from the failing test
         if (apiKeyHeader == null || !apiKeyHeader.equals("test-api-key-12345")) {
             log.error("❌ Expected X-API-KEY header to be 'test-api-key-12345' but was: " + apiKeyHeader);
-            throw new AssertionError("Expected X-API-KEY header to be 'test-api-key-12345' but was: " + apiKeyHeader);
         } else {
             log.info("✅ X-API-KEY header present: {}", apiKeyHeader);
         }
+        assertThat(apiKeyHeader).isEqualTo("test-api-key-12345");
         
         log.info("✅ API Key Authentication debug completed");
     }
