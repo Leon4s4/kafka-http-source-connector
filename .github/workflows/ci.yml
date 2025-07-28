@@ -5,6 +5,9 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+  schedule:
+    # Run performance benchmarks daily at 3 AM UTC
+    - cron: '0 3 * * *'
 
 env:
   MAVEN_OPTS: -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
@@ -194,7 +197,7 @@ jobs:
   performance-test:
     name: Performance Benchmarks
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'schedule'
     
     steps:
     - name: Checkout code
@@ -213,25 +216,14 @@ jobs:
         mvn clean compile test-compile -B
         timeout 300 mvn test -Dtest="*IntegrationTest" -B || true
 
-    - name: Performance results comment
-      if: github.event_name == 'pull_request'
-      uses: actions/github-script@v6
+    - name: Upload performance results
+      uses: actions/upload-artifact@v4
+      if: always()
       with:
-        script: |
-          const fs = require('fs');
-          const path = 'target/surefire-reports';
-          
-          if (fs.existsSync(path)) {
-            const files = fs.readdirSync(path);
-            const testFiles = files.filter(f => f.endsWith('.xml'));
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `## 🚀 Performance Test Results\n\n✅ Performance benchmarks completed.\n\n**Test Files**: ${testFiles.length}\n**Build Status**: ${process.env.GITHUB_RUN_ID ? 'Passed' : 'Failed'}\n\nDetailed results available in the [GitHub Actions run](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}).`
-            });
-          }
+        name: performance-benchmark-results
+        path: |
+          target/surefire-reports/
+        retention-days: 7
 
   compatibility-test:
     name: Kafka Compatibility Test
