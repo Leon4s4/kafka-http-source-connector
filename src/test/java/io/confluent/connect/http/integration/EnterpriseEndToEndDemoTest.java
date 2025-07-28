@@ -7,6 +7,7 @@ import org.apache.kafka.connect.source.SourceRecord;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -112,9 +113,7 @@ public class EnterpriseEndToEndDemoTest {
         String version = connector.version();
         log.info("✅ Connector Version: {}", version);
         
-        if (version == null) {
-            throw new AssertionError("Connector version should not be null");
-        }
+        assertThat(version).isNotNull();
         
         // Start connector with JMX enabled
         connector.start(config);
@@ -122,9 +121,7 @@ public class EnterpriseEndToEndDemoTest {
         
         // Test task configuration
         List<Map<String, String>> taskConfigs = connector.taskConfigs(1);
-        if (taskConfigs == null || taskConfigs.size() != 1) {
-            throw new AssertionError("Expected 1 task config");
-        }
+        assertThat(taskConfigs).isNotNull().hasSize(1);
         log.info("✅ Task configuration generated successfully");
         
         // Start task
@@ -133,9 +130,7 @@ public class EnterpriseEndToEndDemoTest {
         
         // Test polling with enterprise features active
         List<SourceRecord> records = task.poll();
-        if (records == null) {
-            throw new AssertionError("Expected non-null records");
-        }
+        assertThat(records).isNotNull();
         log.info("✅ Data polling successful with enterprise features active");
         
         log.info("🎉 Basic Enterprise Connectivity and JMX test PASSED");

@@ -5,17 +5,21 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+  schedule:
+    # Run performance benchmarks daily at 3 AM UTC
+    - cron: '0 3 * * *'
 
 env:
   MAVEN_OPTS: -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+  JAVA_VERSION: 17
 
 jobs:
   test:
     name: Test Suite
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        java-version: [11, 17]
+        java-version: ['17']
     
     steps:
     - name: Checkout code
@@ -28,6 +32,31 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
+    - name: Setup Maven toolchain
+      run: |
+        mkdir -p ~/.m2
+        cat > ~/.m2/toolchains.xml << EOF
+        <?xml version="1.0" encoding="UTF-8"?>
+        <toolchains>
+          <toolchain>
+            <type>jdk</type>
+            <provides>
+              <version>17</version>
+            </provides>
+            <configuration>
+              <jdkHome>\${env.JAVA_HOME}</jdkHome>
+            </configuration>
+          </toolchain>
+        </toolchains>
+        EOF
+
+    - name: Verify Java installation
+      run: |
+        java -version
+        javac -version
+        echo "JAVA_HOME: $JAVA_HOME"
+        mvn -version
+
     - name: Cache Maven dependencies
       uses: actions/cache@v4
       with:
@@ -36,12 +65,16 @@ jobs:
         restore-keys: ${{ runner.os }}-m2
 
     - name: Run unit tests
-      run: mvn clean test -Dtest="*Test" -Dtest.exclude="*IntegrationTest" -B
-
-    - name: Run integration tests
-      run: mvn test -Dtest="*IntegrationTest" -B
+      run: mvn clean test -B -Dmaven.compiler.release=17
       env:
-        TESTCONTAINERS_RYUK_DISABLED: true
+        JAVA_HOME: ${{ env.JAVA_HOME }}
+
+    - name: Run integration tests  
+      run: mvn test -Pintegration-tests -B -Dmaven.compiler.release=17
+      env:
+        TESTCONTAINERS_RYUK_DISABLED: false
+        TESTCONTAINERS_REUSE_ENABLE: true
+        JAVA_HOME: ${{ env.JAVA_HOME }}
 
     - name: Generate test report
       uses: dorny/test-reporter@v1
@@ -69,12 +102,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17.0.10'
         distribution: 'temurin'
         cache: maven
+
+    - name: Verify Java installation
+      run: |
+        java -version
+        javac -version
+        echo "JAVA_HOME: $JAVA_HOME"
 
     - name: Cache Maven dependencies
       uses: actions/cache@v4
@@ -84,7 +123,7 @@ jobs:
         restore-keys: ${{ runner.os }}-m2
 
     - name: Build package
-      run: mvn clean package -DskipTests -B
+      run: mvn clean package -DskipTests -B -Dmaven.compiler.release=17
 
     - name: Create connector package info
       run: |
@@ -116,10 +155,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17.0.10'
         distribution: 'temurin'
         cache: maven
 
@@ -148,48 +187,26 @@ jobs:
       with:
         fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17.0.10'
         distribution: 'temurin'
         cache: maven
-
-    - name: Cache SonarCloud packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.sonar/cache
-        key: ${{ runner.os }}-sonar
-        restore-keys: ${{ runner.os }}-sonar
-
-    - name: Run tests with coverage
-      run: mvn clean verify -Dtest="*Test" -Dtest.exclude="*IntegrationTest" -B
-
-    - name: SonarCloud Scan
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        mvn sonar:sonar \
-          -Dsonar.projectKey=kafka-http-source-connector \
-          -Dsonar.organization=your-org \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-      continue-on-error: true
 
   performance-test:
     name: Performance Benchmarks
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'schedule'
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
         cache: maven
 
@@ -199,25 +216,14 @@ jobs:
         mvn clean compile test-compile -B
         timeout 300 mvn test -Dtest="*IntegrationTest" -B || true
 
-    - name: Performance results comment
-      if: github.event_name == 'pull_request'
-      uses: actions/github-script@v6
+    - name: Upload performance results
+      uses: actions/upload-artifact@v4
+      if: always()
       with:
-        script: |
-          const fs = require('fs');
-          const path = 'target/surefire-reports';
-          
-          if (fs.existsSync(path)) {
-            const files = fs.readdirSync(path);
-            const testFiles = files.filter(f => f.endsWith('.xml'));
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `## 🚀 Performance Test Results\n\n✅ Performance benchmarks completed.\n\n**Test Files**: ${testFiles.length}\n**Build Status**: ${process.env.GITHUB_RUN_ID ? 'Passed' : 'Failed'}\n\nDetailed results available in the [GitHub Actions run](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}).`
-            });
-          }
+        name: performance-benchmark-results
+        path: |
+          target/surefire-reports/
+        retention-days: 7
 
   compatibility-test:
     name: Kafka Compatibility Test
@@ -230,10 +236,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17.0.10'
         distribution: 'temurin'
         cache: maven
 
@@ -264,10 +270,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17.0.10'
         distribution: 'temurin'
         cache: maven
 

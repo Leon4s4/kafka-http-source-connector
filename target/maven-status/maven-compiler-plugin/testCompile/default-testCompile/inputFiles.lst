@@ -1,3 +1,5 @@
+/Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/integration/AuthenticationDebugTest.java
+/Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/integration/ReliableEnterpriseIntegrationTest.java
 /Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/unit/FieldEncryptionManagerTest.java
 /Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/integration/EnterprisePerformanceIntegrationTest.java
 /Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/integration/SimplifiedEnterpriseIntegrationTest.java

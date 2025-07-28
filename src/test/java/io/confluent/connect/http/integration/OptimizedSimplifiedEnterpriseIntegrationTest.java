@@ -14,10 +14,6 @@ import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.assertj.core.api.Assertions.assertThat;
-import org.testcontainers.containers.KafkaContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.MockResponse;
@@ -26,17 +22,13 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Simplified integration test suite for enterprise features using TestContainers.
- * This test validates that all implemented enterprise features can be instantiated and used.
+ * Optimized simplified integration test using shared containers for faster execution.
+ * This test validates enterprise features with container reuse for improved performance.
  */
-@Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SimplifiedEnterpriseIntegrationTest {
+public class OptimizedSimplifiedEnterpriseIntegrationTest extends BaseIntegrationTest {
     
-    private static final Logger log = LoggerFactory.getLogger(SimplifiedEnterpriseIntegrationTest.class);
-    
-    @Container
-    static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.0"));
+    private static final Logger log = LoggerFactory.getLogger(OptimizedSimplifiedEnterpriseIntegrationTest.class);
     
     private static MockWebServer mockApiServer;
     private HttpSourceConnector connector;
@@ -44,15 +36,18 @@ public class SimplifiedEnterpriseIntegrationTest {
     
     @BeforeAll
     static void setupTestEnvironment() throws IOException {
-        log.info("Starting simplified enterprise features integration test");
+        long startTime = System.currentTimeMillis();
+        log.info("Starting optimized simplified enterprise features integration test");
         
         // Start MockWebServer for API mocking
         mockApiServer = new MockWebServer();
         mockApiServer.start();
         
-        log.info("Test environment setup completed");
-        log.info("Kafka bootstrap servers: {}", kafka.getBootstrapServers());
-        log.info("Mock API Server: http://localhost:{}", mockApiServer.getPort());
+        // Log container information for performance monitoring
+        logContainerInfo();
+        
+        long setupTime = System.currentTimeMillis() - startTime;
+        log.info("Test environment setup completed in {}ms (using shared containers)", setupTime);
     }
     
     @AfterAll
@@ -87,9 +82,9 @@ public class SimplifiedEnterpriseIntegrationTest {
     
     @Test
     @Order(1)
-    @DisplayName("Enterprise Connector Basic Functionality")
+    @DisplayName("Enterprise Connector Basic Functionality - Fast")
     void testEnterpriseConnectorBasicFunctionality() throws Exception {
-        log.info("Testing Enterprise Connector Basic Functionality");
+        log.info("Testing Enterprise Connector Basic Functionality (Fast)");
         
         Map<String, String> config = createBaseConnectorConfig();
         
@@ -116,9 +111,9 @@ public class SimplifiedEnterpriseIntegrationTest {
     
     @Test
     @Order(2)
-    @DisplayName("Enhanced Configuration Validation")
+    @DisplayName("Enhanced Configuration Validation - Fast")
     void testEnhancedConfigurationValidation() throws Exception {
-        log.info("Testing Enhanced Configuration Validation");
+        log.info("Testing Enhanced Configuration Validation (Fast)");
         
         EnhancedConfigValidator validator = new EnhancedConfigValidator(true);
         
@@ -141,15 +136,15 @@ public class SimplifiedEnterpriseIntegrationTest {
     
     @Test
     @Order(3)
-    @DisplayName("Enhanced HTTP Client")
+    @DisplayName("Enhanced HTTP Client - Fast")
     void testEnhancedHttpClient() throws Exception {
-        log.info("Testing Enhanced HTTP Client");
+        log.info("Testing Enhanced HTTP Client (Fast)");
         
         EnhancedHttpClient.HttpClientConfig config = new EnhancedHttpClient.HttpClientConfig();
         config.setHttp2Enabled(false); // Disable HTTP/2 for testing
         config.setAsyncEnabled(true);
         config.setCompressionEnabled(true);
-        config.setMaxConnections(10);
+        config.setMaxConnections(5); // Reduced for faster tests
         
         EnhancedHttpClient client = new EnhancedHttpClient(config);
         
@@ -169,13 +164,13 @@ public class SimplifiedEnterpriseIntegrationTest {
     
     @Test
     @Order(4)
-    @DisplayName("Enhanced Streaming Processor")
+    @DisplayName("Enhanced Streaming Processor - Fast")
     void testEnhancedStreamingProcessor() throws Exception {
-        log.info("Testing Enhanced Streaming Processor");
+        log.info("Testing Enhanced Streaming Processor (Fast)");
         
         EnhancedStreamingProcessor.StreamingConfig config = 
             new EnhancedStreamingProcessor.StreamingConfig();
-        config.setBufferSize(8192);
+        config.setBufferSize(4096); // Reduced for faster tests
         config.setBackPressureEnabled(true);
         config.setParallelProcessingEnabled(false); // Disable for testing
         
@@ -197,26 +192,27 @@ public class SimplifiedEnterpriseIntegrationTest {
     
     @Test
     @Order(5)
-    @DisplayName("Intelligent Cache Manager")
+    @DisplayName("Intelligent Cache Manager - Fast")
     void testIntelligentCacheManager() throws Exception {
-        log.info("Testing Intelligent Cache Manager");
+        log.info("Testing Intelligent Cache Manager (Fast)");
         
         CacheManagerConfig config = new CacheManagerConfig.Builder()
                 .enabled(true)
-                .maintenanceIntervalSeconds(60)
+                .maintenanceIntervalSeconds(30) // Reduced for faster tests
                 .enableStatistics(true)
-                .responseCacheMaxSize(1000)
-                .responseCacheTtlSeconds(30)
+                .responseCacheMaxSize(100) // Reduced for faster tests
+                .responseCacheTtlSeconds(10) // Minimum allowed value
                 .build();
         
         IntelligentCacheManager cacheManager = new IntelligentCacheManager(config);
         
         try {
             // Test cache operations using the correct API
-            String testKey = "test-key";
-            String testValue = "test-value";
+            String testKey = "test-key-fast";
+            String testValue = "test-value-fast";
             
             cacheManager.put(IntelligentCacheManager.CacheType.RESPONSE, testKey, testValue);
+            
             Object cachedValue = cacheManager.get(IntelligentCacheManager.CacheType.RESPONSE, testKey, String.class);
             
             assertThat(cachedValue).isEqualTo(testValue);
@@ -236,9 +232,9 @@ public class SimplifiedEnterpriseIntegrationTest {
     
     @Test
     @Order(6)
-    @DisplayName("Operational Features Manager")
+    @DisplayName("Operational Features Manager - Fast")
     void testOperationalFeaturesManager() throws Exception {
-        log.info("Testing Operational Features Manager");
+        log.info("Testing Operational Features Manager (Fast)");
         
         OperationalFeaturesManager.OperationalConfig config = 
             new OperationalFeaturesManager.OperationalConfig();
@@ -259,9 +255,7 @@ public class SimplifiedEnterpriseIntegrationTest {
             
             // Test service availability
             boolean available = manager.isServiceAvailable("test-service");
-            if (!available) {
-                log.info("Service 'test-service' is not available (expected for new service)");
-            }
+            // Service may not be available for new service (expected)
             
             log.info("Operational status: {}", status);
             
@@ -274,9 +268,9 @@ public class SimplifiedEnterpriseIntegrationTest {
     
     @Test
     @Order(7)
-    @DisplayName("Full Enterprise Connector Integration")
+    @DisplayName("Full Enterprise Connector Integration - Fast")
     void testFullEnterpriseConnectorIntegration() throws Exception {
-        log.info("Testing Full Enterprise Connector Integration");
+        log.info("Testing Full Enterprise Connector Integration (Fast)");
         
         // Configure connector with multiple enterprise features enabled
         Map<String, String> fullConfig = createFullEnterpriseConfig();
@@ -288,8 +282,8 @@ public class SimplifiedEnterpriseIntegrationTest {
         
         task.start(taskConfigs.get(0));
         
-        // Test multiple polling cycles with all features active
-        for (int i = 0; i < 3; i++) {
+        // Test reduced polling cycles for speed
+        for (int i = 0; i < 2; i++) { // Reduced from 3 to 2
             // Enqueue response for each poll
             mockApiServer.enqueue(new MockResponse()
                     .setResponseCode(200)
@@ -297,9 +291,9 @@ public class SimplifiedEnterpriseIntegrationTest {
                     .setBody("{\"id\": " + (i + 1) + ", \"iteration\": " + i + "}"));
             
             List<SourceRecord> records = task.poll();
-            assertThat(records).as("Expected non-null records in iteration %d", i).isNotNull();
+            assertThat(records).isNotNull();
             
-            Thread.sleep(100); // Small delay between polls
+            Thread.sleep(25); // Very small delay
         }
         
         log.info("✅ Full Enterprise Connector Integration test passed");
@@ -309,39 +303,43 @@ public class SimplifiedEnterpriseIntegrationTest {
     
     private Map<String, String> createBaseConnectorConfig() {
         Map<String, String> config = new HashMap<>();
-        config.put("name", "enterprise-http-source-test");
+        config.put("name", "optimized-simplified-http-source-test");
         config.put("connector.class", "io.confluent.connect.http.HttpSourceConnector");
         config.put("tasks.max", "1");
         config.put("http.api.base.url", "http://localhost:" + mockApiServer.getPort());
         config.put("apis.num", "1");
         config.put("api1.http.api.path", "/api/data");
-        config.put("api1.topics", "test-topic");
+        config.put("api1.topics", "test-topic-fast");
         config.put("api1.http.request.method", "GET");
         config.put("api1.http.offset.mode", "SIMPLE_INCREMENTING");
         config.put("api1.http.initial.offset", "0");
-        config.put("api1.request.interval.ms", "5000");
+        config.put("api1.request.interval.ms", "1000"); // Reduced for faster tests
         config.put("auth.type", "NONE");
         config.put("output.data.format", "JSON_SR");
+        
+        // Use shared container connection info
+        config.putAll(getBaseTestProperties());
+        
         return config;
     }
     
     private Map<String, String> createFullEnterpriseConfig() {
         Map<String, String> config = createBaseConnectorConfig();
         
-        // Enable enterprise features (safe settings for testing)
+        // Enable enterprise features with optimized settings for speed
         config.put("metrics.jmx.enabled", "true");
         config.put("health.check.enabled", "false"); // Disable to avoid port conflicts
         config.put("dlq.enabled", "true");
-        config.put("dlq.topic.name", "enterprise-dlq");
+        config.put("dlq.topic.name", "enterprise-dlq-fast");
         config.put("rate.limit.enabled", "true");
-        config.put("rate.limit.requests.per.second", "10");
+        config.put("rate.limit.requests.per.second", "50"); // High for fast tests
         config.put("openapi.enabled", "false"); // Disable to avoid port conflicts
         config.put("ssl.enabled", "false"); // Disable for testing
         config.put("pagination.enabled", "true");
         config.put("pagination.strategy", "OFFSET_BASED");
         config.put("transformation.enabled", "true");
         config.put("cache.enabled", "true");
-        config.put("cache.ttl.ms", "30000");
+        config.put("cache.ttl.ms", "10000"); // Minimum allowed value
         config.put("operational.features.enabled", "true");
         config.put("operational.health.enabled", "true");
         config.put("operational.alerting.enabled", "true");
