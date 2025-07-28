@@ -159,7 +159,7 @@ jobs:
         path: ./
         base: main
         head: HEAD
-        extra_args: --debug --only-verified --exclude-detectors=dockerhub --exclude-globs="src/test/**" --exclude-globs="target/**" --exclude-globs="*.class" --exclude-globs="*.jar"
+        extra_args: --debug --only-verified --exclude-detectors=dockerhub --exclude-globs="src/test/**,target/**,*.class,*.jar"
 
     - name: Check TruffleHog results
       if: always()
