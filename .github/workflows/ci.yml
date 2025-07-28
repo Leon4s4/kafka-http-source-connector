@@ -125,6 +125,35 @@ jobs:
     - name: Build package
       run: mvn clean package -DskipTests -B -Dmaven.compiler.release=17
 
+    - name: Create Kafka Connect plugin package
+      run: |
+        # The Confluent Kafka Connect Maven plugin should create the plugin structure
+        # Check if the target/components directory was created
+        if [ -d "target/components" ]; then
+          echo "✅ Kafka Connect plugin structure found in target/components"
+          ls -la target/components/
+        else
+          echo "⚠️ Kafka Connect plugin structure not found, creating manual structure"
+          # Create the plugin directory structure manually
+          mkdir -p kafka-http-source-connector-plugin
+          
+          # Copy the main JAR and dependencies JAR
+          cp target/kafka-http-source-connector-*.jar kafka-http-source-connector-plugin/
+          
+          # Copy all dependencies if we can find them
+          if [ -f "target/kafka-http-source-connector-*-jar-with-dependencies.jar" ]; then
+            echo "✅ Found jar-with-dependencies, using that instead"
+            rm kafka-http-source-connector-plugin/kafka-http-source-connector-*.jar
+            cp target/kafka-http-source-connector-*-jar-with-dependencies.jar kafka-http-source-connector-plugin/
+          fi
+          
+          # Create ZIP package for Kafka Connect
+          zip -r kafka-http-source-connector-plugin.zip kafka-http-source-connector-plugin/
+          
+          # Move to target directory for consistency
+          mv kafka-http-source-connector-plugin.zip target/
+        fi
+
     - name: Create connector package info
       run: |
         echo "# Build Information" > build-info.md
@@ -142,7 +171,9 @@ jobs:
         name: kafka-http-source-connector
         path: |
           target/kafka-http-source-connector-*.jar
-          target/components/packages/*.zip
+          target/kafka-http-source-connector-*-jar-with-dependencies.jar
+          target/components/**/*.zip
+          target/kafka-http-source-connector-plugin.zip
           build-info.md
         retention-days: 30
 
