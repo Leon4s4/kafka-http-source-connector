@@ -11,6 +11,7 @@ import io.confluent.connect.http.converter.RecordConverterFactory;
 import io.confluent.connect.http.debug.DebugLogger;
 import io.confluent.connect.http.encryption.FieldEncryptionManager;
 import io.confluent.connect.http.error.ErrorHandler;
+import io.confluent.connect.http.offset.ODataOffsetManager;
 import io.confluent.connect.http.offset.OffsetManager;
 import io.confluent.connect.http.offset.OffsetManagerFactory;
 import io.confluent.connect.http.util.JsonPointer;
@@ -305,8 +306,8 @@ public class HttpSourceTask extends SourceTask {
         // For OData pagination, use buildNextRequestUrl to get the proper URL format
         String requestOffset = currentOffset;
         if (offsetManager.getOffsetMode() == ApiConfig.HttpOffsetMode.ODATA_PAGINATION && 
-            offsetManager instanceof io.confluent.connect.http.offset.ODataOffsetManager) {
-            requestOffset = ((io.confluent.connect.http.offset.ODataOffsetManager) offsetManager).buildNextRequestUrl();
+            offsetManager instanceof ODataOffsetManager) {
+            requestOffset = ((ODataOffsetManager) offsetManager).buildNextRequestUrl();
             log.debug("Using OData buildNextRequestUrl: {} instead of raw offset: {}", requestOffset, currentOffset);
         }
         
@@ -451,13 +452,13 @@ public class HttpSourceTask extends SourceTask {
     private void extractAndUpdateODataOffset(ApiConfig apiConfig, String responseBody, OffsetManager offsetManager) {
         try {
             // Cast to ODataOffsetManager to access OData-specific methods
-            if (!(offsetManager instanceof io.confluent.connect.http.offset.ODataOffsetManager)) {
+            if (!(offsetManager instanceof ODataOffsetManager)) {
                 log.warn("Expected ODataOffsetManager for ODATA_PAGINATION mode in API: {}", apiConfig.getId());
                 return;
             }
             
-            io.confluent.connect.http.offset.ODataOffsetManager odataManager = 
-                (io.confluent.connect.http.offset.ODataOffsetManager) offsetManager;
+            ODataOffsetManager odataManager = 
+                (ODataOffsetManager) offsetManager;
             
             // Try to extract nextLink first
             String nextLinkField = odataManager.getNextLinkField();

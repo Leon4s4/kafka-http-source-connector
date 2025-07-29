@@ -1,0 +1,1 @@
+[nitpick] Using fully qualified class names in cast operations reduces readability. Consider adding an import statement for ODataOffsetManager and using the simple class name in the cast.

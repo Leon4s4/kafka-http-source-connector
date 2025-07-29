@@ -11,6 +11,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,7 +43,10 @@ public class ODataOffsetManager implements OffsetManager {
     private static final String DEFAULT_NEXTLINK_FIELD = "@odata.nextLink";
     private static final String DEFAULT_DELTALINK_FIELD = "@odata.deltaLink";
     
-    // Token extraction patterns - will be initialized dynamically based on configuration
+    // Thread-safe cache for compiled patterns to avoid repeated compilation overhead
+    private static final ConcurrentHashMap<String, Pattern> PATTERN_CACHE = new ConcurrentHashMap<>();
+    
+    // Token extraction patterns - will be retrieved from cache or compiled once
     private final Pattern skipTokenPattern;
     private final Pattern deltaTokenPattern;
     
@@ -57,7 +61,7 @@ public class ODataOffsetManager implements OffsetManager {
     private final ODataTokenMode tokenMode;
     private final String skipTokenParam;
     private final String deltaTokenParam;
-    private String lastExtractedTokenType; // Track whether last token was from skiptoken or deltatoken
+    private volatile String lastExtractedTokenType; // Track whether last token was from skiptoken or deltatoken - volatile for thread safety
     
     public enum ODataTokenMode {
         FULL_URL,    // Store the complete URL from @odata.nextLink/@odata.deltaLink
@@ -82,9 +86,9 @@ public class ODataOffsetManager implements OffsetManager {
         this.skipTokenParam = apiConfig.getODataSkipTokenParam();
         this.deltaTokenParam = apiConfig.getODataDeltaTokenParam();
         
-        // Create dynamic patterns based on configured token parameter names
-        this.skipTokenPattern = Pattern.compile(Pattern.quote(skipTokenParam) + "=([^&]+)");
-        this.deltaTokenPattern = Pattern.compile(Pattern.quote(deltaTokenParam) + "=([^&]+)");
+        // Get patterns from cache or compile once - thread-safe caching avoids repeated compilation
+        this.skipTokenPattern = getOrCompilePattern(skipTokenParam);
+        this.deltaTokenPattern = getOrCompilePattern(deltaTokenParam);
         
         // Validate required configuration
         if (nextLinkField == null || nextLinkField.trim().isEmpty()) {
@@ -305,6 +309,18 @@ public class ODataOffsetManager implements OffsetManager {
         // This can happen when loading from offset storage or in edge cases
         log.debug("No token extraction context available for token: {}, defaulting to skiptoken", token);
         return false;
+    }
+    
+    /**
+     * Thread-safe method to get a compiled pattern from cache or compile it once.
+     * This avoids repeated pattern compilation overhead for the same token parameters.
+     * 
+     * @param tokenParam the token parameter name (e.g., "$skiptoken", "$deltatoken")
+     * @return the compiled Pattern for extracting the token value
+     */
+    private static Pattern getOrCompilePattern(String tokenParam) {
+        return PATTERN_CACHE.computeIfAbsent(tokenParam, 
+            param -> Pattern.compile(Pattern.quote(param) + "=([^&]+)"));
     }
     
     /**
