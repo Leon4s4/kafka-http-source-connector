@@ -12,14 +12,16 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
+import java.time.Duration;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,12 +40,16 @@ public class ODataCursorPaginationTest extends BaseIntegrationTest {
     
     // Mock OData API server container
     @Container
-    private static final GenericContainer<?> MOCK_ODATA_SERVER = new GenericContainer<>(
+    private static final GenericContainer<?> MOCK_ODATA_SERVER = 
+            new GenericContainer<>(
             DockerImageName.parse("wiremock/wiremock:2.35.0"))
             .withNetwork(SHARED_NETWORK)
             .withNetworkAliases("mock-odata-api")
             .withExposedPorts(8080)
-            .withCommand("--port", "8080", "--verbose");
+            .withCommand("--port", "8080", "--verbose")
+            .waitingFor(Wait.forHttp("/__admin")
+                    .forStatusCode(200)
+                    .withStartupTimeout(Duration.ofSeconds(30)));
     
     @BeforeEach
     void setUp() throws Exception {
@@ -79,9 +85,6 @@ public class ODataCursorPaginationTest extends BaseIntegrationTest {
         
         // Start the connector
         connector.start(connectorConfig);
-        
-        // Wait a moment for initialization
-        Thread.sleep(2000);
         
         // Create and start the source task
         HttpSourceTask task = new HttpSourceTask();
@@ -133,8 +136,7 @@ public class ODataCursorPaginationTest extends BaseIntegrationTest {
         assertNotNull(firstPage, "First page should not be null");
         assertTrue(firstPage.size() > 0, "First page should have records");
         
-        // Wait a moment and poll for second page
-        Thread.sleep(1000);
+        // Poll for second page
         List<SourceRecord> secondPage = task.poll();
         
         // Verify pagination worked
