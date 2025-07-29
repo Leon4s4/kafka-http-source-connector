@@ -1,0 +1,31 @@
+{
+  "name": "odata-sharepoint-connector", 
+  "config": {
+    "connector.class": "io.confluent.connect.http.HttpSourceConnector",
+    "tasks.max": "1",
+    
+    "http.api.base.url": "https://tenant.sharepoint.com",
+    "apis.num": "1",
+    
+    "api1.http.api.path": "/sites/sitename/_api/web/lists/getbytitle('ListName')/items",
+    "api1.topics": "sharepoint-items", 
+    "api1.http.request.method": "GET",
+    "api1.http.offset.mode": "ODATA_PAGINATION",
+    "api1.request.interval.ms": "45000",
+    
+    "api1.odata.nextlink.field": "@odata.nextLink",
+    "api1.odata.deltalink.field": "@odata.deltaLink",
+    "api1.odata.token.mode": "TOKEN_ONLY",
+    "api1.http.response.data.json.pointer": "/value",
+    "api1.http.initial.offset": "?$select=Title,Created,Modified&$orderby=Modified desc",
+    
+    "auth.type": "BEARER", 
+    "bearer.token": "your-sharepoint-access-token",
+    
+    "output.data.format": "AVRO",
+    "schema.registry.url": "http://schema-registry:8081",
+    "auto.register.schemas": "true",
+    
+    "behavior.on.error": "FAIL"
+  }
+}

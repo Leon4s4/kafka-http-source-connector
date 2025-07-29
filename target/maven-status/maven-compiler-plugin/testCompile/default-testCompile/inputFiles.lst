@@ -9,6 +9,8 @@
 /Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/integration/EnterpriseConnectorIntegrationTest.java
 /Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/integration/AuthenticationDebugTest.java
 /Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/integration/BaseIntegrationTest.java
+/Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/integration/ODataPaginationIntegrationTest.java
+/Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/unit/ODataOffsetManagerTest.java
 /Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/integration/EnterprisePerformanceIntegrationTest.java
 /Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/integration/OptimizedHttpSourceConnectorSimpleIntegrationTest.java
 /Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/integration/OptimizedSimplifiedEnterpriseIntegrationTest.java

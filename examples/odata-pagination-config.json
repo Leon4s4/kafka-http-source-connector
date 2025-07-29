@@ -1,0 +1,28 @@
+{
+  "name": "odata-dynamics-connector",
+  "config": {
+    "connector.class": "io.confluent.connect.http.HttpSourceConnector",
+    "tasks.max": "1",
+    
+    "http.api.base.url": "https://org.api.crm.dynamics.com",
+    "apis.num": "1", 
+    
+    "api1.http.api.path": "/api/data/v9.0/accounts",
+    "api1.topics": "dynamics-accounts",
+    "api1.http.request.method": "GET",
+    "api1.http.offset.mode": "ODATA_PAGINATION",
+    "api1.request.interval.ms": "30000",
+    
+    "api1.odata.nextlink.field": "@odata.nextLink",
+    "api1.odata.deltalink.field": "@odata.deltaLink", 
+    "api1.odata.token.mode": "FULL_URL",
+    "api1.http.response.data.json.pointer": "/value",
+    "api1.http.initial.offset": "?$select=name,accountnumber,telephone1,fax&$filter=modifiedon ge '2025-01-01'",
+    
+    "auth.type": "BEARER",
+    "bearer.token": "your-oauth2-access-token-here",
+    
+    "output.data.format": "JSON_SR",
+    "behavior.on.error": "FAIL"
+  }
+}

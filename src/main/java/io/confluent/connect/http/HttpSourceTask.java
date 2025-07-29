@@ -11,6 +11,7 @@ import io.confluent.connect.http.converter.RecordConverterFactory;
 import io.confluent.connect.http.debug.DebugLogger;
 import io.confluent.connect.http.encryption.FieldEncryptionManager;
 import io.confluent.connect.http.error.ErrorHandler;
+import io.confluent.connect.http.offset.ODataOffsetManager;
 import io.confluent.connect.http.offset.OffsetManager;
 import io.confluent.connect.http.offset.OffsetManagerFactory;
 import io.confluent.connect.http.util.JsonPointer;
@@ -302,9 +303,17 @@ public class HttpSourceTask extends SourceTask {
             }
         }
         
+        // For OData pagination, use buildNextRequestUrl to get the proper URL format
+        String requestOffset = currentOffset;
+        if (offsetManager.getOffsetMode() == ApiConfig.HttpOffsetMode.ODATA_PAGINATION && 
+            offsetManager instanceof ODataOffsetManager) {
+            requestOffset = ((ODataOffsetManager) offsetManager).buildNextRequestUrl();
+            log.debug("Using OData buildNextRequestUrl: {} instead of raw offset: {}", requestOffset, currentOffset);
+        }
+        
         // Make HTTP request with chaining variables
         long requestStartTime = System.currentTimeMillis();
-        HttpApiClient.ApiResponse response = apiClient.makeRequest(currentOffset, chainingVars);
+        HttpApiClient.ApiResponse response = apiClient.makeRequest(requestOffset, chainingVars);
         long responseTime = System.currentTimeMillis() - requestStartTime;
         
         // Debug log response details
@@ -374,6 +383,11 @@ public class HttpSourceTask extends SourceTask {
             }
         }
         
+        // For OData pagination, extract nextLink/deltaLink from response
+        if (offsetManager.getOffsetMode() == ApiConfig.HttpOffsetMode.ODATA_PAGINATION) {
+            extractAndUpdateODataOffset(apiConfig, response.getBody(), offsetManager);
+        }
+        
         log.debug("Converted {} records from API: {}", sourceRecords.size(), apiId);
         return sourceRecords;
     }
@@ -430,6 +444,52 @@ public class HttpSourceTask extends SourceTask {
         }
         
         return null;
+    }
+    
+    /**
+     * Extracts and updates OData pagination offset (nextLink/deltaLink) from API response
+     */
+    private void extractAndUpdateODataOffset(ApiConfig apiConfig, String responseBody, OffsetManager offsetManager) {
+        try {
+            // Cast to ODataOffsetManager to access OData-specific methods
+            if (!(offsetManager instanceof ODataOffsetManager)) {
+                log.warn("Expected ODataOffsetManager for ODATA_PAGINATION mode in API: {}", apiConfig.getId());
+                return;
+            }
+            
+            ODataOffsetManager odataManager = 
+                (ODataOffsetManager) offsetManager;
+            
+            // Try to extract nextLink first
+            String nextLinkField = odataManager.getNextLinkField();
+            String nextLinkPointer = "/" + nextLinkField;
+            log.debug("Extracting OData nextLink for API {} using pointer: {}", apiConfig.getId(), nextLinkPointer);
+            Object nextLinkValue = JsonPointer.extract(responseBody, nextLinkPointer);
+            
+            if (nextLinkValue != null && !nextLinkValue.toString().trim().isEmpty()) {
+                log.debug("Found nextLink for API {}: {}", apiConfig.getId(), nextLinkValue);
+                offsetManager.updateOffset(nextLinkValue.toString());
+                return;
+            }
+            
+            // If no nextLink, try deltaLink
+            String deltaLinkField = odataManager.getDeltaLinkField();
+            String deltaLinkPointer = "/" + deltaLinkField;
+            Object deltaLinkValue = JsonPointer.extract(responseBody, deltaLinkPointer);
+            
+            if (deltaLinkValue != null && !deltaLinkValue.toString().trim().isEmpty()) {
+                log.debug("Found deltaLink for API {}: {}", apiConfig.getId(), deltaLinkValue);
+                offsetManager.updateOffset(deltaLinkValue.toString());
+                return;
+            }
+            
+            // No pagination links found - end of data
+            log.debug("No pagination links found in response for API: {}", apiConfig.getId());
+            offsetManager.updateOffset(null);
+            
+        } catch (Exception e) {
+            log.warn("Error extracting OData pagination offset from API {}: {}", apiConfig.getId(), e.getMessage());
+        }
     }
     
     /**

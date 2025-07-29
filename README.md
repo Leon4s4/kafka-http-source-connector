@@ -7,7 +7,7 @@ A production-ready Kafka Connect source connector for ingesting data from HTTP/H
 ### ✅ Core Features (Fully Implemented)
 - **Multiple API Support**: Poll up to 15 different HTTP/HTTPS endpoints simultaneously
 - **Authentication**: Complete support for None, Basic, Bearer Token, OAuth2, and API Key authentication
-- **Offset Management**: Four modes - Simple incrementing, cursor-based pagination, chaining, and snapshot pagination
+- **Offset Management**: Five modes - Simple incrementing, cursor-based pagination, **OData pagination**, chaining, and snapshot pagination
 - **Data Formats**: Full AVRO, JSON Schema Registry, and Protobuf support with Schema Registry integration
 - **Template Variables**: Dynamic URL construction with offset, chaining, date/time, and environment variables
 
@@ -233,8 +233,39 @@ curl -X POST http://localhost:8083/connectors \
 }
 ```
 
-##### OData API Cursor Pagination Example
-For Microsoft Dynamics 365, SharePoint, or other OData APIs:
+#### 4. OData Pagination Mode
+For Microsoft Dynamics 365, SharePoint, Power Platform, and other OData APIs:
+```json
+{
+  "api1.http.offset.mode": "ODATA_PAGINATION",
+  "api1.http.initial.offset": "?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'",
+  "api1.odata.nextlink.field": "@odata.nextLink",
+  "api1.odata.deltalink.field": "@odata.deltaLink", 
+  "api1.odata.token.mode": "FULL_URL",
+  "api1.http.response.data.json.pointer": "/value"
+}
+```
+
+**Key Features:**
+- **Full URL Mode**: Stores complete URLs from `@odata.nextLink`/`@odata.deltaLink` for subsequent requests
+- **Token Only Mode**: Extracts and stores only the `$skiptoken` or `$deltatoken` values  
+- **Configurable Field Names**: Customize the JSON field names for pagination links
+- **Automatic Link Detection**: Prioritizes `@odata.nextLink` for paging, falls back to `@odata.deltaLink` for incremental sync
+
+**Token Modes:**
+- `FULL_URL`: Store complete URLs like `/api/data/v9.0/accounts?$select=name&$skiptoken=...`
+- `TOKEN_ONLY`: Store only token values and append to base path
+
+**OData Token Only Example:**
+```json
+{
+  "api1.odata.token.mode": "TOKEN_ONLY",
+  "api1.http.api.path": "/api/data/v9.0/accounts?$select=name,accountnumber"
+}
+```
+
+##### Legacy OData with CURSOR_PAGINATION
+For backward compatibility, you can still use CURSOR_PAGINATION mode:
 ```json
 {
   "api1.http.offset.mode": "CURSOR_PAGINATION",
@@ -245,15 +276,7 @@ For Microsoft Dynamics 365, SharePoint, or other OData APIs:
 }
 ```
 
-This configuration:
-- Uses `${offset}` template variable in the API path
-- Starts with an initial OData query with field selection and filtering
-- Extracts the next page URL from `@odata.nextLink` 
-- Extracts data records from the `/value` array
-- Automatically handles OData pagination and change tracking
-- Properly encodes special characters (spaces, quotes) while preserving OData operators ($select, $filter)
-
-#### 3. Circuit Breaker Configuration
+#### 5. Circuit Breaker Configuration
 ```json
 {
   "circuit.breaker.enabled": true,
@@ -303,7 +326,7 @@ This configuration:
 }
 ```
 
-#### 4. Chaining Mode (for API Dependencies)
+#### 6. Chaining Mode (for API Dependencies)
 ```json
 {
   "api1.http.offset.mode": "CHAINING",
