@@ -586,6 +586,14 @@ public class EnterpriseConnectorIntegrationTest {
     void testEndToEndIntegration() throws Exception {
         log.info("Testing End-to-End Integration with All Features");
         
+        // Enqueue sufficient responses for all poll operations (1 initial + 5 in loop = 6 total)
+        for (int i = 0; i < 6; i++) {
+            mockApiServer.enqueue(new MockResponse()
+                    .setResponseCode(200)
+                    .setHeader("Content-Type", "application/json")
+                    .setBody("{\"id\": " + (i + 1) + ", \"data\": \"end-to-end-test-data-" + (i + 1) + "\", \"timestamp\": \"2025-07-29T10:0" + i + ":00Z\"}"));
+        }
+        
         // Configure connector with all enterprise features enabled
         Map<String, String> fullConfig = createFullEnterpriseConfig();
         
