@@ -43,7 +43,9 @@ public class ODataOffsetManager implements OffsetManager {
     private static final String DEFAULT_DELTALINK_FIELD = "@odata.deltaLink";
     
     // Token extraction patterns
+    // Thread-safe: Pattern is immutable and used in a read-only context.
     private static final Pattern SKIPTOKEN_PATTERN = Pattern.compile("\\$skiptoken=([^&]+)");
+    // Thread-safe: Pattern is immutable and used in a read-only context.
     private static final Pattern DELTATOKEN_PATTERN = Pattern.compile("\\$deltatoken=([^&]+)");
     
     private final ApiConfig apiConfig;
