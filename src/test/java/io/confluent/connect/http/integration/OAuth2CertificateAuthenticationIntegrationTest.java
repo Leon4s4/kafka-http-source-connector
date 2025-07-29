@@ -62,16 +62,7 @@ public class OAuth2CertificateAuthenticationIntegrationTest {
     }
 }
 
-import io.confluent.connect.http.HttpSourceConnector;
-import io.confluent.connect.http.HttpSourceTask;
-import io.confluent.connect.http.auth.OAuth2CertificateAuthenticator;
-import io.confluent.connect.http.config.HttpSourceConnectorConfig;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
-import org.apache.kafka.connect.source.SourceRecord;
-import org.junit.jupiter.api.*;
-import org.slf4j.Logger;
+// Removed duplicate imports and unreachable class definition starting at line 65.
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
 import org.testcontainers.junit.jupiter.Testcontainers;
