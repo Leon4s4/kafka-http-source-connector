@@ -7,7 +7,7 @@ A production-ready Kafka Connect source connector for ingesting data from HTTP/H
 ### ✅ Core Features (Fully Implemented)
 - **Multiple API Support**: Poll up to 15 different HTTP/HTTPS endpoints simultaneously
 - **Authentication**: Complete support for None, Basic, Bearer Token, OAuth2, and API Key authentication
-- **Offset Management**: Five modes - Simple incrementing, cursor-based pagination, **OData pagination**, chaining, and snapshot pagination
+- **Offset Management**: Five modes - Simple incrementing, cursor-based pagination, **OData pagination with configurable poll intervals**, chaining, and snapshot pagination
 - **Data Formats**: Full AVRO, JSON Schema Registry, and Protobuf support with Schema Registry integration
 - **Template Variables**: Dynamic URL construction with offset, chaining, date/time, and environment variables
 
@@ -108,6 +108,8 @@ curl -X POST http://localhost:8083/connectors \
 | `api{N}.request.interval.ms` | Polling interval in milliseconds | 30000 | No |
 | `api{N}.http.request.headers` | Custom HTTP headers | None | No |
 | `api{N}.http.request.parameters` | Query parameters | None | No |
+| `api{N}.odata.nextlink.poll.interval.ms` | OData nextLink polling interval (pagination) | request.interval.ms | No |
+| `api{N}.odata.deltalink.poll.interval.ms` | OData deltaLink polling interval (incremental) | request.interval.ms | No |
 
 ### Multiple API Configuration Example
 
@@ -251,6 +253,7 @@ For Microsoft Dynamics 365, SharePoint, Power Platform, and other OData APIs:
 - **Token Only Mode**: Extracts and stores only the `$skiptoken` or `$deltatoken` values  
 - **Configurable Field Names**: Customize the JSON field names for pagination links
 - **Automatic Link Detection**: Prioritizes `@odata.nextLink` for paging, falls back to `@odata.deltaLink` for incremental sync
+- **🆕 Configurable Poll Intervals**: Different polling intervals for pagination vs incremental updates
 
 **Token Modes:**
 - `FULL_URL`: Store complete URLs like `/api/data/v9.0/accounts?$select=name&$skiptoken=...`
@@ -261,6 +264,49 @@ For Microsoft Dynamics 365, SharePoint, Power Platform, and other OData APIs:
 {
   "api1.odata.token.mode": "TOKEN_ONLY",
   "api1.http.api.path": "/api/data/v9.0/accounts?$select=name,accountnumber"
+}
+```
+
+##### 🆕 Configurable Poll Intervals for OData
+Optimize polling performance with different intervals for pagination vs incremental updates:
+
+```json
+{
+  "api1.http.offset.mode": "ODATA_PAGINATION",
+  "api1.request.interval.ms": "300000",                    // 5 minutes (standard/fallback)
+  "api1.odata.nextlink.poll.interval.ms": "2000",         // 2 seconds (fast pagination)
+  "api1.odata.deltalink.poll.interval.ms": "600000"       // 10 minutes (slow incremental)
+}
+```
+
+**How It Works:**
+- **nextLink Processing**: Uses fast polling (e.g., 2 seconds) when processing `@odata.nextLink` for efficient pagination
+- **deltaLink Processing**: Uses slower polling (e.g., 10 minutes) when processing `@odata.deltaLink` for incremental updates
+- **Automatic Detection**: Connector automatically switches between intervals based on the current link type
+- **Fallback**: Uses standard `request.interval.ms` if OData-specific intervals aren't configured
+
+**Performance Benefits:**
+- **Faster Initial Sync**: Aggressive nextLink polling processes large datasets quickly
+- **Reduced API Load**: Slower deltaLink polling reduces unnecessary calls during idle periods
+- **Optimal Resource Usage**: CPU and network resources scale with actual processing needs
+
+**Use Case Examples:**
+
+*High-Throughput Initial Sync:*
+```json
+{
+  "api1.request.interval.ms": "60000",                    // 1 minute standard
+  "api1.odata.nextlink.poll.interval.ms": "1000",        // 1 second pagination
+  "api1.odata.deltalink.poll.interval.ms": "300000"      // 5 minutes incremental
+}
+```
+
+*Balanced Performance:*
+```json
+{
+  "api1.request.interval.ms": "120000",                   // 2 minutes standard
+  "api1.odata.nextlink.poll.interval.ms": "3000",        // 3 seconds pagination
+  "api1.odata.deltalink.poll.interval.ms": "600000"      // 10 minutes incremental
 }
 ```
 
@@ -826,9 +872,14 @@ Monitor connector performance:
     
     "api2.http.api.path": "/orders",
     "api2.topics": "orders-topic",
-    "api2.http.offset.mode": "TIMESTAMP_PAGINATION",
-    "api2.http.timestamp.json.pointer": "/last_modified",
-    "api2.request.interval.ms": "45000",
+    "api2.http.offset.mode": "ODATA_PAGINATION",
+    "api2.odata.nextlink.field": "@odata.nextLink",
+    "api2.odata.deltalink.field": "@odata.deltaLink",
+    "api2.odata.token.mode": "FULL_URL",
+    "api2.request.interval.ms": "120000",
+    "api2.odata.nextlink.poll.interval.ms": "3000",
+    "api2.odata.deltalink.poll.interval.ms": "600000",
+    "api2.http.response.data.json.pointer": "/value",
     
     "api3.http.api.path": "/products",
     "api3.topics": "products-topic",
@@ -910,7 +961,8 @@ Licensed under the Apache License 2.0. See LICENSE file for details.
 #### ✅ Fully Implemented Core Features
 - Multiple API endpoint support (up to 15 APIs per connector)
 - Complete authentication suite (None, Basic, Bearer, OAuth2, API Key)
-- Advanced offset management (4 modes: Simple, Cursor, Chaining, Timestamp)
+- Advanced offset management (5 modes: Simple, Cursor, Chaining, OData, Snapshot)
+- **🆕 OData Configurable Poll Intervals**: Dynamic polling optimization for nextLink vs deltaLink processing
 - Schema Registry integration (Avro, JSON Schema, Protobuf)
 - Template variable system with environment and function support
 

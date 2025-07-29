@@ -45,6 +45,8 @@ public class ApiConfig {
     public static final String ODATA_TOKEN_MODE = ".odata.token.mode";
     public static final String ODATA_SKIPTOKEN_PARAM = ".odata.skiptoken.param";
     public static final String ODATA_DELTATOKEN_PARAM = ".odata.deltatoken.param";
+    public static final String ODATA_NEXTLINK_POLL_INTERVAL_MS = ".odata.nextlink.poll.interval.ms";
+    public static final String ODATA_DELTALINK_POLL_INTERVAL_MS = ".odata.deltalink.poll.interval.ms";
     
     // Enums
     public enum HttpRequestMethod {
@@ -245,6 +247,24 @@ public class ApiConfig {
      */
     public String getODataDeltaTokenParam() {
         return getStringProperty(ODATA_DELTATOKEN_PARAM, "$deltatoken");
+    }
+    
+    /**
+     * Gets the OData nextLink poll interval in milliseconds.
+     * This is used for pagination polling (when processing @odata.nextLink).
+     * Defaults to the standard request interval if not specified.
+     */
+    public long getODataNextLinkPollIntervalMs() {
+        return getLongProperty(ODATA_NEXTLINK_POLL_INTERVAL_MS, getRequestIntervalMs());
+    }
+    
+    /**
+     * Gets the OData deltaLink poll interval in milliseconds.
+     * This is used for incremental update polling (when processing @odata.deltaLink).
+     * Defaults to the standard request interval if not specified.
+     */
+    public long getODataDeltaLinkPollIntervalMs() {
+        return getLongProperty(ODATA_DELTALINK_POLL_INTERVAL_MS, getRequestIntervalMs());
     }
     
     /**

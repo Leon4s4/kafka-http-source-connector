@@ -266,7 +266,7 @@ public class HttpSourceTask extends SourceTask {
     private boolean shouldPollApi(ApiConfig apiConfig) {
         long lastPollTime = lastPollTimes.get(apiConfig.getId());
         long currentTime = System.currentTimeMillis();
-        long interval = apiConfig.getRequestIntervalMs();
+        long interval = calculatePollInterval(apiConfig);
         
         // Check time-based condition
         boolean timeCondition = (currentTime - lastPollTime) >= interval;
@@ -275,6 +275,46 @@ public class HttpSourceTask extends SourceTask {
         boolean chainingCondition = chainingManager.shouldExecuteChildApi(apiConfig.getId());
         
         return timeCondition && chainingCondition;
+    }
+    
+    /**
+     * Calculates the appropriate poll interval for an API based on its configuration and current state.
+     * For OData pagination, uses different intervals for nextLink vs deltaLink processing.
+     */
+    private long calculatePollInterval(ApiConfig apiConfig) {
+        // For OData pagination, use different intervals based on the current link type
+        if (apiConfig.getHttpOffsetMode() == ApiConfig.HttpOffsetMode.ODATA_PAGINATION) {
+            String apiId = apiConfig.getId();
+            OffsetManager offsetManager = offsetManagers.get(apiId);
+            
+            if (offsetManager instanceof ODataOffsetManager) {
+                ODataOffsetManager odataManager = (ODataOffsetManager) offsetManager;
+                ODataOffsetManager.ODataLinkType linkType = odataManager.getCurrentLinkType();
+                
+                switch (linkType) {
+                    case NEXTLINK:
+                        // Use faster polling for pagination (nextLink processing)
+                        long nextLinkInterval = apiConfig.getODataNextLinkPollIntervalMs();
+                        log.debug("Using nextLink poll interval {} ms for API {}", nextLinkInterval, apiId);
+                        return nextLinkInterval;
+                        
+                    case DELTALINK:
+                        // Use slower polling for incremental updates (deltaLink processing)
+                        long deltaLinkInterval = apiConfig.getODataDeltaLinkPollIntervalMs();
+                        log.debug("Using deltaLink poll interval {} ms for API {}", deltaLinkInterval, apiId);
+                        return deltaLinkInterval;
+                        
+                    case UNKNOWN:
+                    default:
+                        // Use standard interval for initial requests or unknown state
+                        log.debug("Using standard poll interval for API {} (link type: {})", apiId, linkType);
+                        return apiConfig.getRequestIntervalMs();
+                }
+            }
+        }
+        
+        // For non-OData APIs or if offset manager is not available, use standard interval
+        return apiConfig.getRequestIntervalMs();
     }
     
     /**
