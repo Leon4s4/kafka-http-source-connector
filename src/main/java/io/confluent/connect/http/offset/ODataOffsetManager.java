@@ -68,6 +68,12 @@ public class ODataOffsetManager implements OffsetManager {
         TOKEN_ONLY   // Extract and store only the $skiptoken/$deltatoken value
     }
     
+    public enum ODataLinkType {
+        NEXTLINK,    // Processing @odata.nextLink for pagination
+        DELTALINK,   // Processing @odata.deltaLink for incremental updates
+        UNKNOWN      // No active pagination link or initial state
+    }
+    
     public ODataOffsetManager(ApiConfig apiConfig, SourceTaskContext context) {
         this.apiConfig = apiConfig;
         this.context = context;
@@ -170,6 +176,23 @@ public class ODataOffsetManager implements OffsetManager {
     }
     
     /**
+     * Gets the current OData link type being processed.
+     * This can be used to determine appropriate polling intervals.
+     * 
+     * @return the current link type (NEXTLINK, DELTALINK, or UNKNOWN)
+     */
+    public ODataLinkType getCurrentLinkType() {
+        if (lastExtractedTokenType != null) {
+            if (lastExtractedTokenType.equals(skipTokenParam)) {
+                return ODataLinkType.NEXTLINK;
+            } else if (lastExtractedTokenType.equals(deltaTokenParam)) {
+                return ODataLinkType.DELTALINK;
+            }
+        }
+        return ODataLinkType.UNKNOWN;
+    }
+    
+    /**
      * Gets the token extraction mode
      */
     public ODataTokenMode getTokenMode() {
@@ -215,13 +238,26 @@ public class ODataOffsetManager implements OffsetManager {
             String path = url.getPath();
             String query = url.getQuery();
             
+            // Detect token type from query parameters to set lastExtractedTokenType
             if (query != null && !query.isEmpty()) {
+                if (query.contains(skipTokenParam)) {
+                    this.lastExtractedTokenType = skipTokenParam;
+                    log.debug("Detected {} token in URL: {}", skipTokenParam, fullUrl);
+                } else if (query.contains(deltaTokenParam)) {
+                    this.lastExtractedTokenType = deltaTokenParam;
+                    log.debug("Detected {} token in URL: {}", deltaTokenParam, fullUrl);
+                } else {
+                    this.lastExtractedTokenType = null;
+                    log.debug("No OData tokens detected in URL: {}", fullUrl);
+                }
                 return path + "?" + query;
             } else {
+                this.lastExtractedTokenType = null;
                 return path;
             }
         } catch (MalformedURLException e) {
             log.warn("Failed to parse OData URL: {}, using as-is", fullUrl);
+            this.lastExtractedTokenType = null;
             return fullUrl;
         }
     }

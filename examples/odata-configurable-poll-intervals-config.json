@@ -1,0 +1,42 @@
+{
+  "name": "odata-configurable-poll-intervals-example",
+  "config": {
+    "connector.class": "io.confluent.connect.http.HttpSourceConnector",
+    "tasks.max": "1",
+    "http.api.base.url": "https://yourdomain.crm.dynamics.com",
+    "apis.num": "1",
+    
+    "api1.http.api.path": "/api/data/v9.0/accounts",
+    "api1.topics": "accounts-topic",
+    "api1.http.request.method": "GET",
+    "api1.http.offset.mode": "ODATA_PAGINATION",
+    "api1.http.initial.offset": "",
+    "api1.http.response.data.json.pointer": "/value",
+    
+    "api1.odata.nextlink.field": "@odata.nextLink",
+    "api1.odata.deltalink.field": "@odata.deltaLink",
+    "api1.odata.token.mode": "FULL_URL",
+    "api1.odata.skiptoken.param": "$skiptoken",
+    "api1.odata.deltatoken.param": "$deltatoken",
+    
+    "comment.1": "Standard polling interval (fallback)",
+    "api1.request.interval.ms": "300000",
+    
+    "comment.2": "Fast polling for pagination (nextLink processing)",
+    "api1.odata.nextlink.poll.interval.ms": "2000",
+    
+    "comment.3": "Slow polling for incremental updates (deltaLink processing)",
+    "api1.odata.deltalink.poll.interval.ms": "600000",
+    
+    "auth.type": "OAUTH2",
+    "oauth2.token.url": "https://login.microsoftonline.com/{tenant-id}/oauth2/v2.0/token",
+    "oauth2.client.id": "${env:OAUTH2_CLIENT_ID}",
+    "oauth2.client.secret": "${env:OAUTH2_CLIENT_SECRET}",
+    "oauth2.client.scope": "https://yourdomain.crm.dynamics.com/.default",
+    "oauth2.client.auth.mode": "HEADER",
+    "oauth2.token.property": "access_token",
+    "oauth2.token.refresh.interval.minutes": "50",
+    
+    "output.data.format": "JSON_SR"
+  }
+}

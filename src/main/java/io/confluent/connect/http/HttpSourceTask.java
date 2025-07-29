@@ -266,7 +266,7 @@ public class HttpSourceTask extends SourceTask {
     private boolean shouldPollApi(ApiConfig apiConfig) {
         long lastPollTime = lastPollTimes.get(apiConfig.getId());
         long currentTime = System.currentTimeMillis();
-        long interval = apiConfig.getRequestIntervalMs();
+        long interval = calculatePollInterval(apiConfig);
         
         // Check time-based condition
         boolean timeCondition = (currentTime - lastPollTime) >= interval;
@@ -275,6 +275,46 @@ public class HttpSourceTask extends SourceTask {
         boolean chainingCondition = chainingManager.shouldExecuteChildApi(apiConfig.getId());
         
         return timeCondition && chainingCondition;
+    }
+    
+    /**
+     * Calculates the appropriate poll interval for an API based on its configuration and current state.
+     * For OData pagination, uses different intervals for nextLink vs deltaLink processing.
+     */
+    private long calculatePollInterval(ApiConfig apiConfig) {
+        // For OData pagination, use different intervals based on the current link type
+        if (apiConfig.getHttpOffsetMode() == ApiConfig.HttpOffsetMode.ODATA_PAGINATION) {
+            String apiId = apiConfig.getId();
+            OffsetManager offsetManager = offsetManagers.get(apiId);
+            
+            if (offsetManager instanceof ODataOffsetManager) {
+                ODataOffsetManager odataManager = (ODataOffsetManager) offsetManager;
+                ODataOffsetManager.ODataLinkType linkType = odataManager.getCurrentLinkType();
+                
+                switch (linkType) {
+                    case NEXTLINK:
+                        // Use faster polling for pagination (nextLink processing)
+                        long nextLinkInterval = apiConfig.getODataNextLinkPollIntervalMs();
+                        log.debug("Using nextLink poll interval {} ms for API {}", nextLinkInterval, apiId);
+                        return nextLinkInterval;
+                        
+                    case DELTALINK:
+                        // Use slower polling for incremental updates (deltaLink processing)
+                        long deltaLinkInterval = apiConfig.getODataDeltaLinkPollIntervalMs();
+                        log.debug("Using deltaLink poll interval {} ms for API {}", deltaLinkInterval, apiId);
+                        return deltaLinkInterval;
+                        
+                    case UNKNOWN:
+                    default:
+                        // Use standard interval for initial requests or unknown state
+                        log.debug("Using standard poll interval for API {} (link type: {})", apiId, linkType);
+                        return apiConfig.getRequestIntervalMs();
+                }
+            }
+        }
+        
+        // For non-OData APIs or if offset manager is not available, use standard interval
+        return apiConfig.getRequestIntervalMs();
     }
     
     /**
@@ -348,13 +388,31 @@ public class HttpSourceTask extends SourceTask {
         // Convert to source records
         List<SourceRecord> sourceRecords = new ArrayList<>();
         
+        // For OData pagination, extract nextLink/deltaLink from response FIRST
+        // This is the pagination offset that should be persisted, not individual record offsets
+        String paginationOffset = null;
+        if (offsetManager.getOffsetMode() == ApiConfig.HttpOffsetMode.ODATA_PAGINATION) {
+            paginationOffset = extractAndUpdateODataOffset(apiConfig, response.getBody(), offsetManager);
+        }
+        
         for (Object dataRecord : dataRecords) {
             try {
                 // Encrypt sensitive fields before processing
                 Object processedRecord = encryptionManager.encryptSensitiveFields(dataRecord, apiId);
                 
-                // Extract offset from record if needed
-                String recordOffset = extractOffsetFromRecord(apiConfig, processedRecord);
+                // For OData pagination, use the pagination offset from the response
+                // For other offset modes, extract offset from individual records
+                String recordOffset;
+                if (offsetManager.getOffsetMode() == ApiConfig.HttpOffsetMode.ODATA_PAGINATION) {
+                    // Use the pagination offset for all records in this batch
+                    // This ensures offset persistence works correctly for pagination
+                    recordOffset = paginationOffset;
+                } else {
+                    // For non-pagination modes, extract offset from individual records
+                    recordOffset = extractOffsetFromRecord(apiConfig, processedRecord);
+                    // Update offset manager for each record
+                    offsetManager.updateOffset(recordOffset);
+                }
                 
                 // Create source partition and offset
                 Map<String, String> sourcePartition = createSourcePartition(apiConfig);
@@ -374,18 +432,10 @@ public class HttpSourceTask extends SourceTask {
                 
                 sourceRecords.add(sourceRecord);
                 
-                // Update offset manager
-                offsetManager.updateOffset(recordOffset);
-                
             } catch (Exception e) {
                 log.error("Error converting record from API {}: {}", apiId, e.getMessage(), e);
                 errorHandler.handleError(apiConfig, e, dataRecord);
             }
-        }
-        
-        // For OData pagination, extract nextLink/deltaLink from response
-        if (offsetManager.getOffsetMode() == ApiConfig.HttpOffsetMode.ODATA_PAGINATION) {
-            extractAndUpdateODataOffset(apiConfig, response.getBody(), offsetManager);
         }
         
         log.debug("Converted {} records from API: {}", sourceRecords.size(), apiId);
@@ -448,13 +498,18 @@ public class HttpSourceTask extends SourceTask {
     
     /**
      * Extracts and updates OData pagination offset (nextLink/deltaLink) from API response
+     * 
+     * @param apiConfig The API configuration
+     * @param responseBody The response body containing pagination links
+     * @param offsetManager The offset manager to update
+     * @return The processed pagination offset stored in the offset manager, or null if no pagination links found
      */
-    private void extractAndUpdateODataOffset(ApiConfig apiConfig, String responseBody, OffsetManager offsetManager) {
+    private String extractAndUpdateODataOffset(ApiConfig apiConfig, String responseBody, OffsetManager offsetManager) {
         try {
             // Cast to ODataOffsetManager to access OData-specific methods
             if (!(offsetManager instanceof ODataOffsetManager)) {
                 log.warn("Expected ODataOffsetManager for ODATA_PAGINATION mode in API: {}", apiConfig.getId());
-                return;
+                return null;
             }
             
             ODataOffsetManager odataManager = 
@@ -467,9 +522,11 @@ public class HttpSourceTask extends SourceTask {
             Object nextLinkValue = JsonPointer.extract(responseBody, nextLinkPointer);
             
             if (nextLinkValue != null && !nextLinkValue.toString().trim().isEmpty()) {
-                log.debug("Found nextLink for API {}: {}", apiConfig.getId(), nextLinkValue);
-                offsetManager.updateOffset(nextLinkValue.toString());
-                return;
+                String nextLink = nextLinkValue.toString();
+                log.debug("Found nextLink for API {}: {}", apiConfig.getId(), nextLink);
+                offsetManager.updateOffset(nextLink);
+                // Return the processed offset that was actually stored
+                return offsetManager.getCurrentOffset();
             }
             
             // If no nextLink, try deltaLink
@@ -478,26 +535,44 @@ public class HttpSourceTask extends SourceTask {
             Object deltaLinkValue = JsonPointer.extract(responseBody, deltaLinkPointer);
             
             if (deltaLinkValue != null && !deltaLinkValue.toString().trim().isEmpty()) {
-                log.debug("Found deltaLink for API {}: {}", apiConfig.getId(), deltaLinkValue);
-                offsetManager.updateOffset(deltaLinkValue.toString());
-                return;
+                String deltaLink = deltaLinkValue.toString();
+                log.debug("Found deltaLink for API {}: {}", apiConfig.getId(), deltaLink);
+                offsetManager.updateOffset(deltaLink);
+                // Return the processed offset that was actually stored
+                return offsetManager.getCurrentOffset();
             }
             
             // No pagination links found - end of data
             log.debug("No pagination links found in response for API: {}", apiConfig.getId());
             offsetManager.updateOffset(null);
+            return null;
             
         } catch (Exception e) {
             log.warn("Error extracting OData pagination offset from API {}: {}", apiConfig.getId(), e.getMessage());
+            return null;
         }
     }
     
     /**
      * Creates the source partition map for Kafka Connect
+     * 
+     * This must match the partition created by OffsetManager for offset persistence to work
      */
     private Map<String, String> createSourcePartition(ApiConfig apiConfig) {
         Map<String, String> partition = new HashMap<>();
-        partition.put("url", config.getHttpApiBaseUrl() + apiConfig.getHttpApiPath());
+        
+        // For OData pagination and other offset managers, use the same partition key
+        // that the offset manager uses for loading offsets from storage
+        if (offsetManagers.containsKey(apiConfig.getId())) {
+            OffsetManager offsetManager = offsetManagers.get(apiConfig.getId());
+            if (offsetManager instanceof ODataOffsetManager) {
+                // Use the same source partition as ODataOffsetManager
+                return ((ODataOffsetManager) offsetManager).getSourcePartition();
+            }
+        }
+        
+        // Fallback to the full URL construction
+        partition.put("url", apiConfig.getFullUrl());
         return partition;
     }
     
