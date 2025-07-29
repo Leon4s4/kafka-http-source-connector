@@ -226,6 +226,35 @@ curl -X POST http://localhost:8083/connectors \
 #### 2. Cursor-based Pagination
 ```json
 {
+  "api1.http.offset.mode": "CURSOR_PAGINATION",
+  "api1.http.next.page.json.pointer": "/pagination/next_cursor",
+  "api1.http.initial.offset": "0",
+  "api1.http.response.data.json.pointer": "/data"
+}
+```
+
+##### OData API Cursor Pagination Example
+For Microsoft Dynamics 365, SharePoint, or other OData APIs:
+```json
+{
+  "api1.http.offset.mode": "CURSOR_PAGINATION",
+  "api1.http.api.path": "/accounts${offset}",
+  "api1.http.initial.offset": "?$select=name,accountnumber,telephone1,fax&$filter=modifiedon ge '2025-01-01'",
+  "api1.http.next.page.json.pointer": "/@odata.nextLink",
+  "api1.http.response.data.json.pointer": "/value"
+}
+```
+
+This configuration:
+- Uses `${offset}` template variable in the API path
+- Starts with an initial OData query with field selection and filtering
+- Extracts the next page URL from `@odata.nextLink` 
+- Extracts data records from the `/value` array
+- Automatically handles OData pagination and change tracking
+
+#### 3. Circuit Breaker Configuration
+```json
+{
   "circuit.breaker.enabled": true,
   "circuit.breaker.failure.threshold": 3,
   "circuit.breaker.timeout.ms": 60000,
