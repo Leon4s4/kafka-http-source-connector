@@ -6,7 +6,7 @@ A production-ready Kafka Connect source connector for ingesting data from HTTP/H
 
 ### ✅ Core Features (Fully Implemented)
 - **Multiple API Support**: Poll up to 15 different HTTP/HTTPS endpoints simultaneously
-- **Authentication**: Complete support for None, Basic, Bearer Token, OAuth2, and API Key authentication
+- **Authentication**: Complete support for None, Basic, Bearer Token, OAuth2 (with client secret and certificate-based), and API Key authentication
 - **Offset Management**: Five modes - Simple incrementing, cursor-based pagination, **OData pagination with configurable poll intervals**, chaining, and snapshot pagination
 - **Data Formats**: Full AVRO, JSON Schema Registry, and Protobuf support with Schema Registry integration
 - **Template Variables**: Dynamic URL construction with offset, chaining, date/time, and environment variables
@@ -178,9 +178,11 @@ curl -X POST http://localhost:8083/connectors \
 
 ### 4. OAuth2 Client Credentials
 
+#### OAuth2 with Client Secret
 ```json
 {
   "auth.type": "OAUTH2",
+  "oauth2.client.auth.mode": "HEADER",
   "oauth2.token.url": "https://auth.example.com/oauth/token",
   "oauth2.client.id": "your-client-id",
   "oauth2.client.secret": "your-client-secret",
@@ -189,6 +191,30 @@ curl -X POST http://localhost:8083/connectors \
   "oauth2.additional.params": "audience=api.example.com"
 }
 ```
+
+#### OAuth2 with Certificate-based Authentication
+For enhanced security using PFX/PKCS12 certificates:
+```json
+{
+  "auth.type": "OAUTH2",
+  "oauth2.client.auth.mode": "CERTIFICATE",
+  "oauth2.token.url": "https://auth.example.com/oauth/token",
+  "oauth2.client.id": "your-client-id",
+  "oauth2.client.certificate.path": "/path/to/certificate.pfx",
+  "oauth2.client.certificate.password": "certificate-password",
+  "oauth2.client.scope": "read:data write:data",
+  "oauth2.token.property": "access_token"
+}
+```
+
+**OAuth2 Authentication Modes:**
+- `HEADER`: Client secret passed in Authorization header (default)
+- `URL`: Client secret passed as URL parameter
+- `CERTIFICATE`: Client certificate authentication using PFX/PKCS12 certificates
+
+**Certificate Authentication Properties:**
+- `oauth2.client.certificate.path`: Path to PFX/PKCS12 certificate file (required for CERTIFICATE mode)
+- `oauth2.client.certificate.password`: Certificate password (optional, for password-protected certificates)
 
 ### 5. API Key Authentication
 
@@ -858,9 +884,11 @@ Monitor connector performance:
     
     // Authentication
     "auth.type": "OAUTH2",
+    "oauth2.client.auth.mode": "CERTIFICATE",
     "oauth2.token.url": "https://auth.company.com/oauth/token",
     "oauth2.client.id": "${vault:secret/oauth2:client_id}",
-    "oauth2.client.secret": "${vault:secret/oauth2:client_secret}",
+    "oauth2.client.certificate.path": "${vault:secret/oauth2:certificate_path}",
+    "oauth2.client.certificate.password": "${vault:secret/oauth2:certificate_password}",
     "oauth2.client.scope": "read:api",
     
     // API Configurations
@@ -934,6 +962,7 @@ Monitor connector performance:
 ## 📚 Additional Resources
 
 - [Enterprise Features Guide](./ENTERPRISE_FEATURES.md)
+- [OAuth2 Certificate Authentication Guide](./docs/OAUTH2_CERTIFICATE_AUTHENTICATION.md)
 - [API Reference Documentation](./API_REFERENCE.md)
 - [Performance Tuning Guide](./PERFORMANCE_TUNING.md)
 - [Security Best Practices](./SECURITY.md)
