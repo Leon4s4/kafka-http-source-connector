@@ -102,12 +102,15 @@ public class HttpApiClient {
      * Builds the HTTP request with authentication, headers, and parameters
      */
     private Request buildRequest(Map<String, String> templateVars) {
-        // Build URL with path and query parameters
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(apiConfig.getFullUrl()).newBuilder();
+        // Replace template variables in URL BEFORE parsing to avoid URL encoding issues
+        String rawUrl = apiConfig.getFullUrl();
+        String processedUrl = templateReplacer.replace(rawUrl, templateVars);
         
-        // Replace template variables in URL path
-        String finalUrl = templateReplacer.replace(urlBuilder.build().toString(), templateVars);
-        urlBuilder = HttpUrl.parse(finalUrl).newBuilder();
+        log.debug("Template replacement: {} -> {}", rawUrl, processedUrl);
+        log.debug("Template variables: {}", templateVars);
+        
+        // Build URL with processed template variables
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(processedUrl).newBuilder();
         
         // Add query parameters
         addQueryParameters(urlBuilder, templateVars);
