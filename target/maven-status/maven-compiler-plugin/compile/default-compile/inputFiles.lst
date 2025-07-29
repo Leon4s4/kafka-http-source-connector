@@ -63,6 +63,7 @@
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/util/JsonPointer.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/util/TemplateVariableReplacer.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/auth/BasicAuthenticator.java
+/Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/offset/ODataOffsetManager.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/config/HttpSourceConnectorConfig.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/ssl/SSLValidationResult.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/performance/ProcessingStatistics.java

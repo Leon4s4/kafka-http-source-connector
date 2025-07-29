@@ -40,6 +40,9 @@ public class ApiConfig {
     public static final String HTTP_PATH_PARAMETERS_SEPARATOR = ".http.path.parameters.separator";
     public static final String HTTP_RESPONSE_SCHEMA_ENFORCE = ".http.response.schema.enforce";
     public static final String HTTP_CHAINING_JSON_POINTER = ".http.chaining.json.pointer";
+    public static final String ODATA_NEXTLINK_FIELD = ".odata.nextlink.field";
+    public static final String ODATA_DELTALINK_FIELD = ".odata.deltalink.field"; 
+    public static final String ODATA_TOKEN_MODE = ".odata.token.mode";
     
     // Enums
     public enum HttpRequestMethod {
@@ -47,7 +50,7 @@ public class ApiConfig {
     }
     
     public enum HttpOffsetMode {
-        SIMPLE_INCREMENTING, CHAINING, CURSOR_PAGINATION, SNAPSHOT_PAGINATION
+        SIMPLE_INCREMENTING, CHAINING, CURSOR_PAGINATION, SNAPSHOT_PAGINATION, ODATA_PAGINATION
     }
     
     public enum RetryBackoffPolicy {
@@ -207,6 +210,28 @@ public class ApiConfig {
     }
     
     /**
+     * Gets the OData nextLink field name
+     */
+    public String getODataNextLinkField() {
+        return getStringProperty(ODATA_NEXTLINK_FIELD, "@odata.nextLink");
+    }
+    
+    /**
+     * Gets the OData deltaLink field name  
+     */
+    public String getODataDeltaLinkField() {
+        return getStringProperty(ODATA_DELTALINK_FIELD, "@odata.deltaLink");
+    }
+    
+    /**
+     * Gets the OData token extraction mode
+     */
+    public io.confluent.connect.http.offset.ODataOffsetManager.ODataTokenMode getODataTokenMode() {
+        String mode = getStringProperty(ODATA_TOKEN_MODE, "FULL_URL");
+        return io.confluent.connect.http.offset.ODataOffsetManager.ODataTokenMode.valueOf(mode);
+    }
+    
+    /**
      * Gets the request interval in milliseconds
      */
     public long getRequestIntervalMs() {
@@ -305,6 +330,13 @@ public class ApiConfig {
             case SNAPSHOT_PAGINATION:
                 if (getHttpOffsetJsonPointer() == null || getHttpOffsetJsonPointer().isEmpty()) {
                     throw new ConfigException("http.offset.json.pointer must be set for SNAPSHOT_PAGINATION mode in " + apiPrefix);
+                }
+                break;
+            case ODATA_PAGINATION:
+                // Check if the nextlink field was explicitly configured (not using default)
+                String nextLinkFieldProperty = apiPrefix + ODATA_NEXTLINK_FIELD;
+                if (!globalConfig.originals().containsKey(nextLinkFieldProperty)) {
+                    throw new ConfigException("odata.nextlink.field must be set for ODATA_PAGINATION mode in " + apiPrefix);
                 }
                 break;
         }

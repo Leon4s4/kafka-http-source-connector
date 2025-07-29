@@ -102,8 +102,25 @@ public class HttpApiClient {
      * Builds the HTTP request with authentication, headers, and parameters
      */
     private Request buildRequest(Map<String, String> templateVars) {
+        // For OData pagination, the offset contains the path with query parameters
+        String rawUrl;
+        if (apiConfig.getHttpOffsetMode() == ApiConfig.HttpOffsetMode.ODATA_PAGINATION && 
+            templateVars.containsKey("offset") && templateVars.get("offset") != null) {
+            String offset = templateVars.get("offset");
+            // If offset starts with '/', it's a path to use instead of the configured API path
+            if (offset.startsWith("/")) {
+                rawUrl = globalConfig.getHttpApiBaseUrl().replaceAll("/$", "") + offset;
+                log.debug("Using OData offset as full path: {}", rawUrl);
+                // For OData, we don't need template replacement on the offset itself
+                return buildODataRequest(rawUrl, templateVars);
+            } else {
+                rawUrl = apiConfig.getFullUrl();
+            }
+        } else {
+            rawUrl = apiConfig.getFullUrl();
+        }
+        
         // Replace template variables in URL BEFORE parsing to avoid URL encoding issues
-        String rawUrl = apiConfig.getFullUrl();
         String processedUrl = templateReplacer.replace(rawUrl, templateVars);
         
         log.debug("Template replacement: {} -> {}", rawUrl, processedUrl);
@@ -352,6 +369,35 @@ public class HttpApiClient {
         }
         
         log.debug("HttpApiClient closed for API: {}", apiConfig.getId());
+    }
+    
+    /**
+     * Builds a request for OData pagination where the full URL is provided
+     */
+    private Request buildODataRequest(String fullUrl, Map<String, String> templateVars) {
+        log.debug("Building OData request for URL: {}", fullUrl);
+        
+        // Parse the URL directly without template replacement
+        HttpUrl url = HttpUrl.parse(fullUrl);
+        if (url == null) {
+            throw new IllegalArgumentException("Invalid OData URL: " + fullUrl);
+        }
+        
+        // Build request
+        Request.Builder requestBuilder = new Request.Builder().url(url);
+        
+        // Add HTTP method and body (typically GET for pagination)
+        addMethodAndBody(requestBuilder, templateVars);
+        
+        // Add headers (but skip parameters as they're already in the URL)
+        addHeaders(requestBuilder, templateVars);
+        
+        // Apply authentication
+        if (authenticator != null) {
+            authenticator.authenticate(requestBuilder);
+        }
+        
+        return requestBuilder.build();
     }
     
     /**

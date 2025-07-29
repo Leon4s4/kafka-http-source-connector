@@ -37,6 +37,9 @@ public class OffsetManagerFactory {
             case SNAPSHOT_PAGINATION:
                 return new SnapshotPaginationOffsetManager(apiConfig, context);
             
+            case ODATA_PAGINATION:
+                return new ODataOffsetManager(apiConfig, context);
+            
             default:
                 throw new IllegalArgumentException("Unsupported offset mode: " + offsetMode);
         }
