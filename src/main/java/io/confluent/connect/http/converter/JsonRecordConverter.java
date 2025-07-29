@@ -1,5 +1,6 @@
 package io.confluent.connect.http.converter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.confluent.connect.http.config.HttpSourceConnectorConfig;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.source.SourceRecord;
@@ -9,7 +10,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /**
- * Simple JSON record converter that creates SourceRecords with string values.
+ * JSON record converter that creates SourceRecords with properly serialized JSON string values.
+ * Uses Jackson ObjectMapper to convert Java objects to valid JSON strings.
  * In a full implementation, this would integrate with Schema Registry for proper schema support.
  */
 public class JsonRecordConverter implements RecordConverter {
@@ -17,9 +19,11 @@ public class JsonRecordConverter implements RecordConverter {
     private static final Logger log = LoggerFactory.getLogger(JsonRecordConverter.class);
     
     private final HttpSourceConnectorConfig config;
+    private final ObjectMapper objectMapper;
     
     public JsonRecordConverter(HttpSourceConnectorConfig config) {
         this.config = config;
+        this.objectMapper = new ObjectMapper();
         log.debug("Initialized JsonRecordConverter with output format: {}", config.getOutputDataFormat());
     }
     
@@ -33,19 +37,54 @@ public class JsonRecordConverter implements RecordConverter {
                                Object value,
                                Long timestamp) {
         
-        log.trace("Converting record for topic: {}", topic);
+        log.trace("Converting record for topic: {} with output format: {}", topic, config.getOutputDataFormat());
         
-        // For JSON format, we'll use string schema and convert the value to JSON string if needed
-        Schema recordValueSchema = Schema.STRING_SCHEMA;
-        String recordValue;
+        // Determine schema and value based on output format
+        Schema recordValueSchema;
+        Object recordValue;
         
-        if (value instanceof String) {
-            recordValue = (String) value;
-        } else if (value != null) {
-            // Convert to JSON string representation
-            recordValue = value.toString();
-        } else {
-            recordValue = null;
+        switch (config.getOutputDataFormat()) {
+            case JSON_SR:
+                // For JSON_SR, use string schema but ensure proper JSON serialization
+                recordValueSchema = Schema.STRING_SCHEMA;
+                if (value instanceof String) {
+                    recordValue = (String) value;
+                } else if (value != null) {
+                    try {
+                        // Convert to proper JSON string representation using Jackson
+                        recordValue = objectMapper.writeValueAsString(value);
+                        log.trace("Converted object to JSON: {}", ((String) recordValue).length() > 200 ? 
+                                 ((String) recordValue).substring(0, 200) + "..." : recordValue);
+                    } catch (Exception e) {
+                        log.warn("Failed to serialize object to JSON, falling back to toString(): {}", e.getMessage());
+                        recordValue = value.toString();
+                    }
+                } else {
+                    recordValue = null;
+                }
+                break;
+                
+            case AVRO:
+            case PROTOBUF:
+                // For schema-based formats, we could return the structured object
+                // and let Kafka Connect handle the serialization with proper schemas
+                recordValueSchema = null; // Schema will be determined by the converter
+                recordValue = value;
+                break;
+                
+            default:
+                // Fallback to string representation
+                recordValueSchema = Schema.STRING_SCHEMA;
+                if (value != null) {
+                    try {
+                        recordValue = objectMapper.writeValueAsString(value);
+                    } catch (Exception e) {
+                        log.warn("Failed to serialize object to JSON: {}", e.getMessage());
+                        recordValue = value.toString();
+                    }
+                } else {
+                    recordValue = null;
+                }
         }
         
         return new SourceRecord(
