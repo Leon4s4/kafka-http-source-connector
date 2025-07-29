@@ -1,0 +1,20 @@
+{
+  "name": "http-source-debug-example",
+  "connector.class": "io.confluent.connect.http.HttpSourceConnector",
+  "tasks.max": 1,
+  "http.api.base.url": "https://api.example.com",
+  "topics": "http-data",
+  "auth.type": "none",
+  
+  "// DEBUG LOGGING CONFIGURATION": "Enable detailed debugging for HTTP requests/responses",
+  "debug.logging.enabled": "true",
+  "debug.log.request.headers": "true",
+  "debug.log.request.body": "true",
+  "debug.log.response.headers": "true", 
+  "debug.log.response.body": "true",
+  
+  "// ADDITIONAL SETTINGS": "Helpful for troubleshooting",
+  "behavior.on.error": "LOG",
+  "reporter.error.topic.name": "connector-errors",
+  "report.errors.as": "http_response"
+}

@@ -8,6 +8,7 @@ import io.confluent.connect.http.config.ApiConfig;
 import io.confluent.connect.http.config.HttpSourceConnectorConfig;
 import io.confluent.connect.http.converter.RecordConverter;
 import io.confluent.connect.http.converter.RecordConverterFactory;
+import io.confluent.connect.http.debug.DebugLogger;
 import io.confluent.connect.http.encryption.FieldEncryptionManager;
 import io.confluent.connect.http.error.ErrorHandler;
 import io.confluent.connect.http.offset.OffsetManager;
@@ -48,6 +49,7 @@ public class HttpSourceTask extends SourceTask {
     private HttpAuthenticator authenticator;
     private ApiChainingManager chainingManager;
     private FieldEncryptionManager encryptionManager;
+    private DebugLogger debugLogger;
     
     @Override
     public String version() {
@@ -76,6 +78,9 @@ public class HttpSourceTask extends SourceTask {
             
             // Initialize field encryption manager
             encryptionManager = new FieldEncryptionManager(config);
+            
+            // Initialize debug logger
+            debugLogger = new DebugLogger(config);
             
             // Initialize error handler
             errorHandler = new ErrorHandler(config);
@@ -116,6 +121,12 @@ public class HttpSourceTask extends SourceTask {
                 }
             } catch (Exception e) {
                 log.error("Error polling API {}: {}", apiConfig.getId(), e.getMessage(), e);
+                
+                // Debug log error details
+                if (debugLogger.isDebugLoggingEnabled()) {
+                    String fullUrl = config.getHttpApiBaseUrl() + (apiConfig.getHttpApiPath() != null ? apiConfig.getHttpApiPath() : "");
+                    debugLogger.logError("API_POLL", fullUrl, e);
+                }
                 
                 // Handle error based on configuration
                 if (config.getBehaviorOnError() == HttpSourceConnectorConfig.BehaviorOnError.FAIL) {
@@ -282,8 +293,29 @@ public class HttpSourceTask extends SourceTask {
         // Get chaining template variables for child APIs
         Map<String, String> chainingVars = chainingManager.getChildApiTemplateVariables(apiConfig);
         
+        // Debug log request details
+        if (debugLogger.isDebugLoggingEnabled()) {
+            String fullUrl = config.getHttpApiBaseUrl() + (apiConfig.getHttpApiPath() != null ? apiConfig.getHttpApiPath() : "");
+            debugLogger.logRequest(apiConfig.getHttpRequestMethod().name(), fullUrl, null, null);
+            if (!chainingVars.isEmpty()) {
+                debugLogger.logPagination(apiId, "CHAINING", "Template variables: " + chainingVars);
+            }
+        }
+        
         // Make HTTP request with chaining variables
+        long requestStartTime = System.currentTimeMillis();
         HttpApiClient.ApiResponse response = apiClient.makeRequest(currentOffset, chainingVars);
+        long responseTime = System.currentTimeMillis() - requestStartTime;
+        
+        // Debug log response details
+        if (debugLogger.isDebugLoggingEnabled() && response != null) {
+            debugLogger.logResponse(
+                response.getStatusCode(), 
+                response.getHeaders(), 
+                response.getBody(), 
+                responseTime
+            );
+        }
         
         if (response == null || response.getBody() == null) {
             log.debug("No data received from API: {}", apiId);

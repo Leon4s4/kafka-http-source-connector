@@ -81,6 +81,13 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
     public static final String MAX_CACHE_SIZE = "max.cache.size";
     public static final String ADAPTIVE_POLLING_ENABLED = "adaptive.polling.enabled";
     
+    // Debug Logging Configuration
+    public static final String DEBUG_LOGGING_ENABLED = "debug.logging.enabled";
+    public static final String DEBUG_LOG_REQUEST_HEADERS = "debug.log.request.headers";
+    public static final String DEBUG_LOG_RESPONSE_BODY = "debug.log.response.body";
+    public static final String DEBUG_LOG_RESPONSE_HEADERS = "debug.log.response.headers";
+    public static final String DEBUG_LOG_REQUEST_BODY = "debug.log.request.body";
+    
     // Enums
     public enum AuthType {
         NONE, BASIC, BEARER, OAUTH2, API_KEY
@@ -489,6 +496,47 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
             "Enable adaptive polling intervals based on API response patterns. Defaults to true"
         );
         
+        // Debug Logging Configuration
+        configDef.define(
+            DEBUG_LOGGING_ENABLED,
+            ConfigDef.Type.BOOLEAN,
+            false,
+            ConfigDef.Importance.LOW,
+            "Enable debug logging for HTTP requests and responses. Defaults to false"
+        );
+        
+        configDef.define(
+            DEBUG_LOG_REQUEST_HEADERS,
+            ConfigDef.Type.BOOLEAN,
+            false,
+            ConfigDef.Importance.LOW,
+            "Log HTTP request headers when debug logging is enabled. Defaults to false"
+        );
+        
+        configDef.define(
+            DEBUG_LOG_RESPONSE_BODY,
+            ConfigDef.Type.BOOLEAN,
+            false,
+            ConfigDef.Importance.LOW,
+            "Log HTTP response body when debug logging is enabled. Defaults to false"
+        );
+        
+        configDef.define(
+            DEBUG_LOG_RESPONSE_HEADERS,
+            ConfigDef.Type.BOOLEAN,
+            false,
+            ConfigDef.Importance.LOW,
+            "Log HTTP response headers when debug logging is enabled. Defaults to false"
+        );
+        
+        configDef.define(
+            DEBUG_LOG_REQUEST_BODY,
+            ConfigDef.Type.BOOLEAN,
+            false,
+            ConfigDef.Importance.LOW,
+            "Log HTTP request body when debug logging is enabled. Defaults to false"
+        );
+        
         return configDef;
     }
     
@@ -707,5 +755,26 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
     
     public boolean isAdaptivePollingEnabled() {
         return getBoolean(ADAPTIVE_POLLING_ENABLED);
+    }
+    
+    // Debug Logging Getters
+    public boolean isDebugLoggingEnabled() {
+        return getBoolean(DEBUG_LOGGING_ENABLED);
+    }
+    
+    public boolean isDebugLogRequestHeaders() {
+        return getBoolean(DEBUG_LOG_REQUEST_HEADERS);
+    }
+    
+    public boolean isDebugLogResponseBody() {
+        return getBoolean(DEBUG_LOG_RESPONSE_BODY);
+    }
+    
+    public boolean isDebugLogResponseHeaders() {
+        return getBoolean(DEBUG_LOG_RESPONSE_HEADERS);
+    }
+    
+    public boolean isDebugLogRequestBody() {
+        return getBoolean(DEBUG_LOG_REQUEST_BODY);
     }
 }

@@ -72,8 +72,15 @@ public class EnhancedConfigValidator {
             validatePerformance(config, result);
             
         } catch (Exception e) {
-            result.addError("VALIDATION_ERROR", "Configuration validation failed: " + e.getMessage());
-            log.error("Configuration validation error", e);
+            // Enhanced error handling with detailed diagnostics
+            if (isConnectionRelatedError(e)) {
+                String enhancedMessage = generateConnectionErrorDetails(e, config);
+                result.addError("CONNECTION_VALIDATION_ERROR", enhancedMessage);
+                log.error("Connection validation error with enhanced diagnostics: {}", enhancedMessage, e);
+            } else {
+                result.addError("VALIDATION_ERROR", "Configuration validation failed: " + e.getMessage());
+                log.error("Configuration validation error", e);
+            }
         }
         
         log.debug("Configuration validation completed: valid={}, errors={}, warnings={}",
@@ -810,6 +817,53 @@ public class EnhancedConfigValidator {
         return value.startsWith("${env:") || 
                value.startsWith("${file:") || 
                value.startsWith("${vault:");
+    }
+    
+    /**
+     * Check if error is connection-related and should get enhanced diagnostics.
+     */
+    private boolean isConnectionRelatedError(Exception e) {
+        if (e == null) return false;
+        
+        String errorClass = e.getClass().getName();
+        String message = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
+        
+        return errorClass.contains("Connection") ||
+               errorClass.contains("SSL") ||
+               errorClass.contains("Certificate") ||
+               message.contains("connection") ||
+               message.contains("ssl") ||
+               message.contains("tls") ||
+               message.contains("timeout") ||
+               message.contains("handshake") ||
+               message.contains("certificate");
+    }
+    
+    /**
+     * Generate enhanced connection error details.
+     */
+    private String generateConnectionErrorDetails(Exception e, Map<String, String> config) {
+        try {
+            // Create a minimal HTTP config for diagnostics
+            io.confluent.connect.http.config.HttpSourceConnectorConfig httpConfig = 
+                new io.confluent.connect.http.config.HttpSourceConnectorConfig(config);
+            
+            io.confluent.connect.http.error.ConnectionErrorDiagnostics diagnostics = 
+                new io.confluent.connect.http.error.ConnectionErrorDiagnostics(httpConfig);
+            
+            String url = config.get("http.api.base.url");
+            if (url == null) url = "unknown";
+            
+            io.confluent.connect.http.error.EnhancedErrorReport report = 
+                diagnostics.analyzeConnectionError(e, url, config);
+            
+            return report.generateSummary();
+            
+        } catch (Exception diagnosticsError) {
+            log.warn("Failed to generate enhanced error diagnostics", diagnosticsError);
+            return "Enhanced diagnostics failed: " + e.getMessage() + 
+                   " (Diagnostics error: " + diagnosticsError.getMessage() + ")";
+        }
     }
     
     /**
