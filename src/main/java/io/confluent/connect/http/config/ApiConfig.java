@@ -43,6 +43,8 @@ public class ApiConfig {
     public static final String ODATA_NEXTLINK_FIELD = ".odata.nextlink.field";
     public static final String ODATA_DELTALINK_FIELD = ".odata.deltalink.field"; 
     public static final String ODATA_TOKEN_MODE = ".odata.token.mode";
+    public static final String ODATA_SKIPTOKEN_PARAM = ".odata.skiptoken.param";
+    public static final String ODATA_DELTATOKEN_PARAM = ".odata.deltatoken.param";
     
     // Enums
     public enum HttpRequestMethod {
@@ -229,6 +231,20 @@ public class ApiConfig {
     public io.confluent.connect.http.offset.ODataOffsetManager.ODataTokenMode getODataTokenMode() {
         String mode = getStringProperty(ODATA_TOKEN_MODE, "FULL_URL");
         return io.confluent.connect.http.offset.ODataOffsetManager.ODataTokenMode.valueOf(mode);
+    }
+    
+    /**
+     * Gets the OData skiptoken parameter name
+     */
+    public String getODataSkipTokenParam() {
+        return getStringProperty(ODATA_SKIPTOKEN_PARAM, "$skiptoken");
+    }
+    
+    /**
+     * Gets the OData deltatoken parameter name
+     */
+    public String getODataDeltaTokenParam() {
+        return getStringProperty(ODATA_DELTATOKEN_PARAM, "$deltatoken");
     }
     
     /**

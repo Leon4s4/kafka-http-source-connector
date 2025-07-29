@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: io.confluent.connect.http.unit.ODataOffsetManagerTest
 -------------------------------------------------------------------------------
-Tests run: 17, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.538 s -- in io.confluent.connect.http.unit.ODataOffsetManagerTest
+Tests run: 22, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.574 s -- in io.confluent.connect.http.unit.ODataOffsetManagerTest

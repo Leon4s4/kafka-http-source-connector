@@ -313,6 +313,137 @@ class ODataOffsetManagerTest {
     }
     
     @Test
+    void testConfigurableSkipTokenParameter() {
+        Map<String, String> configProps = new HashMap<>();
+        configProps.put("http.api.base.url", "https://api.example.com");
+        configProps.put("apis.num", "1");
+        configProps.put("api1.http.api.path", "/api/data/v9.0/accounts");
+        configProps.put("api1.topics", "accounts-topic");
+        configProps.put("api1.http.offset.mode", "ODATA_PAGINATION");
+        configProps.put("api1.http.initial.offset", "");
+        configProps.put("api1.odata.nextlink.field", "@odata.nextLink");
+        configProps.put("api1.odata.token.mode", "TOKEN_ONLY");
+        configProps.put("api1.odata.skiptoken.param", "customSkipToken");
+        
+        HttpSourceConnectorConfig config = new HttpSourceConnectorConfig(configProps);
+        ApiConfig apiConfig = new ApiConfig(config, 1);
+        offsetManager = new ODataOffsetManager(apiConfig, mockContext);
+        
+        // Test that custom skiptoken parameter is used
+        assertThat(offsetManager.getSkipTokenParam()).isEqualTo("customSkipToken");
+        
+        // Test URL with custom skiptoken parameter
+        String urlWithCustomToken = "https://api.example.com/accounts?customSkipToken=abc123";
+        offsetManager.updateOffset(urlWithCustomToken);
+        
+        assertThat(offsetManager.getCurrentOffset()).isEqualTo("abc123");
+        
+        // Test buildNextRequestUrl with custom parameter
+        String nextUrl = offsetManager.buildNextRequestUrl();
+        assertThat(nextUrl).contains("customSkipToken=abc123");
+    }
+    
+    @Test
+    void testConfigurableDeltaTokenParameter() {
+        Map<String, String> configProps = new HashMap<>();
+        configProps.put("http.api.base.url", "https://api.example.com");
+        configProps.put("apis.num", "1");
+        configProps.put("api1.http.api.path", "/api/data/v9.0/accounts");
+        configProps.put("api1.topics", "accounts-topic");
+        configProps.put("api1.http.offset.mode", "ODATA_PAGINATION");
+        configProps.put("api1.http.initial.offset", "");
+        configProps.put("api1.odata.nextlink.field", "@odata.nextLink");
+        configProps.put("api1.odata.token.mode", "TOKEN_ONLY");
+        configProps.put("api1.odata.deltatoken.param", "customDeltaToken");
+        
+        HttpSourceConnectorConfig config = new HttpSourceConnectorConfig(configProps);
+        ApiConfig apiConfig = new ApiConfig(config, 1);
+        offsetManager = new ODataOffsetManager(apiConfig, mockContext);
+        
+        // Test that custom deltatoken parameter is used
+        assertThat(offsetManager.getDeltaTokenParam()).isEqualTo("customDeltaToken");
+        
+        // Test URL with custom deltatoken parameter
+        String urlWithCustomToken = "https://api.example.com/accounts?customDeltaToken=delta123";
+        offsetManager.updateOffset(urlWithCustomToken);
+        
+        assertThat(offsetManager.getCurrentOffset()).isEqualTo("delta123");
+        
+        // Test buildNextRequestUrl with custom parameter
+        String nextUrl = offsetManager.buildNextRequestUrl();
+        assertThat(nextUrl).contains("customDeltaToken=delta123");
+    }
+    
+    @Test
+    void testBothCustomTokenParameters() {
+        Map<String, String> configProps = new HashMap<>();
+        configProps.put("http.api.base.url", "https://api.example.com");
+        configProps.put("apis.num", "1");
+        configProps.put("api1.http.api.path", "/api/data/v9.0/accounts?$select=name");
+        configProps.put("api1.topics", "accounts-topic");
+        configProps.put("api1.http.offset.mode", "ODATA_PAGINATION");
+        configProps.put("api1.http.initial.offset", "");
+        configProps.put("api1.odata.nextlink.field", "@odata.nextLink");
+        configProps.put("api1.odata.token.mode", "TOKEN_ONLY");
+        configProps.put("api1.odata.skiptoken.param", "mySkipToken");
+        configProps.put("api1.odata.deltatoken.param", "myDeltaToken");
+        
+        HttpSourceConnectorConfig config = new HttpSourceConnectorConfig(configProps);
+        ApiConfig apiConfig = new ApiConfig(config, 1);
+        offsetManager = new ODataOffsetManager(apiConfig, mockContext);
+        
+        // Test skiptoken extraction and URL building
+        offsetManager.updateOffset("https://api.example.com/accounts?mySkipToken=skip123");
+        assertThat(offsetManager.getCurrentOffset()).isEqualTo("skip123");
+        assertThat(offsetManager.buildNextRequestUrl()).isEqualTo("/api/data/v9.0/accounts?$select=name&mySkipToken=skip123");
+        
+        // Test deltatoken extraction and URL building
+        offsetManager.updateOffset("https://api.example.com/accounts?myDeltaToken=delta456");
+        assertThat(offsetManager.getCurrentOffset()).isEqualTo("delta456");
+        assertThat(offsetManager.buildNextRequestUrl()).isEqualTo("/api/data/v9.0/accounts?$select=name&myDeltaToken=delta456");
+    }
+    
+    @Test
+    void testSpecialCharactersInTokenParameters() {
+        Map<String, String> configProps = new HashMap<>();
+        configProps.put("http.api.base.url", "https://api.example.com");
+        configProps.put("apis.num", "1");
+        configProps.put("api1.http.api.path", "/api/data/v9.0/accounts");
+        configProps.put("api1.topics", "accounts-topic");
+        configProps.put("api1.http.offset.mode", "ODATA_PAGINATION");
+        configProps.put("api1.http.initial.offset", "");
+        configProps.put("api1.odata.nextlink.field", "@odata.nextLink");
+        configProps.put("api1.odata.token.mode", "TOKEN_ONLY");
+        configProps.put("api1.odata.skiptoken.param", "skip-token");
+        configProps.put("api1.odata.deltatoken.param", "delta_token");
+        
+        HttpSourceConnectorConfig config = new HttpSourceConnectorConfig(configProps);
+        ApiConfig apiConfig = new ApiConfig(config, 1);
+        offsetManager = new ODataOffsetManager(apiConfig, mockContext);
+        
+        // Test that special characters are properly escaped in patterns
+        offsetManager.updateOffset("https://api.example.com/accounts?skip-token=abc123&other=value");
+        assertThat(offsetManager.getCurrentOffset()).isEqualTo("abc123");
+        
+        offsetManager.updateOffset("https://api.example.com/accounts?delta_token=def456&other=value");
+        assertThat(offsetManager.getCurrentOffset()).isEqualTo("def456");
+    }
+    
+    @Test
+    void testDefaultTokenParametersWhenNotConfigured() {
+        offsetManager = new ODataOffsetManager(apiConfig, mockContext);
+        
+        // Should use default parameter names
+        assertThat(offsetManager.getSkipTokenParam()).isEqualTo("$skiptoken");
+        assertThat(offsetManager.getDeltaTokenParam()).isEqualTo("$deltatoken");
+        
+        // Should work with default parameters
+        offsetManager.updateOffset("https://api.example.com/accounts?$skiptoken=default123");
+        // This test uses FULL_URL mode, so it should extract path and query
+        assertThat(offsetManager.getCurrentOffset()).isEqualTo("/accounts?$skiptoken=default123");
+    }
+    
+    @Test
     void testCloseMethod() {
         offsetManager = new ODataOffsetManager(apiConfig, mockContext);
         

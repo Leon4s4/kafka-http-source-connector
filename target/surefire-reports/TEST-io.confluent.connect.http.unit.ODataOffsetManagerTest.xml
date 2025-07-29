@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.538" tests="17" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.574" tests="22" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="24"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -13,7 +13,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="CA"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/24.0.1/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/Git/kafka-http-source-connector/target/surefire/surefirebooter-20250729134606945_3.jar /Users/Git/kafka-http-source-connector/target/surefire 2025-07-29T13-46-06_911-jvmRun1 surefire-20250729134606945_1tmp surefire_0-20250729134606945_2tmp"/>
+    <property name="sun.java.command" value="/Users/Git/kafka-http-source-connector/target/surefire/surefirebooter-20250729135746512_3.jar /Users/Git/kafka-http-source-connector/target/surefire 2025-07-29T13-57-46_472-jvmRun1 surefire-20250729135746512_1tmp surefire_0-20250729135746512_2tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="test" value="ODataOffsetManagerTest"/>
@@ -31,7 +31,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/Git/kafka-http-source-connector/target/surefire/surefirebooter-20250729134606945_3.jar"/>
+    <property name="surefire.real.class.path" value="/Users/Git/kafka-http-source-connector/target/surefire/surefirebooter-20250729135746512_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="24.0.1"/>
@@ -60,8 +60,8 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="68.0"/>
   </properties>
-  <testcase name="testUpdateOffsetWithDeltaTokenInTokenOnlyMode" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.493">
-    <system-out><![CDATA[13:46:07.700 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+  <testcase name="testUpdateOffsetWithDeltaTokenInTokenOnlyMode" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.521">
+    <system-out><![CDATA[13:57:47.297 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -108,11 +108,11 @@
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.701 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.701 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.701 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.702 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.708 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+13:57:47.299 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.299 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.299 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.300 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.307 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -159,12 +159,12 @@
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.708 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.708 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.708 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.708 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.710 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: 
-13:46:07.710 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: TOKEN_ONLY, current offset: 
+13:57:47.307 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.307 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.307 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.307 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.309 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: 
+13:57:47.309 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: TOKEN_ONLY, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: 
 ]]></system-out>
     <system-err><![CDATA[WARNING: A Java agent has been loaded dynamically (/Users/leonardosantana/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.10/byte-buddy-agent-1.14.10.jar)
 WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
@@ -172,8 +172,8 @@ WARNING: If a serviceability tool is not in use, please run with -Djdk.instrumen
 WARNING: Dynamic loading of agents will be disallowed by default in a future release
 ]]></system-err>
   </testcase>
-  <testcase name="testUpdateOffsetWithTokenOnlyMode" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.003">
-    <system-out><![CDATA[13:46:07.732 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+  <testcase name="testUpdateOffsetWithTokenOnlyMode" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.002">
+    <system-out><![CDATA[13:57:47.330 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -220,11 +220,11 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.732 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.732 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.732 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.732 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.733 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+13:57:47.330 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.330 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.330 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.330 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.331 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -271,16 +271,16 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.733 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.733 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.733 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.733 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.733 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: 
-13:46:07.733 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: TOKEN_ONLY, current offset: 
+13:57:47.331 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.331 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.331 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.331 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.331 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: 
+13:57:47.331 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: TOKEN_ONLY, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: 
 ]]></system-out>
   </testcase>
   <testcase name="testResetOffset" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.003">
-    <system-out><![CDATA[13:46:07.734 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+    <system-out><![CDATA[13:57:47.333 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -327,17 +327,17 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.735 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.735 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.735 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.735 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.735 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
-13:46:07.735 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
-13:46:07.736 [main] INFO io.confluent.connect.http.offset.ODataOffsetManager -- Reset offset for API api1 to initial value: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.333 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.333 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.333 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.333 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.333 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.333 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.334 [main] INFO io.confluent.connect.http.offset.ODataOffsetManager -- Reset offset for API api1 to initial value: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
 ]]></system-out>
   </testcase>
   <testcase name="testHandleMalformedUrl" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.001">
-    <system-out><![CDATA[13:46:07.738 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+    <system-out><![CDATA[13:57:47.335 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -384,17 +384,124 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.738 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.738 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.738 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.738 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.738 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
-13:46:07.738 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
-13:46:07.738 [main] WARN io.confluent.connect.http.offset.ODataOffsetManager -- Failed to parse OData URL: not-a-valid-url, using as-is
+13:57:47.336 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.336 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.336 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.336 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.336 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.336 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.336 [main] WARN io.confluent.connect.http.offset.ODataOffsetManager -- Failed to parse OData URL: not-a-valid-url, using as-is
+]]></system-out>
+  </testcase>
+  <testcase name="testSpecialCharactersInTokenParameters" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.001">
+    <system-out><![CDATA[13:57:47.337 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+	adaptive.polling.enabled = true
+	api.chaining.parent.child.relationship = 
+	api.key.location = HEADER
+	api.key.name = X-API-KEY
+	api.key.value = null
+	apis.num = 1
+	auth.type = NONE
+	bearer.token = null
+	behavior.on.error = FAIL
+	circuit.breaker.failure.threshold = 5
+	circuit.breaker.recovery.time.ms = 30000
+	circuit.breaker.timeout.ms = 60000
+	connection.password = null
+	connection.user = null
+	debug.log.request.body = false
+	debug.log.request.headers = false
+	debug.log.response.body = false
+	debug.log.response.headers = false
+	debug.logging.enabled = false
+	field.encryption.enabled = false
+	field.encryption.key = null
+	field.encryption.rules = 
+	http.api.base.url = https://api.example.com
+	http.proxy.host = null
+	http.proxy.password = null
+	http.proxy.port = null
+	http.proxy.user = null
+	https.ssl.enabled = false
+	https.ssl.protocol = TLSv1.3
+	max.cache.size = 1000
+	oauth2.client.auth.mode = HEADER
+	oauth2.client.id = null
+	oauth2.client.scope = any
+	oauth2.client.secret = null
+	oauth2.token.property = access_token
+	oauth2.token.refresh.interval.minutes = 30
+	oauth2.token.url = null
+	output.data.format = JSON_SR
+	report.errors.as = Error string
+	reporter.error.topic.name = error-${connector}
+	response.cache.ttl.ms = 300000
+	response.caching.enabled = true
+	schema.context.name = default
+	tasks.max = 1
+	value.subject.name.strategy = TopicNameStrategy
+
+13:57:47.337 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.337 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.337 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.337 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.338 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+	adaptive.polling.enabled = true
+	api.chaining.parent.child.relationship = 
+	api.key.location = HEADER
+	api.key.name = X-API-KEY
+	api.key.value = null
+	apis.num = 1
+	auth.type = NONE
+	bearer.token = null
+	behavior.on.error = FAIL
+	circuit.breaker.failure.threshold = 5
+	circuit.breaker.recovery.time.ms = 30000
+	circuit.breaker.timeout.ms = 60000
+	connection.password = null
+	connection.user = null
+	debug.log.request.body = false
+	debug.log.request.headers = false
+	debug.log.response.body = false
+	debug.log.response.headers = false
+	debug.logging.enabled = false
+	field.encryption.enabled = false
+	field.encryption.key = null
+	field.encryption.rules = 
+	http.api.base.url = https://api.example.com
+	http.proxy.host = null
+	http.proxy.password = null
+	http.proxy.port = null
+	http.proxy.user = null
+	https.ssl.enabled = false
+	https.ssl.protocol = TLSv1.3
+	max.cache.size = 1000
+	oauth2.client.auth.mode = HEADER
+	oauth2.client.id = null
+	oauth2.client.scope = any
+	oauth2.client.secret = null
+	oauth2.token.property = access_token
+	oauth2.token.refresh.interval.minutes = 30
+	oauth2.token.url = null
+	output.data.format = JSON_SR
+	report.errors.as = Error string
+	reporter.error.topic.name = error-${connector}
+	response.cache.ttl.ms = 300000
+	response.caching.enabled = true
+	schema.context.name = default
+	tasks.max = 1
+	value.subject.name.strategy = TopicNameStrategy
+
+13:57:47.338 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.338 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.338 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.338 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.338 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: 
+13:57:47.338 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: TOKEN_ONLY, skiptoken param: skip-token, deltatoken param: delta_token, current offset: 
 ]]></system-out>
   </testcase>
   <testcase name="testCloseMethod" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.002">
-    <system-out><![CDATA[13:46:07.739 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+    <system-out><![CDATA[13:57:47.339 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -441,17 +548,124 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.739 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.740 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.740 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.740 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.740 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
-13:46:07.740 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
-13:46:07.741 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Closing ODataOffsetManager for API: api1
+13:57:47.339 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.339 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.339 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.339 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.340 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.340 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.340 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Closing ODataOffsetManager for API: api1
+]]></system-out>
+  </testcase>
+  <testcase name="testConfigurableSkipTokenParameter" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.002">
+    <system-out><![CDATA[13:57:47.342 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+	adaptive.polling.enabled = true
+	api.chaining.parent.child.relationship = 
+	api.key.location = HEADER
+	api.key.name = X-API-KEY
+	api.key.value = null
+	apis.num = 1
+	auth.type = NONE
+	bearer.token = null
+	behavior.on.error = FAIL
+	circuit.breaker.failure.threshold = 5
+	circuit.breaker.recovery.time.ms = 30000
+	circuit.breaker.timeout.ms = 60000
+	connection.password = null
+	connection.user = null
+	debug.log.request.body = false
+	debug.log.request.headers = false
+	debug.log.response.body = false
+	debug.log.response.headers = false
+	debug.logging.enabled = false
+	field.encryption.enabled = false
+	field.encryption.key = null
+	field.encryption.rules = 
+	http.api.base.url = https://api.example.com
+	http.proxy.host = null
+	http.proxy.password = null
+	http.proxy.port = null
+	http.proxy.user = null
+	https.ssl.enabled = false
+	https.ssl.protocol = TLSv1.3
+	max.cache.size = 1000
+	oauth2.client.auth.mode = HEADER
+	oauth2.client.id = null
+	oauth2.client.scope = any
+	oauth2.client.secret = null
+	oauth2.token.property = access_token
+	oauth2.token.refresh.interval.minutes = 30
+	oauth2.token.url = null
+	output.data.format = JSON_SR
+	report.errors.as = Error string
+	reporter.error.topic.name = error-${connector}
+	response.cache.ttl.ms = 300000
+	response.caching.enabled = true
+	schema.context.name = default
+	tasks.max = 1
+	value.subject.name.strategy = TopicNameStrategy
+
+13:57:47.342 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.342 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.342 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.342 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.342 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+	adaptive.polling.enabled = true
+	api.chaining.parent.child.relationship = 
+	api.key.location = HEADER
+	api.key.name = X-API-KEY
+	api.key.value = null
+	apis.num = 1
+	auth.type = NONE
+	bearer.token = null
+	behavior.on.error = FAIL
+	circuit.breaker.failure.threshold = 5
+	circuit.breaker.recovery.time.ms = 30000
+	circuit.breaker.timeout.ms = 60000
+	connection.password = null
+	connection.user = null
+	debug.log.request.body = false
+	debug.log.request.headers = false
+	debug.log.response.body = false
+	debug.log.response.headers = false
+	debug.logging.enabled = false
+	field.encryption.enabled = false
+	field.encryption.key = null
+	field.encryption.rules = 
+	http.api.base.url = https://api.example.com
+	http.proxy.host = null
+	http.proxy.password = null
+	http.proxy.port = null
+	http.proxy.user = null
+	https.ssl.enabled = false
+	https.ssl.protocol = TLSv1.3
+	max.cache.size = 1000
+	oauth2.client.auth.mode = HEADER
+	oauth2.client.id = null
+	oauth2.client.scope = any
+	oauth2.client.secret = null
+	oauth2.token.property = access_token
+	oauth2.token.refresh.interval.minutes = 30
+	oauth2.token.url = null
+	output.data.format = JSON_SR
+	report.errors.as = Error string
+	reporter.error.topic.name = error-${connector}
+	response.cache.ttl.ms = 300000
+	response.caching.enabled = true
+	schema.context.name = default
+	tasks.max = 1
+	value.subject.name.strategy = TopicNameStrategy
+
+13:57:47.342 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.342 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.342 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.342 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.342 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: 
+13:57:47.342 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: TOKEN_ONLY, skiptoken param: customSkipToken, deltatoken param: $deltatoken, current offset: 
 ]]></system-out>
   </testcase>
   <testcase name="testUpdateOffsetWithFullUrlNextLink" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.002">
-    <system-out><![CDATA[13:46:07.742 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+    <system-out><![CDATA[13:57:47.344 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -498,16 +712,16 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.742 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.742 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.742 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.742 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.743 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
-13:46:07.743 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.344 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.344 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.344 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.344 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.344 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.345 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
 ]]></system-out>
   </testcase>
-  <testcase name="testCustomFieldNames" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.002">
-    <system-out><![CDATA[13:46:07.744 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+  <testcase name="testCustomFieldNames" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.001">
+    <system-out><![CDATA[13:57:47.345 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -554,11 +768,11 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.744 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.744 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.744 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.744 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.744 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+13:57:47.345 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.345 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.345 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.345 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.346 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -605,16 +819,16 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.744 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.744 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.744 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.744 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.745 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: 
-13:46:07.745 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: custom.nextLink, deltaLink field: custom.deltaLink, token mode: FULL_URL, current offset: 
+13:57:47.346 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.346 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.346 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.346 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.346 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: 
+13:57:47.346 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: custom.nextLink, deltaLink field: custom.deltaLink, token mode: FULL_URL, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: 
 ]]></system-out>
   </testcase>
   <testcase name="testLoadExistingOffsetFromStorage" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.002">
-    <system-out><![CDATA[13:46:07.746 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+    <system-out><![CDATA[13:57:47.347 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -661,16 +875,16 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.746 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.746 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.746 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.746 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.747 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Loaded existing offset for API api1: /api/data/v9.0/accounts?$skiptoken=stored-token
-13:46:07.747 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, current offset: /api/data/v9.0/accounts?$skiptoken=stored-token
+13:57:47.347 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.347 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.347 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.347 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.348 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Loaded existing offset for API api1: /api/data/v9.0/accounts?$skiptoken=stored-token
+13:57:47.348 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: /api/data/v9.0/accounts?$skiptoken=stored-token
 ]]></system-out>
   </testcase>
-  <testcase name="testValidationFailsWithoutNextLinkField" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.001">
-    <system-out><![CDATA[13:46:07.748 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+  <testcase name="testDefaultTokenParametersWhenNotConfigured" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.001">
+    <system-out><![CDATA[13:57:47.349 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -717,11 +931,16 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.748 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.748 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.748 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.748 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.748 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+13:57:47.349 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.349 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.349 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.349 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.350 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.350 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+]]></system-out>
+  </testcase>
+  <testcase name="testValidationFailsWithoutNextLinkField" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.002">
+    <system-out><![CDATA[13:57:47.351 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -768,13 +987,64 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.748 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.749 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.749 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.351 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.351 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.351 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.351 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.351 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+	adaptive.polling.enabled = true
+	api.chaining.parent.child.relationship = 
+	api.key.location = HEADER
+	api.key.name = X-API-KEY
+	api.key.value = null
+	apis.num = 1
+	auth.type = NONE
+	bearer.token = null
+	behavior.on.error = FAIL
+	circuit.breaker.failure.threshold = 5
+	circuit.breaker.recovery.time.ms = 30000
+	circuit.breaker.timeout.ms = 60000
+	connection.password = null
+	connection.user = null
+	debug.log.request.body = false
+	debug.log.request.headers = false
+	debug.log.response.body = false
+	debug.log.response.headers = false
+	debug.logging.enabled = false
+	field.encryption.enabled = false
+	field.encryption.key = null
+	field.encryption.rules = 
+	http.api.base.url = https://api.example.com
+	http.proxy.host = null
+	http.proxy.password = null
+	http.proxy.port = null
+	http.proxy.user = null
+	https.ssl.enabled = false
+	https.ssl.protocol = TLSv1.3
+	max.cache.size = 1000
+	oauth2.client.auth.mode = HEADER
+	oauth2.client.id = null
+	oauth2.client.scope = any
+	oauth2.client.secret = null
+	oauth2.token.property = access_token
+	oauth2.token.refresh.interval.minutes = 30
+	oauth2.token.url = null
+	output.data.format = JSON_SR
+	report.errors.as = Error string
+	reporter.error.topic.name = error-${connector}
+	response.cache.ttl.ms = 300000
+	response.caching.enabled = true
+	schema.context.name = default
+	tasks.max = 1
+	value.subject.name.strategy = TopicNameStrategy
+
+13:57:47.351 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.351 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.351 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
 ]]></system-out>
   </testcase>
   <testcase name="testSourcePartitionCreation" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.004">
-    <system-out><![CDATA[13:46:07.750 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+    <system-out><![CDATA[13:57:47.353 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -821,16 +1091,16 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.750 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.750 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.750 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.750 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.750 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
-13:46:07.750 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.353 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.353 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.353 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.353 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.353 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.353 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
 ]]></system-out>
   </testcase>
   <testcase name="testUpdateOffsetWithEmptyValue" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.001">
-    <system-out><![CDATA[13:46:07.753 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+    <system-out><![CDATA[13:57:47.356 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -877,17 +1147,17 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.754 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.754 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.754 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.754 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.754 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
-13:46:07.754 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
-13:46:07.754 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Received null or empty offset for API api1, this might indicate end of pagination
+13:57:47.356 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.356 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.356 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.356 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.357 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.357 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.357 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Received null or empty offset for API api1, this might indicate end of pagination
 ]]></system-out>
   </testcase>
   <testcase name="testInitializationWithTokenOnlyMode" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.002">
-    <system-out><![CDATA[13:46:07.755 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+    <system-out><![CDATA[13:57:47.358 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -934,11 +1204,11 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.755 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.755 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.755 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.755 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.755 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+13:57:47.358 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.358 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.358 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.358 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.358 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -985,16 +1255,16 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.755 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.755 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.755 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.755 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.756 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: initial-token
-13:46:07.756 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: TOKEN_ONLY, current offset: initial-token
+13:57:47.358 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.358 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.358 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.358 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.358 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: initial-token
+13:57:47.358 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: TOKEN_ONLY, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: initial-token
 ]]></system-out>
   </testcase>
-  <testcase name="testBuildNextRequestUrlWithTokenOnlyMode" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.002">
-    <system-out><![CDATA[13:46:07.756 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+  <testcase name="testBuildNextRequestUrlWithTokenOnlyMode" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.001">
+    <system-out><![CDATA[13:57:47.359 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -1041,11 +1311,11 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.756 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.756 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.757 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.757 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.757 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+13:57:47.359 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.359 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.359 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.359 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.360 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -1092,16 +1362,16 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.757 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.757 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.757 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.757 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.757 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: 
-13:46:07.757 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: TOKEN_ONLY, current offset: 
+13:57:47.360 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.360 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.360 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.360 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.360 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: 
+13:57:47.360 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: TOKEN_ONLY, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: 
 ]]></system-out>
   </testcase>
   <testcase name="testInitializationWithFullUrlMode" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.001">
-    <system-out><![CDATA[13:46:07.758 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+    <system-out><![CDATA[13:57:47.361 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -1148,16 +1418,16 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.758 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.758 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.758 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.758 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.759 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
-13:46:07.759 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.361 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.361 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.361 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.361 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.361 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.361 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
 ]]></system-out>
   </testcase>
   <testcase name="testUpdateOffsetWithNullValue" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.001">
-    <system-out><![CDATA[13:46:07.759 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+    <system-out><![CDATA[13:57:47.362 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -1204,17 +1474,17 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.759 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.759 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.759 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.759 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.760 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
-13:46:07.760 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
-13:46:07.760 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Received null or empty offset for API api1, this might indicate end of pagination
+13:57:47.362 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.362 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.362 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.362 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.362 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.362 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.362 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Received null or empty offset for API api1, this might indicate end of pagination
 ]]></system-out>
   </testcase>
-  <testcase name="testBuildNextRequestUrlWithFullUrlMode" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.001">
-    <system-out><![CDATA[13:46:07.760 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+  <testcase name="testBuildNextRequestUrlWithFullUrlMode" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.002">
+    <system-out><![CDATA[13:57:47.363 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -1261,16 +1531,230 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.760 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.761 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.761 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.761 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.761 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
-13:46:07.761 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.363 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.363 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.363 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.363 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.363 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.363 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+]]></system-out>
+  </testcase>
+  <testcase name="testBothCustomTokenParameters" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.001">
+    <system-out><![CDATA[13:57:47.364 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+	adaptive.polling.enabled = true
+	api.chaining.parent.child.relationship = 
+	api.key.location = HEADER
+	api.key.name = X-API-KEY
+	api.key.value = null
+	apis.num = 1
+	auth.type = NONE
+	bearer.token = null
+	behavior.on.error = FAIL
+	circuit.breaker.failure.threshold = 5
+	circuit.breaker.recovery.time.ms = 30000
+	circuit.breaker.timeout.ms = 60000
+	connection.password = null
+	connection.user = null
+	debug.log.request.body = false
+	debug.log.request.headers = false
+	debug.log.response.body = false
+	debug.log.response.headers = false
+	debug.logging.enabled = false
+	field.encryption.enabled = false
+	field.encryption.key = null
+	field.encryption.rules = 
+	http.api.base.url = https://api.example.com
+	http.proxy.host = null
+	http.proxy.password = null
+	http.proxy.port = null
+	http.proxy.user = null
+	https.ssl.enabled = false
+	https.ssl.protocol = TLSv1.3
+	max.cache.size = 1000
+	oauth2.client.auth.mode = HEADER
+	oauth2.client.id = null
+	oauth2.client.scope = any
+	oauth2.client.secret = null
+	oauth2.token.property = access_token
+	oauth2.token.refresh.interval.minutes = 30
+	oauth2.token.url = null
+	output.data.format = JSON_SR
+	report.errors.as = Error string
+	reporter.error.topic.name = error-${connector}
+	response.cache.ttl.ms = 300000
+	response.caching.enabled = true
+	schema.context.name = default
+	tasks.max = 1
+	value.subject.name.strategy = TopicNameStrategy
+
+13:57:47.364 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.364 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.364 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.364 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.365 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+	adaptive.polling.enabled = true
+	api.chaining.parent.child.relationship = 
+	api.key.location = HEADER
+	api.key.name = X-API-KEY
+	api.key.value = null
+	apis.num = 1
+	auth.type = NONE
+	bearer.token = null
+	behavior.on.error = FAIL
+	circuit.breaker.failure.threshold = 5
+	circuit.breaker.recovery.time.ms = 30000
+	circuit.breaker.timeout.ms = 60000
+	connection.password = null
+	connection.user = null
+	debug.log.request.body = false
+	debug.log.request.headers = false
+	debug.log.response.body = false
+	debug.log.response.headers = false
+	debug.logging.enabled = false
+	field.encryption.enabled = false
+	field.encryption.key = null
+	field.encryption.rules = 
+	http.api.base.url = https://api.example.com
+	http.proxy.host = null
+	http.proxy.password = null
+	http.proxy.port = null
+	http.proxy.user = null
+	https.ssl.enabled = false
+	https.ssl.protocol = TLSv1.3
+	max.cache.size = 1000
+	oauth2.client.auth.mode = HEADER
+	oauth2.client.id = null
+	oauth2.client.scope = any
+	oauth2.client.secret = null
+	oauth2.token.property = access_token
+	oauth2.token.refresh.interval.minutes = 30
+	oauth2.token.url = null
+	output.data.format = JSON_SR
+	report.errors.as = Error string
+	reporter.error.topic.name = error-${connector}
+	response.cache.ttl.ms = 300000
+	response.caching.enabled = true
+	schema.context.name = default
+	tasks.max = 1
+	value.subject.name.strategy = TopicNameStrategy
+
+13:57:47.365 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.365 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.365 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.365 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.365 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: 
+13:57:47.365 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: TOKEN_ONLY, skiptoken param: mySkipToken, deltatoken param: myDeltaToken, current offset: 
+]]></system-out>
+  </testcase>
+  <testcase name="testConfigurableDeltaTokenParameter" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.002">
+    <system-out><![CDATA[13:57:47.366 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+	adaptive.polling.enabled = true
+	api.chaining.parent.child.relationship = 
+	api.key.location = HEADER
+	api.key.name = X-API-KEY
+	api.key.value = null
+	apis.num = 1
+	auth.type = NONE
+	bearer.token = null
+	behavior.on.error = FAIL
+	circuit.breaker.failure.threshold = 5
+	circuit.breaker.recovery.time.ms = 30000
+	circuit.breaker.timeout.ms = 60000
+	connection.password = null
+	connection.user = null
+	debug.log.request.body = false
+	debug.log.request.headers = false
+	debug.log.response.body = false
+	debug.log.response.headers = false
+	debug.logging.enabled = false
+	field.encryption.enabled = false
+	field.encryption.key = null
+	field.encryption.rules = 
+	http.api.base.url = https://api.example.com
+	http.proxy.host = null
+	http.proxy.password = null
+	http.proxy.port = null
+	http.proxy.user = null
+	https.ssl.enabled = false
+	https.ssl.protocol = TLSv1.3
+	max.cache.size = 1000
+	oauth2.client.auth.mode = HEADER
+	oauth2.client.id = null
+	oauth2.client.scope = any
+	oauth2.client.secret = null
+	oauth2.token.property = access_token
+	oauth2.token.refresh.interval.minutes = 30
+	oauth2.token.url = null
+	output.data.format = JSON_SR
+	report.errors.as = Error string
+	reporter.error.topic.name = error-${connector}
+	response.cache.ttl.ms = 300000
+	response.caching.enabled = true
+	schema.context.name = default
+	tasks.max = 1
+	value.subject.name.strategy = TopicNameStrategy
+
+13:57:47.366 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.366 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.366 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.366 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.366 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+	adaptive.polling.enabled = true
+	api.chaining.parent.child.relationship = 
+	api.key.location = HEADER
+	api.key.name = X-API-KEY
+	api.key.value = null
+	apis.num = 1
+	auth.type = NONE
+	bearer.token = null
+	behavior.on.error = FAIL
+	circuit.breaker.failure.threshold = 5
+	circuit.breaker.recovery.time.ms = 30000
+	circuit.breaker.timeout.ms = 60000
+	connection.password = null
+	connection.user = null
+	debug.log.request.body = false
+	debug.log.request.headers = false
+	debug.log.response.body = false
+	debug.log.response.headers = false
+	debug.logging.enabled = false
+	field.encryption.enabled = false
+	field.encryption.key = null
+	field.encryption.rules = 
+	http.api.base.url = https://api.example.com
+	http.proxy.host = null
+	http.proxy.password = null
+	http.proxy.port = null
+	http.proxy.user = null
+	https.ssl.enabled = false
+	https.ssl.protocol = TLSv1.3
+	max.cache.size = 1000
+	oauth2.client.auth.mode = HEADER
+	oauth2.client.id = null
+	oauth2.client.scope = any
+	oauth2.client.secret = null
+	oauth2.token.property = access_token
+	oauth2.token.refresh.interval.minutes = 30
+	oauth2.token.url = null
+	output.data.format = JSON_SR
+	report.errors.as = Error string
+	reporter.error.topic.name = error-${connector}
+	response.cache.ttl.ms = 300000
+	response.caching.enabled = true
+	schema.context.name = default
+	tasks.max = 1
+	value.subject.name.strategy = TopicNameStrategy
+
+13:57:47.366 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.366 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.366 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.366 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.367 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: 
+13:57:47.367 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: TOKEN_ONLY, skiptoken param: $skiptoken, deltatoken param: customDeltaToken, current offset: 
 ]]></system-out>
   </testcase>
   <testcase name="testUpdateOffsetWithFullUrlDeltaLink" classname="io.confluent.connect.http.unit.ODataOffsetManagerTest" time="0.001">
-    <system-out><![CDATA[13:46:07.762 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
+    <system-out><![CDATA[13:57:47.367 [main] INFO io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig values: 
 	adaptive.polling.enabled = true
 	api.chaining.parent.child.relationship = 
 	api.key.location = HEADER
@@ -1317,12 +1801,12 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 	tasks.max = 1
 	value.subject.name.strategy = TopicNameStrategy
 
-13:46:07.762 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
-13:46:07.762 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
-13:46:07.762 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
-13:46:07.762 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
-13:46:07.762 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
-13:46:07.762 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.367 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- Validating HttpSourceConnectorConfig
+13:57:47.367 [main] DEBUG io.confluent.connect.http.config.HttpSourceConnectorConfig -- HttpSourceConnectorConfig validation completed
+13:57:47.367 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Validating configuration for API: api1
+13:57:47.367 [main] DEBUG io.confluent.connect.http.config.ApiConfig -- Configuration validation completed for API: api1
+13:57:47.368 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Using initial offset for API api1: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
+13:57:47.368 [main] DEBUG io.confluent.connect.http.offset.ODataOffsetManager -- Initialized ODataOffsetManager for API: api1 with nextLink field: @odata.nextLink, deltaLink field: @odata.deltaLink, token mode: FULL_URL, skiptoken param: $skiptoken, deltatoken param: $deltatoken, current offset: ?$select=name,accountnumber&$filter=modifiedon ge '2025-01-01'
 ]]></system-out>
   </testcase>
 </testsuite>

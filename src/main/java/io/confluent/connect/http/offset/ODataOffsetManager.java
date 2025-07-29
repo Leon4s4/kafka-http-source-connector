@@ -42,11 +42,9 @@ public class ODataOffsetManager implements OffsetManager {
     private static final String DEFAULT_NEXTLINK_FIELD = "@odata.nextLink";
     private static final String DEFAULT_DELTALINK_FIELD = "@odata.deltaLink";
     
-    // Token extraction patterns
-    // Thread-safe: Pattern is immutable and used in a read-only context.
-    private static final Pattern SKIPTOKEN_PATTERN = Pattern.compile("\\$skiptoken=([^&]+)");
-    // Thread-safe: Pattern is immutable and used in a read-only context.
-    private static final Pattern DELTATOKEN_PATTERN = Pattern.compile("\\$deltatoken=([^&]+)");
+    // Token extraction patterns - will be initialized dynamically based on configuration
+    private final Pattern skipTokenPattern;
+    private final Pattern deltaTokenPattern;
     
     private final ApiConfig apiConfig;
     private final SourceTaskContext context;
@@ -57,6 +55,8 @@ public class ODataOffsetManager implements OffsetManager {
     private final String nextLinkField;
     private final String deltaLinkField;
     private final ODataTokenMode tokenMode;
+    private final String skipTokenParam;
+    private final String deltaTokenParam;
     private String lastExtractedTokenType; // Track whether last token was from skiptoken or deltatoken
     
     public enum ODataTokenMode {
@@ -75,10 +75,16 @@ public class ODataOffsetManager implements OffsetManager {
         // Get initial offset
         this.initialOffset = apiConfig.getHttpInitialOffset();
         
-        // Get configurable field names
+        // Get configurable field names and token parameters
         this.nextLinkField = apiConfig.getODataNextLinkField();
         this.deltaLinkField = apiConfig.getODataDeltaLinkField();
         this.tokenMode = apiConfig.getODataTokenMode();
+        this.skipTokenParam = apiConfig.getODataSkipTokenParam();
+        this.deltaTokenParam = apiConfig.getODataDeltaTokenParam();
+        
+        // Create dynamic patterns based on configured token parameter names
+        this.skipTokenPattern = Pattern.compile(Pattern.quote(skipTokenParam) + "=([^&]+)");
+        this.deltaTokenPattern = Pattern.compile(Pattern.quote(deltaTokenParam) + "=([^&]+)");
         
         // Validate required configuration
         if (nextLinkField == null || nextLinkField.trim().isEmpty()) {
@@ -89,8 +95,8 @@ public class ODataOffsetManager implements OffsetManager {
         // Load current offset from Kafka Connect's offset storage
         loadCurrentOffset();
         
-        log.debug("Initialized ODataOffsetManager for API: {} with nextLink field: {}, deltaLink field: {}, token mode: {}, current offset: {}",
-            apiConfig.getId(), nextLinkField, deltaLinkField, tokenMode, currentOffset);
+        log.debug("Initialized ODataOffsetManager for API: {} with nextLink field: {}, deltaLink field: {}, token mode: {}, skiptoken param: {}, deltatoken param: {}, current offset: {}",
+            apiConfig.getId(), nextLinkField, deltaLinkField, tokenMode, skipTokenParam, deltaTokenParam, currentOffset);
     }
     
     @Override
@@ -167,6 +173,20 @@ public class ODataOffsetManager implements OffsetManager {
     }
     
     /**
+     * Gets the configured skiptoken parameter name
+     */
+    public String getSkipTokenParam() {
+        return skipTokenParam;
+    }
+    
+    /**
+     * Gets the configured deltatoken parameter name
+     */
+    public String getDeltaTokenParam() {
+        return deltaTokenParam;
+    }
+    
+    /**
      * Processes the offset based on the configured token mode
      */
     private String processOffset(String rawOffset) {
@@ -205,35 +225,35 @@ public class ODataOffsetManager implements OffsetManager {
     /**
      * Extracts only the token value from an OData URL
      * 
-     * Looks for $skiptoken or $deltatoken parameters and extracts their values
+     * Looks for configured token parameters and extracts their values
      */
     private String extractTokenOnly(String fullUrl) {
         // Try to extract skiptoken first
-        Matcher skipMatcher = SKIPTOKEN_PATTERN.matcher(fullUrl);
+        Matcher skipMatcher = skipTokenPattern.matcher(fullUrl);
         if (skipMatcher.find()) {
-            this.lastExtractedTokenType = "skiptoken";
+            this.lastExtractedTokenType = skipTokenParam;
             try {
                 return URLDecoder.decode(skipMatcher.group(1), StandardCharsets.UTF_8);
             } catch (Exception e) {
-                log.warn("Failed to decode skiptoken from: {}", fullUrl, e);
+                log.warn("Failed to decode {} from: {}", skipTokenParam, fullUrl, e);
                 return skipMatcher.group(1);
             }
         }
         
         // Try to extract deltatoken
-        Matcher deltaMatcher = DELTATOKEN_PATTERN.matcher(fullUrl);
+        Matcher deltaMatcher = deltaTokenPattern.matcher(fullUrl);
         if (deltaMatcher.find()) {
-            this.lastExtractedTokenType = "deltatoken";
+            this.lastExtractedTokenType = deltaTokenParam;
             try {
                 return URLDecoder.decode(deltaMatcher.group(1), StandardCharsets.UTF_8);
             } catch (Exception e) {
-                log.warn("Failed to decode deltatoken from: {}", fullUrl, e);
+                log.warn("Failed to decode {} from: {}", deltaTokenParam, fullUrl, e);
                 return deltaMatcher.group(1);
             }
         }
         
         // If no token found, return the original URL
-        log.debug("No skiptoken or deltatoken found in URL: {}, using full URL", fullUrl);
+        log.debug("No {} or {} found in URL: {}, using full URL", skipTokenParam, deltaTokenParam, fullUrl);
         this.lastExtractedTokenType = null;
         return extractPathAndQuery(fullUrl);
     }
@@ -260,27 +280,31 @@ public class ODataOffsetManager implements OffsetManager {
             
             // Determine if this is a skiptoken or deltatoken based on content and context
             if (isDeltaToken(currentOffset)) {
-                return basePath + separator + "$deltatoken=" + currentOffset;
+                return basePath + separator + deltaTokenParam + "=" + currentOffset;
             } else {
-                return basePath + separator + "$skiptoken=" + currentOffset;
+                return basePath + separator + skipTokenParam + "=" + currentOffset;
             }
         }
         return currentOffset;
     }
     
     /**
-     * Heuristic to determine if a token is likely a delta token
+     * Determines if a token is a delta token based on the extraction context
+     * 
+     * This method uses the token type that was determined during the extraction process,
+     * which is more reliable than pattern-based heuristics.
      */
     private boolean isDeltaToken(String token) {
         // Check if token came from a deltatoken URL parameter extraction
-        // This is stored during the token extraction process
+        // This is stored during the token extraction process and is the most reliable method
         if (lastExtractedTokenType != null) {
-            return lastExtractedTokenType.equals("deltatoken");
+            return lastExtractedTokenType.equals(deltaTokenParam);
         }
         
-        // Fallback heuristic: Delta tokens often contain timestamps or specific patterns
-        // This is a simple heuristic - customize based on your OData implementation
-        return token.contains("%2f") || token.contains("%3a") || token.matches(".*\\d{4}.*\\d{2}.*\\d{2}.*");
+        // Fallback: If no extraction context is available, assume skiptoken
+        // This can happen when loading from offset storage or in edge cases
+        log.debug("No token extraction context available for token: {}, defaulting to skiptoken", token);
+        return false;
     }
     
     /**
