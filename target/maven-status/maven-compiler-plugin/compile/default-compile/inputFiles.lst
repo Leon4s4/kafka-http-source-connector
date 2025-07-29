@@ -16,6 +16,7 @@
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/health/HealthStatus.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/offset/SimpleIncrementingOffsetManager.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/offset/OffsetManager.java
+/Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/error/EnhancedErrorReport.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/metrics/HttpSourceConnectorMetrics.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/client/PreparedRequest.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/transformation/FilterExpression.java
@@ -25,6 +26,7 @@
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/client/RetryHandler.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/ssl/EnhancedSSLManager.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/HttpSourceConnector.java
+/Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/error/ConnectionErrorDiagnostics.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/offset/SnapshotPaginationOffsetManager.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/offset/OffsetManagerFactory.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/client/ClientStatistics.java
@@ -41,6 +43,7 @@
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/config/EnhancedConfigValidator.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/auth/OAuth2Authenticator.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/pagination/PaginationState.java
+/Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/debug/DebugLogger.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/auth/enhanced/AzureAdAuthenticator.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/transformation/FieldMapping.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/transformation/FieldEnrichment.java

@@ -100,6 +100,7 @@ io/confluent/connect/http/ssl/SSLValidationResult.class
 io/confluent/connect/http/transformation/AdvancedTransformationEngine$1.class
 io/confluent/connect/http/transformation/AdvancedTransformationEngine$TransformationStats.class
 io/confluent/connect/http/config/EnhancedConfigValidator.class
+io/confluent/connect/http/converter/JsonRecordConverter$1.class
 io/confluent/connect/http/auth/enhanced/AzureAdAuthenticator$AzureAuthFlow.class
 io/confluent/connect/http/offset/OffsetManagerFactory$1.class
 io/confluent/connect/http/client/HttpApiClient$HttpRequestException.class
