@@ -251,6 +251,7 @@ This configuration:
 - Extracts the next page URL from `@odata.nextLink` 
 - Extracts data records from the `/value` array
 - Automatically handles OData pagination and change tracking
+- Properly encodes special characters (spaces, quotes) while preserving OData operators ($select, $filter)
 
 #### 3. Circuit Breaker Configuration
 ```json

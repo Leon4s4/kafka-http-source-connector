@@ -1,4 +1,20 @@
 -------------------------------------------------------------------------------
 Test set: io.confluent.connect.http.integration.ODataCursorPaginationTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.545 s -- in io.confluent.connect.http.integration.ODataCursorPaginationTest
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 85.35 s <<< FAILURE! -- in io.confluent.connect.http.integration.ODataCursorPaginationTest
+io.confluent.connect.http.integration.ODataCursorPaginationTest.shouldReplaceOffsetTemplateWithODataQueryParameters -- Time elapsed: 74.51 s <<< ERROR!
+java.lang.RuntimeException: API polling failed: HTTP request failed with status 404: Not Found
+	at io.confluent.connect.http.HttpSourceTask.poll(HttpSourceTask.java:133)
+	at io.confluent.connect.http.integration.ODataCursorPaginationTest.shouldReplaceOffsetTemplateWithODataQueryParameters(ODataCursorPaginationTest.java:98)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+Caused by: io.confluent.connect.http.client.HttpApiClient$HttpRequestException: HTTP request failed with status 404: Not Found
+	at io.confluent.connect.http.client.HttpApiClient.executeRequest(HttpApiClient.java:237)
+	at io.confluent.connect.http.client.HttpApiClient.lambda$makeRequest$0(HttpApiClient.java:98)
+	at io.confluent.connect.http.client.RetryHandler.executeWithRetry(RetryHandler.java:59)
+	at io.confluent.connect.http.client.HttpApiClient.makeRequest(HttpApiClient.java:98)
+	at io.confluent.connect.http.HttpSourceTask.pollApi(HttpSourceTask.java:307)
+	at io.confluent.connect.http.HttpSourceTask.poll(HttpSourceTask.java:116)
+	... 4 more
+

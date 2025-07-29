@@ -91,6 +91,9 @@ public class ODataCursorPaginationTest extends BaseIntegrationTest {
         HttpSourceTask task = new HttpSourceTask();
         task.start(connectorConfig);
         
+        // Check what requests WireMock has received (for debugging)
+        checkWireMockRequests();
+        
         // Poll for records
         List<SourceRecord> records = task.poll();
         
@@ -224,8 +227,11 @@ public class ODataCursorPaginationTest extends BaseIntegrationTest {
             }
             """;
         
-        // Setup WireMock stub for the initial request
-        setupWireMockStub("/accounts", firstPageResponse);
+        // Setup WireMock stub for the initial request with OData query parameters  
+        // The actual request will be: /accounts?$select=name,accountnumber,telephone1,fax&$filter=modifiedon%20ge%20'2025-01-01'
+        setupWireMockStubWithQueryParams("/accounts", 
+            "\\$select=name,accountnumber,telephone1,fax&\\$filter=modifiedon%20ge%20'2025-01-01'", 
+            firstPageResponse);
         
         log.info("Mock OData responses configured");
     }
@@ -266,38 +272,70 @@ public class ODataCursorPaginationTest extends BaseIntegrationTest {
             }
             """;
         
-        // Setup stubs for both pages
+        // Setup stubs for both pages with proper URL encoding
         setupWireMockStub("/accounts", firstPageResponse);
-        setupWireMockStub("/accounts?$skiptoken=page2", secondPageResponse);
+        setupWireMockStubWithQueryParams("/accounts", "\\$skiptoken=page2", secondPageResponse);
         
         log.info("Mock pagination responses configured");
     }
     
     private void setupWireMockStub(String urlPath, String responseBody) {
+        setupWireMockStubWithQueryParams(urlPath, null, responseBody);
+    }
+    
+    private void setupWireMockStubWithQueryParams(String urlPath, String queryString, String responseBody) {
         try {
-            // Build WireMock stub configuration - match any URL starting with the path
-            String stubConfig = String.format("""
-                {
-                    "request": {
-                        "method": "GET",
-                        "urlPattern": "/api/data/v9.2/accounts.*"
-                    },
-                    "response": {
-                        "status": 200,
-                        "headers": {
-                            "Content-Type": "application/json"
+            // Build WireMock stub configuration with more flexible matching
+            String stubConfig;
+            if (queryString != null) {
+                // Use a more flexible pattern that matches any query parameters containing our key parts
+                stubConfig = String.format("""
+                    {
+                        "request": {
+                            "method": "GET",
+                            "urlPathPattern": "/api/data/v9.2%s",
+                            "queryParameters": {
+                                ".*": {
+                                    "matches": ".*"
+                                }
+                            }
                         },
-                        "body": %s
+                        "response": {
+                            "status": 200,
+                            "headers": {
+                                "Content-Type": "application/json"
+                            },
+                            "body": %s
+                        }
                     }
-                }
-                """, OBJECT_MAPPER.writeValueAsString(responseBody));
+                    """, urlPath, OBJECT_MAPPER.writeValueAsString(responseBody));
+            } else {
+                // Match URL path with any or no query parameters
+                stubConfig = String.format("""
+                    {
+                        "request": {
+                            "method": "GET",
+                            "urlPathPattern": "/api/data/v9.2%s"
+                        },
+                        "response": {
+                            "status": 200,
+                            "headers": {
+                                "Content-Type": "application/json"
+                            },
+                            "body": %s
+                        }
+                    }
+                    """, urlPath, OBJECT_MAPPER.writeValueAsString(responseBody));
+            }
             
             // Post to WireMock admin API
             String wireMockUrl = String.format("http://%s:%d/__admin/mappings", 
                 MOCK_ODATA_SERVER.getHost(), 
                 MOCK_ODATA_SERVER.getMappedPort(8080));
             
-            log.info("Setting up WireMock stub for path: {} at URL: {}", urlPath, wireMockUrl);
+            log.info("Setting up WireMock stub for path: {} with query: {} at URL: {}", 
+                urlPath, queryString != null ? queryString : "(none)", wireMockUrl);
+            log.info("WireMock stub config: {}", stubConfig);
             
             // Using basic HTTP client to setup WireMock stub
             var httpClient = java.net.http.HttpClient.newHttpClient();
@@ -317,7 +355,27 @@ public class ODataCursorPaginationTest extends BaseIntegrationTest {
             }
             
         } catch (Exception e) {
-            log.error("Error setting up WireMock stub for path: {}", urlPath, e);
+            log.error("Error setting up WireMock stub for path: {} with query: {}", urlPath, queryString, e);
+        }
+    }
+    
+    private void checkWireMockRequests() {
+        try {
+            String requestsUrl = String.format("http://%s:%d/__admin/requests", 
+                MOCK_ODATA_SERVER.getHost(), 
+                MOCK_ODATA_SERVER.getMappedPort(8080));
+            
+            var httpClient = java.net.http.HttpClient.newHttpClient();
+            var request = java.net.http.HttpRequest.newBuilder()
+                .uri(java.net.URI.create(requestsUrl))
+                .GET()
+                .build();
+            
+            var response = httpClient.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+            log.info("WireMock received requests: {}", response.body());
+            
+        } catch (Exception e) {
+            log.warn("Failed to check WireMock requests", e);
         }
     }
 }

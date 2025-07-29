@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: io.confluent.connect.http.unit.TemplateReplacementTest
 -------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.079 s -- in io.confluent.connect.http.unit.TemplateReplacementTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.086 s -- in io.confluent.connect.http.unit.TemplateReplacementTest

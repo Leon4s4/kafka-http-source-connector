@@ -1,6 +1,8 @@
 /Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/integration/ReliableEnterpriseIntegrationTest.java
 /Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/unit/FieldEncryptionManagerTest.java
+/Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/unit/HttpApiClientTemplateTest.java
 /Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/integration/SimplifiedEnterpriseIntegrationTest.java
+/Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/unit/HttpApiClientRealRequestTest.java
 /Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/integration/OptimizedEnterpriseConnectorIntegrationTest.java
 /Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/unit/TemplateReplacementTest.java
 /Users/Git/kafka-http-source-connector/src/test/java/io/confluent/connect/http/unit/AdvancedErrorHandlerTest.java
