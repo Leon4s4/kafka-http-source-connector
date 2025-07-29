@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: io.confluent.connect.http.integration.ODataCursorPaginationTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.491 s -- in io.confluent.connect.http.integration.ODataCursorPaginationTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.545 s -- in io.confluent.connect.http.integration.ODataCursorPaginationTest

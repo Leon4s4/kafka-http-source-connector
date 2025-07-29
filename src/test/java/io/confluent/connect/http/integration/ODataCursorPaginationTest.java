@@ -39,6 +39,7 @@ public class ODataCursorPaginationTest extends BaseIntegrationTest {
     private Map<String, String> connectorConfig;
     
     // Mock OData API server container
+    @SuppressWarnings("resource") // TestContainers manages lifecycle automatically
     @Container
     private static final GenericContainer<?> MOCK_ODATA_SERVER = 
             new GenericContainer<>(
@@ -267,7 +268,7 @@ public class ODataCursorPaginationTest extends BaseIntegrationTest {
         
         // Setup stubs for both pages
         setupWireMockStub("/accounts", firstPageResponse);
-        setupWireMockStub("/accounts?\\$skiptoken=page2", secondPageResponse);
+        setupWireMockStub("/accounts?$skiptoken=page2", secondPageResponse);
         
         log.info("Mock pagination responses configured");
     }

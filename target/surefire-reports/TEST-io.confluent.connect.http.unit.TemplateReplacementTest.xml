@@ -13,7 +13,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="CA"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/24.0.1/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/Git/kafka-http-source-connector/target/surefire/surefirebooter-20250729081323885_3.jar /Users/Git/kafka-http-source-connector/target/surefire 2025-07-29T08-13-23_849-jvmRun1 surefire-20250729081323885_1tmp surefire_0-20250729081323885_2tmp"/>
+    <property name="sun.java.command" value="/Users/Git/kafka-http-source-connector/target/surefire/surefirebooter-20250729085059447_3.jar /Users/Git/kafka-http-source-connector/target/surefire 2025-07-29T08-50-59_409-jvmRun1 surefire-20250729085059447_1tmp surefire_0-20250729085059447_2tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="test" value="TemplateReplacementTest"/>
@@ -31,7 +31,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/Git/kafka-http-source-connector/target/surefire/surefirebooter-20250729081323885_3.jar"/>
+    <property name="surefire.real.class.path" value="/Users/Git/kafka-http-source-connector/target/surefire/surefirebooter-20250729085059447_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="24.0.1"/>
@@ -61,13 +61,13 @@
     <property name="java.class.version" value="68.0"/>
   </properties>
   <testcase name="shouldDemonstrateFixReplaceBeforeParsing" classname="io.confluent.connect.http.unit.TemplateReplacementTest" time="0.065">
-    <system-out><![CDATA[08:13:24.228 [main] DEBUG io.confluent.connect.http.util.TemplateVariableReplacer -- Template replacement completed: http://mock-server:8080/api/data/v9.2/accounts${offset} -> http://mock-server:8080/api/data/v9.2/accounts?$select=name,accountnumber
+    <system-out><![CDATA[08:50:59.795 [main] DEBUG io.confluent.connect.http.util.TemplateVariableReplacer -- Template replacement completed: http://mock-server:8080/api/data/v9.2/accounts${offset} -> http://mock-server:8080/api/data/v9.2/accounts?$select=name,accountnumber
 OLD WAY - Parse first, then replace: http://mock-server:8080/api/data/v9.2/accounts$%7Boffset%7D
 NEW WAY - Replace first, then parse: http://mock-server:8080/api/data/v9.2/accounts?$select=name,accountnumber
 ]]></system-out>
   </testcase>
   <testcase name="shouldReplaceOffsetTemplateInUrlPath" classname="io.confluent.connect.http.unit.TemplateReplacementTest" time="0.0">
-    <system-out><![CDATA[08:13:24.238 [main] DEBUG io.confluent.connect.http.util.TemplateVariableReplacer -- Template replacement completed: http://mock-server:8080/api/data/v9.2/accounts${offset} -> http://mock-server:8080/api/data/v9.2/accounts?$select=name,accountnumber,telephone1,fax&$filter=modifiedon ge '2025-01-01'
+    <system-out><![CDATA[08:50:59.805 [main] DEBUG io.confluent.connect.http.util.TemplateVariableReplacer -- Template replacement completed: http://mock-server:8080/api/data/v9.2/accounts${offset} -> http://mock-server:8080/api/data/v9.2/accounts?$select=name,accountnumber,telephone1,fax&$filter=modifiedon ge '2025-01-01'
 ]]></system-out>
   </testcase>
   <testcase name="shouldTestUrlEncodingWithHttpUrlParse" classname="io.confluent.connect.http.unit.TemplateReplacementTest" time="0.001">
@@ -76,11 +76,11 @@ Parsed URL: http://mock-server:8080/api/data/v9.2/accounts$%7Boffset%7D
 ]]></system-out>
   </testcase>
   <testcase name="shouldHandleMultipleTemplateVariables" classname="io.confluent.connect.http.unit.TemplateReplacementTest" time="0.001">
-    <system-out><![CDATA[08:13:24.240 [main] DEBUG io.confluent.connect.http.util.TemplateVariableReplacer -- Template replacement completed: http://mock-server:8080/api/data/v9.2/accounts${offset}&debug=${debug} -> http://mock-server:8080/api/data/v9.2/accounts?$select=name&debug=true
+    <system-out><![CDATA[08:50:59.807 [main] DEBUG io.confluent.connect.http.util.TemplateVariableReplacer -- Template replacement completed: http://mock-server:8080/api/data/v9.2/accounts${offset}&debug=${debug} -> http://mock-server:8080/api/data/v9.2/accounts?$select=name&debug=true
 ]]></system-out>
   </testcase>
   <testcase name="shouldHandleEmptyOffsetValue" classname="io.confluent.connect.http.unit.TemplateReplacementTest" time="0.001">
-    <system-out><![CDATA[08:13:24.241 [main] DEBUG io.confluent.connect.http.util.TemplateVariableReplacer -- Template replacement completed: http://mock-server:8080/api/data/v9.2/accounts${offset} -> http://mock-server:8080/api/data/v9.2/accounts
+    <system-out><![CDATA[08:50:59.808 [main] DEBUG io.confluent.connect.http.util.TemplateVariableReplacer -- Template replacement completed: http://mock-server:8080/api/data/v9.2/accounts${offset} -> http://mock-server:8080/api/data/v9.2/accounts
 ]]></system-out>
   </testcase>
   <testcase name="shouldHandleNullOffsetValue" classname="io.confluent.connect.http.unit.TemplateReplacementTest" time="0.0"/>
