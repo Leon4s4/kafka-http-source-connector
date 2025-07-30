@@ -288,17 +288,12 @@ public class ODataCursorPaginationTest extends BaseIntegrationTest {
             // Build WireMock stub configuration with more flexible matching
             String stubConfig;
             if (queryString != null) {
-                // Use a more flexible pattern that matches any query parameters containing our key parts
+                // Use a more flexible pattern that matches the path with any query parameters
                 stubConfig = String.format("""
                     {
                         "request": {
                             "method": "GET",
-                            "urlPathPattern": "/api/data/v9.2%s",
-                            "queryParameters": {
-                                ".*": {
-                                    "matches": ".*"
-                                }
-                            }
+                            "urlPattern": "/api/data/v9.2%s\\?.*"
                         },
                         "response": {
                             "status": 200,
@@ -315,7 +310,12 @@ public class ODataCursorPaginationTest extends BaseIntegrationTest {
                     {
                         "request": {
                             "method": "GET",
-                            "urlPathPattern": "/api/data/v9.2%s"
+                            "urlPattern": "/api/data/v9.2%s(\\?.*)?",
+                            "headers": {
+                                "Accept": {
+                                    "matches": ".*"
+                                }
+                            }
                         },
                         "response": {
                             "status": 200,

@@ -6,7 +6,7 @@ A production-ready Kafka Connect source connector for ingesting data from HTTP/H
 
 ### ✅ Core Features (Fully Implemented)
 - **Multiple API Support**: Poll up to 15 different HTTP/HTTPS endpoints simultaneously
-- **Authentication**: Complete support for None, Basic, Bearer Token, OAuth2, and API Key authentication
+- **Authentication**: Complete support for None, Basic, Bearer Token, OAuth2 (with client secret and certificate-based), and API Key authentication
 - **Offset Management**: Five modes - Simple incrementing, cursor-based pagination, **OData pagination with configurable poll intervals**, chaining, and snapshot pagination
 - **Data Formats**: Full AVRO, JSON Schema Registry, and Protobuf support with Schema Registry integration
 - **Template Variables**: Dynamic URL construction with offset, chaining, date/time, and environment variables
@@ -30,15 +30,15 @@ A production-ready Kafka Connect source connector for ingesting data from HTTP/H
 
 ## 📋 Table of Contents
 
-1. [Quick Start](#quick-start)
-2. [Core Configuration](#core-configuration)
-3. [Authentication Methods](#authentication-methods)
-4. [Advanced Features](#advanced-features)
-5. [Enterprise Features](#enterprise-features)
-6. [Monitoring & Operations](#monitoring--operations)
-7. [Security Configuration](#security-configuration)
-8. [Performance Tuning](#performance-tuning)
-9. [Troubleshooting](#troubleshooting)
+1. [🚀 Quick Start](#-quick-start)
+2. [⚙️ Core Configuration](#️-core-configuration)
+3. [🔐 Authentication Methods](#-authentication-methods)
+4. [🔧 Advanced Features](#-advanced-features)
+5. [🏢 Enterprise Features](#-enterprise-features)
+6. [📊 Monitoring & Operations](#-monitoring--operations)
+7. [🔒 Security Configuration](#-security-configuration)
+8. [🚀 Performance Tuning](#-performance-tuning)
+9. [🛠️ Troubleshooting](#️-troubleshooting)
 
 ## 🚀 Quick Start
 
@@ -178,9 +178,11 @@ curl -X POST http://localhost:8083/connectors \
 
 ### 4. OAuth2 Client Credentials
 
+#### OAuth2 with Client Secret
 ```json
 {
   "auth.type": "OAUTH2",
+  "oauth2.client.auth.mode": "HEADER",
   "oauth2.token.url": "https://auth.example.com/oauth/token",
   "oauth2.client.id": "your-client-id",
   "oauth2.client.secret": "your-client-secret",
@@ -189,6 +191,199 @@ curl -X POST http://localhost:8083/connectors \
   "oauth2.additional.params": "audience=api.example.com"
 }
 ```
+
+#### OAuth2 with Certificate-based Authentication
+For enhanced security using PFX/PKCS12 certificates:
+```json
+{
+  "auth.type": "OAUTH2",
+  "oauth2.client.auth.mode": "CERTIFICATE",
+  "oauth2.token.url": "https://auth.example.com/oauth/token",
+  "oauth2.client.id": "your-client-id",
+  "oauth2.client.certificate.path": "/path/to/certificate.pfx",
+  "oauth2.client.certificate.password": "certificate-password",
+  "oauth2.client.scope": "read:data write:data",
+  "oauth2.token.property": "access_token"
+}
+```
+
+**OAuth2 Authentication Modes:**
+- `HEADER`: Client secret passed in Authorization header (default)
+- `URL`: Client secret passed as URL parameter
+- `CERTIFICATE`: Client certificate authentication using PFX/PKCS12 certificates
+
+**Certificate Authentication Properties:**
+- `oauth2.client.certificate.path`: Path to PFX/PKCS12 certificate file (required for CERTIFICATE mode)
+- `oauth2.client.certificate.password`: Certificate password (optional, for password-protected certificates)
+
+#### Enhanced Authentication Providers
+
+The connector supports enterprise-grade authentication providers for secure and scalable authentication management.
+
+##### HashiCorp Vault Integration
+
+Secure credential management with automatic rotation:
+
+```json
+{
+  "auth.type": "VAULT",
+  "auth.vault.enabled": "true",
+  "auth.vault.address": "https://vault.company.com:8200",
+  "auth.vault.auth.method": "TOKEN",
+  "auth.vault.auth.token": "${env:VAULT_TOKEN}",
+  "auth.vault.secret.path": "secret/api-credentials",
+  "auth.vault.field.username": "username",
+  "auth.vault.field.password": "password",
+  "auth.vault.credentials.refresh.interval.minutes": "60",
+  "auth.vault.ssl.verify": "true"
+}
+```
+
+**Vault Authentication Methods:**
+```json
+{
+  "auth.vault.auth.method": "AWS_IAM",
+  "auth.vault.aws.role": "kafka-connect-role",
+  "auth.vault.aws.region": "us-east-1"
+}
+```
+
+```json
+{
+  "auth.vault.auth.method": "KUBERNETES",
+  "auth.vault.k8s.role": "kafka-connect",
+  "auth.vault.k8s.service.account.token.path": "/var/run/secrets/kubernetes.io/serviceaccount/token"
+}
+```
+
+##### AWS IAM Role Authentication
+
+Leverage AWS IAM for secure API authentication:
+
+```json
+{
+  "auth.type": "AWS_IAM",
+  "auth.aws.enabled": "true",
+  "auth.aws.region": "us-east-1",
+  "auth.aws.service": "execute-api",
+  "auth.aws.iam.role.arn": "arn:aws:iam::123456789012:role/HttpConnectorRole",
+  "auth.aws.iam.session.duration.seconds": "3600",
+  "auth.aws.credentials.provider": "DefaultAWSCredentialsProviderChain"
+}
+```
+
+**Advanced AWS Configuration:**
+```json
+{
+  "auth.aws.assume.role.enabled": "true",
+  "auth.aws.assume.role.external.id": "unique-external-id",
+  "auth.aws.sts.endpoint": "https://sts.amazonaws.com",
+  "auth.aws.signature.version": "4",
+  "auth.aws.credentials.cache.enabled": "true"
+}
+```
+
+##### Azure Active Directory Integration
+
+Enterprise authentication with Azure AD:
+
+```json
+{
+  "auth.type": "AZURE_AD",
+  "auth.azure.enabled": "true",
+  "auth.azure.tenant.id": "your-tenant-id",
+  "auth.azure.client.id": "your-client-id",
+  "auth.azure.client.secret": "your-client-secret",
+  "auth.azure.scope": "https://api.company.com/.default",
+  "auth.azure.authority": "https://login.microsoftonline.com/",
+  "auth.azure.token.cache.enabled": "true"
+}
+```
+
+**Azure Managed Identity:**
+```json
+{
+  "auth.azure.managed.identity.enabled": "true",
+  "auth.azure.managed.identity.client.id": "user-assigned-identity-id",
+  "auth.azure.managed.identity.endpoint": "http://169.254.169.254/metadata/identity/oauth2/token"
+}
+```
+
+##### JWT Token Authentication
+
+Custom JWT token handling with validation:
+
+```json
+{
+  "auth.type": "JWT",
+  "auth.jwt.token": "your-jwt-token",
+  "auth.jwt.header": "Authorization",
+  "auth.jwt.prefix": "Bearer",
+  "auth.jwt.validation.enabled": "true",
+  "auth.jwt.validation.issuer": "https://auth.company.com",
+  "auth.jwt.validation.audience": "api.company.com",
+  "auth.jwt.refresh.enabled": "true"
+}
+```
+
+**JWT Provider Integration:**
+```json
+{
+  "auth.jwt.provider": "OKTA",
+  "auth.jwt.okta.domain": "dev-123456.okta.com",
+  "auth.jwt.okta.client.id": "your-client-id",
+  "auth.jwt.okta.client.secret": "your-client-secret"
+}
+```
+
+##### Multi-Factor Authentication (MFA)
+
+Support for MFA-enabled authentication:
+
+```json
+{
+  "auth.mfa.enabled": "true",
+  "auth.mfa.provider": "TOTP",
+  "auth.mfa.secret.source": "VAULT",
+  "auth.mfa.vault.path": "secret/mfa-keys",
+  "auth.mfa.backup.codes.enabled": "true"
+}
+```
+
+##### Authentication Caching and Performance
+
+Optimize authentication performance:
+
+```json
+{
+  "auth.cache.enabled": "true",
+  "auth.cache.ttl.seconds": "3600",
+  "auth.cache.max.size": "1000",
+  "auth.cache.refresh.ahead.enabled": "true",
+  "auth.cache.refresh.ahead.threshold.seconds": "300"
+}
+```
+
+##### Authentication Monitoring
+
+Monitor authentication health and performance:
+
+```json
+{
+  "auth.monitoring.enabled": "true",
+  "auth.metrics.enabled": "true",
+  "auth.failure.alerts.enabled": "true",
+  "auth.token.expiry.alerts.enabled": "true",
+  "auth.performance.tracking.enabled": "true"
+}
+```
+
+**Authentication Metrics:**
+- Authentication success/failure rates
+- Token refresh frequency
+- Authentication latency
+- Cache hit rates
+- Provider-specific metrics
 
 ### 5. API Key Authentication
 
@@ -235,8 +430,14 @@ curl -X POST http://localhost:8083/connectors \
 }
 ```
 
-#### 4. OData Pagination Mode
-For Microsoft Dynamics 365, SharePoint, Power Platform, and other OData APIs:
+#### 4. Advanced Pagination Support
+
+The connector provides comprehensive pagination support for various API patterns including OData, cursor-based, offset-based, link header, and timestamp pagination.
+
+##### OData Pagination Mode
+
+Specifically designed for Microsoft Dynamics 365, SharePoint, Power Platform, and other OData APIs:
+
 ```json
 {
   "api1.http.offset.mode": "ODATA_PAGINATION",
@@ -244,31 +445,32 @@ For Microsoft Dynamics 365, SharePoint, Power Platform, and other OData APIs:
   "api1.odata.nextlink.field": "@odata.nextLink",
   "api1.odata.deltalink.field": "@odata.deltaLink", 
   "api1.odata.token.mode": "FULL_URL",
+  "api1.odata.skiptoken.param": "$skiptoken",
+  "api1.odata.deltatoken.param": "$deltatoken",
   "api1.http.response.data.json.pointer": "/value"
 }
 ```
 
-**Key Features:**
-- **Full URL Mode**: Stores complete URLs from `@odata.nextLink`/`@odata.deltaLink` for subsequent requests
-- **Token Only Mode**: Extracts and stores only the `$skiptoken` or `$deltatoken` values  
-- **Configurable Field Names**: Customize the JSON field names for pagination links
-- **Automatic Link Detection**: Prioritizes `@odata.nextLink` for paging, falls back to `@odata.deltaLink` for incremental sync
-- **🆕 Configurable Poll Intervals**: Different polling intervals for pagination vs incremental updates
+**Token Extraction Modes:**
 
-**Token Modes:**
-- `FULL_URL`: Store complete URLs like `/api/data/v9.0/accounts?$select=name&$skiptoken=...`
-- `TOKEN_ONLY`: Store only token values and append to base path
+*Full URL Mode* - Store complete URLs:
+```json
+{
+  "api1.odata.token.mode": "FULL_URL"
+  // Stores: "/api/data/v9.0/accounts?$select=name&$skiptoken=..."
+}
+```
 
-**OData Token Only Example:**
+*Token Only Mode* - Extract and store only token values:
 ```json
 {
   "api1.odata.token.mode": "TOKEN_ONLY",
   "api1.http.api.path": "/api/data/v9.0/accounts?$select=name,accountnumber"
+  // Stores: "encoded-token-value-here"
 }
 ```
 
-##### 🆕 Configurable Poll Intervals for OData
-Optimize polling performance with different intervals for pagination vs incremental updates:
+**🆕 Configurable Poll Intervals for Optimal Performance:**
 
 ```json
 {
@@ -279,18 +481,13 @@ Optimize polling performance with different intervals for pagination vs incremen
 }
 ```
 
-**How It Works:**
-- **nextLink Processing**: Uses fast polling (e.g., 2 seconds) when processing `@odata.nextLink` for efficient pagination
-- **deltaLink Processing**: Uses slower polling (e.g., 10 minutes) when processing `@odata.deltaLink` for incremental updates
-- **Automatic Detection**: Connector automatically switches between intervals based on the current link type
-- **Fallback**: Uses standard `request.interval.ms` if OData-specific intervals aren't configured
+**Intelligent Link Processing:**
+- **nextLink**: Fast polling for efficient pagination during bulk data loads
+- **deltaLink**: Slower polling for incremental updates and change tracking
+- **Automatic Detection**: Connector automatically switches between intervals based on link type
+- **Performance Optimization**: Resources scale with actual processing needs
 
-**Performance Benefits:**
-- **Faster Initial Sync**: Aggressive nextLink polling processes large datasets quickly
-- **Reduced API Load**: Slower deltaLink polling reduces unnecessary calls during idle periods
-- **Optimal Resource Usage**: CPU and network resources scale with actual processing needs
-
-**Use Case Examples:**
+**OData Configuration Examples:**
 
 *High-Throughput Initial Sync:*
 ```json
@@ -310,8 +507,177 @@ Optimize polling performance with different intervals for pagination vs incremen
 }
 ```
 
-##### Legacy OData with CURSOR_PAGINATION
-For backward compatibility, you can still use CURSOR_PAGINATION mode:
+*Conservative Approach:*
+```json
+{
+  "api1.request.interval.ms": "300000",                   // 5 minutes standard
+  "api1.odata.nextlink.poll.interval.ms": "10000",       // 10 seconds pagination
+  "api1.odata.deltalink.poll.interval.ms": "1800000"     // 30 minutes incremental
+}
+```
+
+##### Cursor-Based Pagination
+
+For APIs that use cursor tokens for pagination:
+
+```json
+{
+  "api1.http.offset.mode": "CURSOR_PAGINATION",
+  "api1.http.next.page.json.pointer": "/pagination/next_cursor",
+  "api1.http.initial.offset": "initial-cursor-value",
+  "api1.http.response.data.json.pointer": "/data",
+  "api1.cursor.parameter.name": "cursor",
+  "api1.cursor.end.condition": "null"
+}
+```
+
+**Advanced Cursor Configuration:**
+```json
+{
+  "api1.cursor.encoding": "BASE64",
+  "api1.cursor.validation.enabled": "true",
+  "api1.cursor.retry.on.invalid": "true",
+  "api1.cursor.reset.strategy": "RESTART_FROM_BEGINNING"
+}
+```
+
+##### Offset-Based Pagination
+
+For APIs using offset and limit parameters:
+
+```json
+{
+  "api1.http.offset.mode": "OFFSET_PAGINATION",
+  "api1.pagination.offset.param": "offset",
+  "api1.pagination.limit.param": "limit",
+  "api1.pagination.limit.value": "100",
+  "api1.pagination.max.pages": "1000",
+  "api1.pagination.total.count.pointer": "/total_count"
+}
+```
+
+**Dynamic Limit Adjustment:**
+```json
+{
+  "api1.pagination.adaptive.enabled": "true",
+  "api1.pagination.min.limit": "10",
+  "api1.pagination.max.limit": "500",
+  "api1.pagination.adjust.on.error": "true"
+}
+```
+
+##### Link Header Pagination
+
+For APIs using RFC 5988 Link headers:
+
+```json
+{
+  "api1.http.offset.mode": "LINK_HEADER_PAGINATION",
+  "api1.pagination.link.header": "Link",
+  "api1.pagination.link.rel": "next",
+  "api1.pagination.link.extract.method": "REGEX",
+  "api1.pagination.link.regex": "<([^>]+)>; rel=\"next\""
+}
+```
+
+**Multiple Link Relations:**
+```json
+{
+  "api1.pagination.link.relations": ["next", "last"],
+  "api1.pagination.link.follow.strategy": "SEQUENTIAL",
+  "api1.pagination.link.absolute.urls": "true"
+}
+```
+
+##### Timestamp-Based Pagination
+
+For APIs using timestamp-based pagination:
+
+```json
+{
+  "api1.http.offset.mode": "TIMESTAMP_PAGINATION",
+  "api1.http.timestamp.json.pointer": "/last_modified",
+  "api1.timestamp.format": "ISO_8601",
+  "api1.timestamp.parameter.name": "since",
+  "api1.timestamp.increment.strategy": "LAST_RECORD"
+}
+```
+
+**Advanced Timestamp Configuration:**
+```json
+{
+  "api1.timestamp.timezone": "UTC",
+  "api1.timestamp.precision": "MILLISECONDS",
+  "api1.timestamp.overlap.seconds": "60",
+  "api1.timestamp.field.fallback": "/created_at"
+}
+```
+
+##### Page-Based Pagination
+
+For simple page number pagination:
+
+```json
+{
+  "api1.http.offset.mode": "PAGE_PAGINATION",
+  "api1.pagination.page.param": "page",
+  "api1.pagination.size.param": "size",
+  "api1.pagination.size.value": "50",
+  "api1.pagination.start.page": "1",
+  "api1.pagination.max.pages": "500"
+}
+```
+
+##### Hybrid Pagination Strategies
+
+Combine multiple pagination methods:
+
+```json
+{
+  "api1.http.offset.mode": "HYBRID_PAGINATION",
+  "api1.pagination.primary.strategy": "CURSOR_PAGINATION",
+  "api1.pagination.fallback.strategy": "OFFSET_PAGINATION",
+  "api1.pagination.auto.detect": "true",
+  "api1.pagination.switch.threshold": "5"
+}
+```
+
+##### Pagination Error Handling
+
+Configure robust error handling for pagination:
+
+```json
+{
+  "api1.pagination.error.handling.enabled": "true",
+  "api1.pagination.retry.on.invalid.cursor": "true",
+  "api1.pagination.retry.max.attempts": "3",
+  "api1.pagination.reset.on.error": "true",
+  "api1.pagination.error.notification.enabled": "true"
+}
+```
+
+##### Pagination Monitoring
+
+Monitor pagination performance:
+
+```json
+{
+  "api1.pagination.monitoring.enabled": "true",
+  "api1.pagination.metrics.enabled": "true",
+  "api1.pagination.performance.tracking": "true",
+  "api1.pagination.alerts.enabled": "true"
+}
+```
+
+**Pagination Metrics:**
+- Pages processed per API
+- Average records per page
+- Pagination completion rate
+- Time to complete pagination cycles
+
+##### Legacy OData Support
+
+For backward compatibility with CURSOR_PAGINATION mode:
 ```json
 {
   "api1.http.offset.mode": "CURSOR_PAGINATION",
@@ -509,7 +875,11 @@ Prevent cascading failures with intelligent circuit breakers:
 }
 ```
 
-### Error Handling and Dead Letter Queue
+### Enhanced Error Handling and Dead Letter Queue
+
+The connector provides sophisticated error handling with intelligent categorization, retry policies, and comprehensive Dead Letter Queue (DLQ) support for robust data pipeline management.
+
+#### Error Handling Configuration
 
 Advanced error handling with categorization and DLQ support:
 
@@ -517,26 +887,280 @@ Advanced error handling with categorization and DLQ support:
 {
   "error.handling.enabled": true,
   "error.tolerance": "ALL",
-  "dlq.enabled": true,
-  "dlq.topic.name": "http-connector-dlq",
-  "dlq.topic.replication.factor": "3",
-  "retry.policy": "EXPONENTIAL_BACKOFF",
-  "retry.max.attempts": "5",
-  "retry.initial.delay.ms": "1000",
-  "retry.max.delay.ms": "30000",
-  "retry.multiplier": "2.0",
-  "retry.jitter.enabled": "true"
+  "error.categorization.enabled": "true",
+  "error.context.enrichment.enabled": "true",
+  "error.handling.strategy": "CATEGORIZED",
+  "error.notification.enabled": "true"
 }
 ```
 
-**Error Categories:**
-- `TRANSIENT`: Network timeouts, 5xx errors
-- `AUTHENTICATION`: 401, 403 errors
-- `RATE_LIMIT`: 429 errors
-- `CLIENT_ERROR`: 4xx errors (except auth/rate limit)
-- `SERVER_ERROR`: 5xx errors
+#### Error Categories and Handling
 
-### Rate Limiting
+**Transient Errors** - Temporary failures:
+```json
+{
+  "error.transient.retry.enabled": "true",
+  "error.transient.max.attempts": "5",
+  "error.transient.backoff.strategy": "EXPONENTIAL",
+  "error.transient.initial.delay.ms": "1000",
+  "error.transient.max.delay.ms": "60000",
+  "error.transient.jitter.enabled": "true"
+}
+```
+- Network timeouts, connection failures
+- 5xx server errors (500, 502, 503, 504)
+- Temporary service unavailability
+
+**Authentication Errors** - Auth-related failures:
+```json
+{
+  "error.authentication.retry.enabled": "true",
+  "error.authentication.max.attempts": "3",
+  "error.authentication.token.refresh.on.401": "true",
+  "error.authentication.credential.rotation.on.403": "true",
+  "error.authentication.dlq.enabled": "true"
+}
+```
+- 401 Unauthorized
+- 403 Forbidden
+- Token expiration
+- Certificate validation failures
+
+**Rate Limit Errors** - Throttling responses:
+```json
+{
+  "error.rate.limit.retry.enabled": "true",
+  "error.rate.limit.respect.retry.after": "true",
+  "error.rate.limit.adaptive.backoff": "true",
+  "error.rate.limit.max.backoff.ms": "300000",
+  "error.rate.limit.circuit.breaker.integration": "true"
+}
+```
+- 429 Too Many Requests
+- Custom rate limiting headers
+- Quota exceeded responses
+
+**Client Errors** - Request issues:
+```json
+{
+  "error.client.retry.enabled": "false",
+  "error.client.dlq.enabled": "true",
+  "error.client.validation.enabled": "true",
+  "error.client.request.modification.enabled": "true"
+}
+```
+- 400 Bad Request
+- 404 Not Found
+- 422 Unprocessable Entity
+- Request validation failures
+
+**Server Errors** - Service issues:
+```json
+{
+  "error.server.retry.enabled": "true",
+  "error.server.max.attempts": "3",
+  "error.server.circuit.breaker.integration": "true",
+  "error.server.escalation.enabled": "true"
+}
+```
+- 5xx server errors
+- Service degradation
+- Maintenance windows
+
+#### Advanced Retry Policies
+
+**Exponential Backoff:**
+```json
+{
+  "retry.policy": "EXPONENTIAL_BACKOFF",
+  "retry.initial.delay.ms": "1000",
+  "retry.max.delay.ms": "60000",
+  "retry.multiplier": "2.0",
+  "retry.jitter.enabled": "true",
+  "retry.jitter.factor": "0.1"
+}
+```
+
+**Linear Backoff:**
+```json
+{
+  "retry.policy": "LINEAR_BACKOFF",
+  "retry.initial.delay.ms": "5000",
+  "retry.increment.ms": "2000",
+  "retry.max.delay.ms": "30000"
+}
+```
+
+**Custom Backoff:**
+```json
+{
+  "retry.policy": "CUSTOM",
+  "retry.custom.intervals": "1000,2000,5000,10000,20000",
+  "retry.custom.strategy": "FIXED_SEQUENCE"
+}
+```
+
+#### Dead Letter Queue (DLQ) Configuration
+
+**Basic DLQ Setup:**
+```json
+{
+  "dlq.enabled": true,
+  "dlq.topic.name": "http-connector-dlq",
+  "dlq.topic.replication.factor": "3",
+  "dlq.topic.partitions": "6",
+  "dlq.serialization.format": "JSON"
+}
+```
+
+**Advanced DLQ Features:**
+```json
+{
+  "dlq.context.enrichment.enabled": "true",
+  "dlq.error.classification.enabled": "true",
+  "dlq.retry.tracking.enabled": "true",
+  "dlq.original.payload.included": "true",
+  "dlq.headers.included": "true",
+  "dlq.compression.enabled": "true"
+}
+```
+
+**DLQ Routing:**
+```json
+{
+  "dlq.routing.enabled": "true",
+  "dlq.routing.transient.topic": "http-connector-dlq-transient",
+  "dlq.routing.auth.topic": "http-connector-dlq-auth",
+  "dlq.routing.client.topic": "http-connector-dlq-client",
+  "dlq.routing.default.topic": "http-connector-dlq"
+}
+```
+
+#### Error Context Enrichment
+
+Add comprehensive error context:
+
+```json
+{
+  "error.context.enabled": "true",
+  "error.context.include.request.details": "true",
+  "error.context.include.response.details": "true",
+  "error.context.include.stack.trace": "true",
+  "error.context.include.timing": "true",
+  "error.context.include.api.metadata": "true"
+}
+```
+
+**Error Context Information:**
+- Request URL, headers, body
+- Response status, headers, body
+- Error timestamp and duration
+- Retry attempt number
+- API configuration details
+- Circuit breaker state
+
+#### Error Monitoring and Alerting
+
+**Error Metrics:**
+```json
+{
+  "error.monitoring.enabled": "true",
+  "error.metrics.enabled": "true",
+  "error.alerting.enabled": "true",
+  "error.dashboard.enabled": "true"
+}
+```
+
+**Alert Thresholds:**
+```json
+{
+  "error.alerts.error.rate.threshold": "0.05",
+  "error.alerts.consecutive.failures.threshold": "10",
+  "error.alerts.dlq.size.threshold": "1000",
+  "error.alerts.retry.exhaustion.threshold": "100"
+}
+```
+
+### Configuration Validation
+
+The connector includes comprehensive configuration validation to ensure correct setup and prevent runtime issues.
+
+#### Validation Configuration
+
+Enable comprehensive configuration validation:
+
+```json
+{
+  "config.validation.enabled": "true",
+  "config.validation.strict.mode": "true",
+  "config.validation.fail.on.warning": "false",
+  "config.validation.schema.validation": "true",
+  "config.validation.dependency.check": "true"
+}
+```
+
+#### Validation Features
+
+**Schema Validation:**
+```json
+{
+  "config.validation.schema.enabled": "true",
+  "config.validation.schema.version": "2.0",
+  "config.validation.schema.custom.rules": "true",
+  "config.validation.schema.format.check": "true"
+}
+```
+
+**Dependency Validation:**
+```json
+{
+  "config.validation.dependencies.enabled": "true",
+  "config.validation.api.connectivity": "true",
+  "config.validation.auth.verification": "true",
+  "config.validation.schema.registry.check": "true"
+}
+```
+
+**Runtime Validation:**
+```json
+{
+  "config.validation.runtime.enabled": "true",
+  "config.validation.hot.reload.validation": "true",
+  "config.validation.change.impact.analysis": "true"
+}
+```
+
+#### Validation Categories
+
+**Connectivity Validation:**
+- API endpoint accessibility
+- Network connectivity
+- SSL/TLS certificate validation
+- DNS resolution
+
+**Authentication Validation:**
+- Credential verification
+- Token validity
+- Certificate validation
+- Provider connectivity
+
+**Configuration Consistency:**
+- Parameter compatibility
+- Value range validation
+- Required field presence
+- Format validation
+
+**Performance Validation:**
+- Resource limits
+- Throughput estimates
+- Memory requirements
+- Connection pool sizing
+
+### Rate Limiting and Throttling
+
+The connector provides sophisticated rate limiting capabilities to ensure respectful API consumption and prevent overwhelming target services. It supports multiple algorithms and can be configured globally or per-API.
+
+#### Configuration
 
 Implement respectful API consumption with multiple algorithms:
 
@@ -547,17 +1171,79 @@ Implement respectful API consumption with multiple algorithms:
   "ratelimit.scope": "PER_API",
   "ratelimit.requests.per.second": "10",
   "ratelimit.burst.size": "20",
-  "ratelimit.window.size.ms": "60000"
+  "ratelimit.window.size.ms": "60000",
+  "ratelimit.backoff.strategy": "EXPONENTIAL",
+  "ratelimit.max.backoff.ms": "60000"
 }
 ```
 
-**Rate Limiting Algorithms:**
-- `TOKEN_BUCKET`: Allows bursts up to bucket capacity
-- `SLIDING_WINDOW`: Smooth rate limiting over time window
-- `FIXED_WINDOW`: Simple counter reset every window
-- `LEAKY_BUCKET`: Steady outflow rate
+#### Available Rate Limiting Algorithms
 
-#### Per-API Rate Limiting
+**TOKEN_BUCKET Algorithm:**
+```json
+{
+  "ratelimit.algorithm": "TOKEN_BUCKET",
+  "ratelimit.requests.per.second": "10",
+  "ratelimit.burst.size": "20",
+  "ratelimit.token.refill.period.ms": "100"
+}
+```
+- **Best for**: APIs that can handle bursts of traffic
+- **Behavior**: Allows burst requests up to bucket capacity, then steady rate
+- **Use case**: Most REST APIs, social media APIs
+
+**SLIDING_WINDOW Algorithm:**
+```json
+{
+  "ratelimit.algorithm": "SLIDING_WINDOW",
+  "ratelimit.requests.per.second": "10",
+  "ratelimit.window.size.ms": "60000",
+  "ratelimit.window.precision.ms": "1000"
+}
+```
+- **Best for**: Smooth, consistent rate limiting
+- **Behavior**: Tracks requests over a sliding time window
+- **Use case**: APIs with strict rate limits, financial services
+
+**FIXED_WINDOW Algorithm:**
+```json
+{
+  "ratelimit.algorithm": "FIXED_WINDOW",
+  "ratelimit.requests.per.window": "100",
+  "ratelimit.window.size.ms": "60000",
+  "ratelimit.window.reset.strategy": "IMMEDIATE"
+}
+```
+- **Best for**: Simple rate limiting requirements
+- **Behavior**: Fixed number of requests per time window
+- **Use case**: APIs with hourly/daily quotas
+
+**LEAKY_BUCKET Algorithm:**
+```json
+{
+  "ratelimit.algorithm": "LEAKY_BUCKET",
+  "ratelimit.leak.rate.per.second": "5",
+  "ratelimit.bucket.capacity": "50",
+  "ratelimit.overflow.strategy": "REJECT"
+}
+```
+- **Best for**: Steady, predictable request rates
+- **Behavior**: Processes requests at constant rate regardless of input
+- **Use case**: Time-sensitive APIs, real-time systems
+
+#### Rate Limiting Scopes
+
+**Global Rate Limiting:**
+```json
+{
+  "ratelimit.enabled": true,
+  "ratelimit.scope": "GLOBAL",
+  "ratelimit.requests.per.second": "50"
+}
+```
+Applies single rate limit across all APIs.
+
+**Per-API Rate Limiting:**
 ```json
 {
   "ratelimit.enabled": true,
@@ -565,26 +1251,404 @@ Implement respectful API consumption with multiple algorithms:
   "ratelimit.api.api1.requests.per.second": "5",
   "ratelimit.api.api1.burst.size": "10",
   "ratelimit.api.api2.requests.per.second": "15",
-  "ratelimit.api.api2.burst.size": "30"
+  "ratelimit.api.api2.burst.size": "30",
+  "ratelimit.api.api3.algorithm": "SLIDING_WINDOW",
+  "ratelimit.api.api3.requests.per.second": "20"
+}
+```
+
+**Per-Host Rate Limiting:**
+```json
+{
+  "ratelimit.enabled": true,
+  "ratelimit.scope": "PER_HOST",
+  "ratelimit.host.api.example.com.requests.per.second": "100",
+  "ratelimit.host.api.example.com.burst.size": "200"
+}
+```
+
+#### Backoff Strategies
+
+**Exponential Backoff:**
+```json
+{
+  "ratelimit.backoff.strategy": "EXPONENTIAL",
+  "ratelimit.initial.backoff.ms": "1000",
+  "ratelimit.max.backoff.ms": "60000",
+  "ratelimit.backoff.multiplier": "2.0",
+  "ratelimit.backoff.jitter.enabled": "true"
+}
+```
+
+**Linear Backoff:**
+```json
+{
+  "ratelimit.backoff.strategy": "LINEAR",
+  "ratelimit.initial.backoff.ms": "5000",
+  "ratelimit.backoff.increment.ms": "2000",
+  "ratelimit.max.backoff.ms": "30000"
+}
+```
+
+**Fixed Backoff:**
+```json
+{
+  "ratelimit.backoff.strategy": "FIXED",
+  "ratelimit.backoff.duration.ms": "10000"
+}
+```
+
+#### Advanced Configuration Examples
+
+**API with Different Peak Hours:**
+```json
+{
+  "ratelimit.enabled": true,
+  "ratelimit.schedule.enabled": "true",
+  "ratelimit.schedule.peak.hours": "9-17",
+  "ratelimit.schedule.peak.requests.per.second": "5",
+  "ratelimit.schedule.off-peak.requests.per.second": "20",
+  "ratelimit.schedule.timezone": "America/New_York"
+}
+```
+
+**Rate Limiting with Circuit Breaker Integration:**
+```json
+{
+  "ratelimit.enabled": true,
+  "ratelimit.circuit.breaker.integration": "true",
+  "ratelimit.circuit.breaker.threshold": "3",
+  "ratelimit.emergency.backoff.enabled": "true",
+  "ratelimit.emergency.backoff.duration.ms": "300000"
+}
+```
+
+**Adaptive Rate Limiting:**
+```json
+{
+  "ratelimit.enabled": true,
+  "ratelimit.adaptive.enabled": "true",
+  "ratelimit.adaptive.target.response.time.ms": "2000",
+  "ratelimit.adaptive.adjustment.factor": "0.1",
+  "ratelimit.adaptive.min.rate": "1",
+  "ratelimit.adaptive.max.rate": "100"
+}
+```
+
+#### Rate Limiting Monitoring
+
+Monitor rate limiting effectiveness:
+
+```json
+{
+  "ratelimit.monitoring.enabled": "true",
+  "ratelimit.metrics.enabled": "true",
+  "ratelimit.alerts.enabled": "true",
+  "ratelimit.alerts.threshold.rejection.rate": "0.1"
+}
+```
+
+**Key Metrics:**
+- Requests allowed vs rejected
+- Current rate vs configured limit
+- Backoff duration and frequency
+- Queue size (for token bucket)
+
+#### Handling Rate Limit Responses
+
+**HTTP 429 Response Handling:**
+```json
+{
+  "ratelimit.http.429.handling": "RESPECT_RETRY_AFTER",
+  "ratelimit.retry.after.header": "Retry-After",
+  "ratelimit.max.retry.after.seconds": "3600",
+  "ratelimit.fallback.backoff.ms": "30000"
+}
+```
+
+**Custom Rate Limit Headers:**
+```json
+{
+  "ratelimit.response.headers.enabled": "true",
+  "ratelimit.remaining.header": "X-RateLimit-Remaining",
+  "ratelimit.limit.header": "X-RateLimit-Limit",
+  "ratelimit.reset.header": "X-RateLimit-Reset"
+}
+```
+
+### Intelligent Caching System
+
+The connector features a sophisticated multi-level caching system designed to optimize performance, reduce API calls, and improve response times across all enterprise features.
+
+#### Cache Configuration
+
+Enable and configure the intelligent caching system:
+
+```json
+{
+  "cache.enabled": true,
+  "cache.implementation": "CAFFEINE",
+  "cache.statistics.enabled": "true",
+  "cache.maintenance.interval.ms": "300000",
+  "cache.async.refresh.enabled": "true",
+  "cache.metrics.enabled": "true"
+}
+```
+
+#### Multi-Level Cache Architecture
+
+**Response Cache** - Cache API responses:
+```json
+{
+  "cache.response.enabled": "true",
+  "cache.response.max.size": "1000",
+  "cache.response.ttl.ms": "300000",
+  "cache.response.refresh.ahead.threshold": "0.8",
+  "cache.response.key.strategy": "URL_PARAMS_HASH"
+}
+```
+
+**Schema Cache** - Cache schema definitions:
+```json
+{
+  "cache.schema.enabled": "true",
+  "cache.schema.max.size": "100",
+  "cache.schema.ttl.ms": "7200000",
+  "cache.schema.eviction.policy": "LRU",
+  "cache.schema.persistent": "true"
+}
+```
+
+**Authentication Cache** - Cache authentication tokens:
+```json
+{
+  "cache.auth.enabled": "true",
+  "cache.auth.max.size": "50",
+  "cache.auth.ttl.ms": "1800000",
+  "cache.auth.refresh.before.expiry.ms": "300000",
+  "cache.auth.secure.storage": "true"
+}
+```
+
+**Metadata Cache** - Cache configuration and metadata:
+```json
+{
+  "cache.metadata.enabled": "true",
+  "cache.metadata.max.size": "200",
+  "cache.metadata.ttl.ms": "3600000",
+  "cache.metadata.include.api.definitions": "true"
+}
+```
+
+#### Advanced Cache Features
+
+**Cache Key Strategies:**
+```json
+{
+  "cache.response.key.strategy": "CUSTOM",
+  "cache.response.key.include.headers": ["Authorization", "Content-Type"],
+  "cache.response.key.exclude.params": ["timestamp", "_"],
+  "cache.response.key.normalization": "true"
+}
+```
+
+**Conditional Caching:**
+```json
+{
+  "cache.conditional.enabled": "true",
+  "cache.conditional.etag.enabled": "true",
+  "cache.conditional.last.modified.enabled": "true",
+  "cache.conditional.cache.control.respect": "true",
+  "cache.conditional.max.age.override": "false"
+}
+```
+
+**Cache Warming:**
+```json
+{
+  "cache.warming.enabled": "true",
+  "cache.warming.strategy": "SCHEDULED",
+  "cache.warming.schedule.cron": "0 */5 * * * *",
+  "cache.warming.apis": ["api1", "api2"],
+  "cache.warming.concurrency": "2"
+}
+```
+
+#### Cache Eviction Policies
+
+**LRU (Least Recently Used):**
+```json
+{
+  "cache.eviction.policy": "LRU",
+  "cache.eviction.size.based": "true",
+  "cache.eviction.time.based": "true"
+}
+```
+
+**Time-based Eviction:**
+```json
+{
+  "cache.eviction.policy": "TIME_BASED",
+  "cache.eviction.after.write.ms": "600000",
+  "cache.eviction.after.access.ms": "300000"
+}
+```
+
+**Custom Eviction:**
+```json
+{
+  "cache.eviction.policy": "CUSTOM",
+  "cache.eviction.weight.calculator": "RESPONSE_SIZE",
+  "cache.eviction.max.weight": "104857600"
+}
+```
+
+#### Cache Performance Optimization
+
+**Async Operations:**
+```json
+{
+  "cache.async.enabled": "true",
+  "cache.async.refresh.executor.threads": "4",
+  "cache.async.write.behind.enabled": "true",
+  "cache.async.batch.size": "100"
+}
+```
+
+**Memory Management:**
+```json
+{
+  "cache.memory.optimization": "true",
+  "cache.memory.weak.keys": "false",
+  "cache.memory.weak.values": "false",
+  "cache.memory.soft.values": "true",
+  "cache.memory.compression": "true"
+}
+```
+
+#### Cache Monitoring and Metrics
+
+**Cache Statistics:**
+```json
+{
+  "cache.statistics.enabled": "true",
+  "cache.statistics.collection.interval.ms": "30000",
+  "cache.statistics.jmx.enabled": "true",
+  "cache.statistics.detailed": "true"
+}
+```
+
+**Available Cache Metrics:**
+- Hit Rate and Miss Rate
+- Eviction Count and Eviction Rate
+- Load Time and Load Count
+- Cache Size and Memory Usage
+- Refresh Rate and Refresh Time
+
+**Cache Alerting:**
+```json
+{
+  "cache.alerts.enabled": "true",
+  "cache.alerts.hit.rate.threshold": "0.8",
+  "cache.alerts.eviction.rate.threshold": "0.1",
+  "cache.alerts.load.time.threshold": "5000"
+}
+```
+
+#### Environment-Specific Cache Configuration
+
+**Development Environment:**
+```json
+{
+  "cache.enabled": "true",
+  "cache.response.ttl.ms": "60000",
+  "cache.response.max.size": "100",
+  "cache.statistics.enabled": "true",
+  "cache.debug.logging": "true"
+}
+```
+
+**Production Environment:**
+```json
+{
+  "cache.enabled": "true",
+  "cache.response.ttl.ms": "1800000",
+  "cache.response.max.size": "5000",
+  "cache.async.refresh.enabled": "true",
+  "cache.warming.enabled": "true",
+  "cache.monitoring.enabled": "true"
+}
+```
+
+#### Cache Integration with Other Features
+
+**Circuit Breaker Integration:**
+```json
+{
+  "cache.circuit.breaker.integration": "true",
+  "cache.circuit.breaker.fallback": "true",
+  "cache.stale.on.error": "true",
+  "cache.stale.max.age.ms": "3600000"
+}
+```
+
+**Rate Limiting Integration:**
+```json
+{
+  "cache.rate.limit.bypass": "true",
+  "cache.rate.limit.priority": "HIGH",
+  "cache.rate.limit.separate.quota": "true"
+}
+```
+
+#### Cache Troubleshooting
+
+**Debug Configuration:**
+```json
+{
+  "cache.debug.enabled": "true",
+  "cache.debug.log.hits": "true",
+  "cache.debug.log.misses": "true",
+  "cache.debug.log.evictions": "true",
+  "cache.debug.log.refreshes": "true"
+}
+```
+
+**Cache Health Checks:**
+```json
+{
+  "cache.health.check.enabled": "true",
+  "cache.health.check.interval.ms": "60000",
+  "cache.health.check.hit.rate.threshold": "0.5",
+  "cache.health.check.error.threshold": "0.05"
 }
 ```
 
 ### Performance Optimization
 
-Response caching and adaptive polling for better performance:
+The connector includes comprehensive performance optimization features designed to maximize throughput, minimize latency, and efficiently utilize system resources.
+
+#### Adaptive Polling
+
+Dynamic polling interval adjustment based on API response patterns:
 
 ```json
 {
-  "cache.enabled": true,
-  "cache.ttl.ms": "300000",
-  "cache.max.size": "1000",
-  "cache.statistics.enabled": "true",
   "adaptive.polling.enabled": true,
   "adaptive.polling.min.interval.ms": "10000",
   "adaptive.polling.max.interval.ms": "120000",
-  "adaptive.polling.change.factor": "0.1"
+  "adaptive.polling.change.factor": "0.1",
+  "adaptive.polling.response.time.threshold": "5000",
+  "adaptive.polling.data.change.threshold": "0.05",
+  "adaptive.polling.backoff.strategy": "EXPONENTIAL"
 }
 ```
+
+**Adaptive Polling Strategies:**
+- **Response Time Based**: Adjust based on API response times
+- **Data Change Based**: Adjust based on data change frequency
+- **Error Rate Based**: Slow down when errors increase
+- **Combined Strategy**: Use multiple factors for optimization
 
 #### HTTP/2 and Connection Optimization
 ```json
@@ -601,7 +1665,11 @@ Response caching and adaptive polling for better performance:
 
 ## 📊 Monitoring & Operations
 
-### JMX Metrics Configuration
+### JMX Metrics and Monitoring
+
+The connector provides comprehensive JMX metrics for enterprise monitoring and observability. This feature enables real-time monitoring of connector performance, health, and operational status.
+
+#### Configuration
 
 Enable comprehensive JMX metrics for enterprise monitoring:
 
@@ -612,19 +1680,92 @@ Enable comprehensive JMX metrics for enterprise monitoring:
   "metrics.collection.interval.ms": "30000",
   "metrics.include.request.metrics": "true",
   "metrics.include.cache.metrics": "true",
-  "metrics.include.circuit.breaker.metrics": "true"
+  "metrics.include.circuit.breaker.metrics": "true",
+  "metrics.include.auth.metrics": "true",
+  "metrics.include.rate.limit.metrics": "true"
 }
 ```
 
-**Available JMX Metrics:**
-- `kafka.connect.http:type=HttpConnector,name=RequestsPerSecond`
-- `kafka.connect.http:type=HttpConnector,name=ErrorRate`
-- `kafka.connect.http:type=HttpConnector,name=ResponseTime`
-- `kafka.connect.http:type=CircuitBreaker,name=State`
-- `kafka.connect.http:type=Cache,name=HitRate`
-- `kafka.connect.http:type=RateLimit,name=ThrottleRate`
+#### Available JMX Metrics
+
+**Performance Metrics:**
+- `kafka.connect.http:type=HttpConnector,name=RequestsPerSecond` - API requests per second
+- `kafka.connect.http:type=HttpConnector,name=ResponseTime` - Average response time (ms)
+- `kafka.connect.http:type=HttpConnector,name=MessagesProcessed` - Total messages processed
+- `kafka.connect.http:type=HttpConnector,name=BytesProcessed` - Total bytes processed
+- `kafka.connect.http:type=HttpConnector,name=ThroughputMBps` - Throughput in MB/s
+
+**Error and Reliability Metrics:**
+- `kafka.connect.http:type=HttpConnector,name=ErrorRate` - Error rate percentage
+- `kafka.connect.http:type=HttpConnector,name=ErrorCount` - Total error count
+- `kafka.connect.http:type=CircuitBreaker,name=State` - Circuit breaker state (CLOSED/OPEN/HALF_OPEN)
+- `kafka.connect.http:type=CircuitBreaker,name=FailureCount` - Circuit breaker failure count
+- `kafka.connect.http:type=HttpConnector,name=AuthenticationFailures` - Authentication failure count
+
+**Cache Performance Metrics:**
+- `kafka.connect.http:type=Cache,name=HitRate` - Cache hit rate percentage
+- `kafka.connect.http:type=Cache,name=MissRate` - Cache miss rate percentage
+- `kafka.connect.http:type=Cache,name=Size` - Current cache size
+- `kafka.connect.http:type=Cache,name=Evictions` - Number of evictions
+
+**Rate Limiting Metrics:**
+- `kafka.connect.http:type=RateLimit,name=ThrottleRate` - Rate limiting throttle rate
+- `kafka.connect.http:type=RateLimit,name=RequestsAllowed` - Requests allowed per time window
+- `kafka.connect.http:type=RateLimit,name=RequestsRejected` - Requests rejected due to rate limiting
+
+**Authentication Metrics:**
+- `kafka.connect.http:type=Auth,name=TokenRefreshCount` - OAuth2 token refresh count
+- `kafka.connect.http:type=Auth,name=TokenExpiryTime` - Token expiry timestamp
+- `kafka.connect.http:type=Auth,name=AuthenticationLatency` - Authentication request latency
+
+#### Monitoring with JConsole
+
+Connect to the Kafka Connect JVM using JConsole:
+```bash
+jconsole localhost:9999
+```
+
+Navigate to MBeans → kafka.connect.http to view all connector metrics.
+
+#### Monitoring with Prometheus
+
+Export JMX metrics to Prometheus using the JMX exporter:
+
+```yaml
+# jmx_exporter_config.yml
+rules:
+  - pattern: "kafka.connect.http<type=(.+), name=(.+)><>Value"
+    name: "kafka_connect_http_$1_$2"
+    type: GAUGE
+```
+
+Start with JMX exporter:
+```bash
+java -javaagent:jmx_prometheus_javaagent-0.17.0.jar=8080:jmx_exporter_config.yml \
+     -jar connect-distributed.jar connect-distributed.properties
+```
+
+#### Sample Grafana Dashboard Query
+
+```promql
+# Request rate
+rate(kafka_connect_http_HttpConnector_RequestsPerSecond[5m])
+
+# Error rate
+(kafka_connect_http_HttpConnector_ErrorCount / kafka_connect_http_HttpConnector_MessagesProcessed) * 100
+
+# Cache hit rate
+kafka_connect_http_Cache_HitRate
+
+# Circuit breaker state
+kafka_connect_http_CircuitBreaker_State
+```
 
 ### Health Check Endpoints
+
+The connector provides comprehensive HTTP health check endpoints for operational monitoring, enabling easy integration with load balancers, monitoring systems, and orchestration platforms like Kubernetes.
+
+#### Configuration
 
 Enable HTTP health check endpoints for operational monitoring:
 
@@ -633,17 +1774,170 @@ Enable HTTP health check endpoints for operational monitoring:
   "health.check.enabled": true,
   "health.check.port": "8084",
   "health.check.bind.address": "0.0.0.0",
-  "health.check.endpoints": "/health,/metrics,/ready",
-  "health.check.include.detailed.status": "true"
+  "health.check.endpoints": "/health,/metrics,/ready,/live",
+  "health.check.include.detailed.status": "true",
+  "health.check.security.enabled": "false",
+  "health.check.cors.enabled": "true"
 }
 ```
 
-**Health Check Endpoints:**
-- `GET /health` - Overall connector health
-- `GET /health/apis` - Per-API health status
-- `GET /health/circuit-breakers` - Circuit breaker states
-- `GET /metrics` - Prometheus-compatible metrics
-- `GET /ready` - Readiness probe for Kubernetes
+#### Available Health Check Endpoints
+
+**Core Health Endpoints:**
+- `GET /health` - Overall connector health and status summary
+- `GET /health/live` - Liveness probe (connector is running)
+- `GET /health/ready` - Readiness probe (connector is ready to serve traffic)
+- `GET /health/started` - Startup probe (connector has finished initialization)
+
+**Component-Specific Health Endpoints:**
+- `GET /health/apis` - Per-API health status and response times
+- `GET /health/auth` - Authentication system health
+- `GET /health/cache` - Cache system health and statistics
+- `GET /health/circuit-breakers` - Circuit breaker states and statistics
+- `GET /health/rate-limit` - Rate limiting status and current limits
+- `GET /health/ssl` - SSL/TLS configuration status
+
+**Metrics and Diagnostics:**
+- `GET /metrics` - Prometheus-compatible metrics export
+- `GET /info` - Connector build and configuration information
+- `GET /diagnostics` - Detailed diagnostic information
+
+#### Health Response Format
+
+**Healthy Response (HTTP 200):**
+```json
+{
+  "status": "UP",
+  "timestamp": "2025-01-30T10:30:00Z",
+  "uptime": "PT2H30M15S",
+  "version": "2.0.0-enterprise",
+  "components": {
+    "apis": {
+      "status": "UP",
+      "details": {
+        "api1": {"status": "UP", "lastSuccessfulRequest": "2025-01-30T10:29:45Z"},
+        "api2": {"status": "UP", "lastSuccessfulRequest": "2025-01-30T10:29:50Z"}
+      }
+    },
+    "authentication": {"status": "UP", "tokenValid": true},
+    "cache": {"status": "UP", "hitRate": 0.85, "size": 150},
+    "circuitBreakers": {"status": "UP", "openBreakers": 0},
+    "rateLimit": {"status": "UP", "currentRate": 8.5}
+  }
+}
+```
+
+**Unhealthy Response (HTTP 503):**
+```json
+{
+  "status": "DOWN",
+  "timestamp": "2025-01-30T10:30:00Z",
+  "components": {
+    "apis": {
+      "status": "DOWN",
+      "details": {
+        "api1": {
+          "status": "DOWN", 
+          "error": "Connection timeout after 30000ms",
+          "lastError": "2025-01-30T10:29:30Z"
+        }
+      }
+    },
+    "circuitBreakers": {"status": "DOWN", "openBreakers": 1}
+  }
+}
+```
+
+#### Kubernetes Integration
+
+Use health endpoints for Kubernetes probes:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-connect-http
+spec:
+  template:
+    spec:
+      containers:
+      - name: kafka-connect
+        image: kafka-connect-http:latest
+        ports:
+        - containerPort: 8084
+          name: health
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8084
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8084
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        startupProbe:
+          httpGet:
+            path: /health/started
+            port: 8084
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 12
+```
+
+#### Load Balancer Health Checks
+
+Configure your load balancer to use health endpoints:
+
+**AWS ALB Target Group:**
+```json
+{
+  "HealthCheckPath": "/health/ready",
+  "HealthCheckPort": "8084",
+  "HealthCheckProtocol": "HTTP",
+  "HealthCheckIntervalSeconds": 30,
+  "HealthyThresholdCount": 2,
+  "UnhealthyThresholdCount": 3
+}
+```
+
+**HAProxy Configuration:**
+```
+backend kafka-connect-http
+    option httpchk GET /health/ready
+    http-check expect status 200
+    server connect1 10.0.1.10:8083 check port 8084
+    server connect2 10.0.1.11:8083 check port 8084
+```
+
+#### Monitoring Integration
+
+**Prometheus Scraping:**
+```yaml
+# prometheus.yml
+scrape_configs:
+  - job_name: 'kafka-connect-http'
+    static_configs:
+      - targets: ['kafka-connect:8084']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+```
+
+**Nagios Check:**
+```bash
+#!/bin/bash
+# check_kafka_connect_health.sh
+curl -s -o /dev/null -w "%{http_code}" http://kafka-connect:8084/health/ready
+if [ $? -eq 200 ]; then
+    echo "OK - Kafka Connect HTTP is healthy"
+    exit 0
+else
+    echo "CRITICAL - Kafka Connect HTTP is unhealthy"
+    exit 2
+fi
+```
 
 ### Operational Features
 
@@ -663,7 +1957,11 @@ Runtime configuration and management:
 
 ## 🔒 Security Configuration
 
-### SSL/TLS Configuration
+### SSL/TLS Enhancements
+
+The connector provides enterprise-grade SSL/TLS capabilities including mutual authentication, certificate pinning, custom validation, and multiple protocol support for maximum security and compatibility.
+
+#### Basic SSL/TLS Configuration
 
 Advanced SSL/TLS configuration with mutual authentication:
 
@@ -678,6 +1976,223 @@ Advanced SSL/TLS configuration with mutual authentication:
   "https.ssl.key.password": "key-password",
   "https.ssl.verify.hostname": "true",
   "https.ssl.cipher.suites": "TLS_AES_256_GCM_SHA384,TLS_AES_128_GCM_SHA256"
+}
+```
+
+#### Certificate Pinning
+
+Enhance security with certificate pinning to prevent man-in-the-middle attacks:
+
+```json
+{
+  "https.ssl.enabled": true,
+  "https.ssl.certificate.pinning.enabled": "true",
+  "https.ssl.certificate.pins": [
+    "sha256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+    "sha256:BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB="
+  ],
+  "https.ssl.pin.validation.mode": "STRICT",
+  "https.ssl.pin.backup.enabled": "true"
+}
+```
+
+**Pin Validation Modes:**
+- `STRICT`: Fail if any pinned certificate doesn't match
+- `REPORT_ONLY`: Log violations but continue
+- `BACKUP`: Use backup pins if primary validation fails
+
+#### Mutual TLS (mTLS) Authentication
+
+Configure client certificate authentication:
+
+```json
+{
+  "https.ssl.enabled": true,
+  "https.ssl.client.auth": "REQUIRED",
+  "https.ssl.keystore.location": "/path/to/client-keystore.jks",
+  "https.ssl.keystore.password": "keystore-password",
+  "https.ssl.keystore.type": "JKS",
+  "https.ssl.key.password": "key-password",
+  "https.ssl.key.alias": "client-cert"
+}
+```
+
+**Client Authentication Modes:**
+- `NONE`: No client authentication required
+- `OPTIONAL`: Client auth is optional
+- `REQUIRED`: Client auth is mandatory
+
+#### Custom SSL Validation Levels
+
+Configure different levels of SSL validation:
+
+```json
+{
+  "https.ssl.enabled": true,
+  "https.ssl.validation.level": "STRICT",
+  "https.ssl.verify.hostname": "true",
+  "https.ssl.verify.certificate.chain": "true",
+  "https.ssl.allow.self.signed": "false",
+  "https.ssl.check.revocation": "true"
+}
+```
+
+**Validation Levels:**
+- `STRICT`: Full certificate validation (production)
+- `RELAXED`: Basic validation, allows some flexibility
+- `DEVELOPMENT`: Minimal validation for development/testing
+- `CUSTOM`: Use custom validation rules
+
+#### Advanced SSL Configuration
+
+**Protocol and Cipher Suite Selection:**
+```json
+{
+  "https.ssl.protocol": "TLSv1.3",
+  "https.ssl.enabled.protocols": ["TLSv1.3", "TLSv1.2"],
+  "https.ssl.cipher.suites": [
+    "TLS_AES_256_GCM_SHA384",
+    "TLS_AES_128_GCM_SHA256",
+    "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
+  ],
+  "https.ssl.prefer.server.cipher.suites": "true"
+}
+```
+
+**Custom Trust Store Management:**
+```json
+{
+  "https.ssl.truststore.type": "JKS",
+  "https.ssl.truststore.provider": "SUN",
+  "https.ssl.truststore.refresh.interval.minutes": "60",
+  "https.ssl.custom.ca.enabled": "true",
+  "https.ssl.custom.ca.path": "/path/to/custom-ca.pem"
+}
+```
+
+**SSL Session Management:**
+```json
+{
+  "https.ssl.session.cache.enabled": "true",
+  "https.ssl.session.cache.size": "1000",
+  "https.ssl.session.timeout.seconds": "3600",
+  "https.ssl.session.reuse.enabled": "true"
+}
+```
+
+#### Certificate Rotation Support
+
+Enable automatic certificate rotation:
+
+```json
+{
+  "https.ssl.certificate.rotation.enabled": "true",
+  "https.ssl.certificate.rotation.interval.hours": "24",
+  "https.ssl.certificate.rotation.source": "VAULT",
+  "https.ssl.certificate.rotation.vault.path": "secret/ssl-certs",
+  "https.ssl.certificate.rotation.notification.enabled": "true"
+}
+```
+
+#### SSL/TLS Monitoring and Alerting
+
+Monitor SSL certificate health:
+
+```json
+{
+  "https.ssl.monitoring.enabled": "true",
+  "https.ssl.certificate.expiry.warning.days": "30",
+  "https.ssl.certificate.expiry.critical.days": "7",
+  "https.ssl.handshake.timeout.ms": "10000",
+  "https.ssl.alerts.enabled": "true"
+}
+```
+
+**SSL Metrics Available:**
+- Certificate expiry dates
+- SSL handshake duration
+- SSL connection success/failure rates
+- Certificate validation results
+
+#### Environment-Specific SSL Configurations
+
+**Production Environment:**
+```json
+{
+  "https.ssl.enabled": true,
+  "https.ssl.protocol": "TLSv1.3",
+  "https.ssl.validation.level": "STRICT",
+  "https.ssl.certificate.pinning.enabled": "true",
+  "https.ssl.client.auth": "REQUIRED",
+  "https.ssl.verify.hostname": "true",
+  "https.ssl.check.revocation": "true"
+}
+```
+
+**Development Environment:**
+```json
+{
+  "https.ssl.enabled": true,
+  "https.ssl.protocol": "TLSv1.2",
+  "https.ssl.validation.level": "DEVELOPMENT",
+  "https.ssl.allow.self.signed": "true",
+  "https.ssl.verify.hostname": "false",
+  "https.ssl.debug.enabled": "true"
+}
+```
+
+**Staging Environment:**
+```json
+{
+  "https.ssl.enabled": true,
+  "https.ssl.protocol": "TLSv1.3",
+  "https.ssl.validation.level": "RELAXED",
+  "https.ssl.certificate.pinning.enabled": "false",
+  "https.ssl.verify.hostname": "true",
+  "https.ssl.logging.enabled": "true"
+}
+```
+
+#### SSL Troubleshooting
+
+Enable SSL debugging and logging:
+
+```json
+{
+  "https.ssl.debug.enabled": "true",
+  "https.ssl.debug.level": "ALL",
+  "https.ssl.logging.enabled": "true",
+  "https.ssl.log.handshake.details": "true",
+  "https.ssl.log.certificate.details": "true"
+}
+```
+
+**Debug Levels:**
+- `NONE`: No SSL debugging
+- `BASIC`: Basic SSL information
+- `DETAILED`: Detailed SSL handshake information
+- `ALL`: Complete SSL debugging including certificate details
+
+#### Integration with External Certificate Providers
+
+**HashiCorp Vault Integration:**
+```json
+{
+  "https.ssl.certificate.provider": "VAULT",
+  "https.ssl.vault.address": "https://vault.company.com",
+  "https.ssl.vault.auth.token": "${env:VAULT_TOKEN}",
+  "https.ssl.vault.cert.path": "pki/issue/kafka-connect",
+  "https.ssl.vault.cert.ttl": "24h"
+}
+```
+
+**AWS Certificate Manager Integration:**
+```json
+{
+  "https.ssl.certificate.provider": "AWS_ACM",
+  "https.ssl.aws.region": "us-east-1",
+  "https.ssl.aws.certificate.arn": "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012",
+  "https.ssl.aws.credentials.provider": "DefaultAWSCredentialsProviderChain"
 }
 ```
 
@@ -858,9 +2373,11 @@ Monitor connector performance:
     
     // Authentication
     "auth.type": "OAUTH2",
+    "oauth2.client.auth.mode": "CERTIFICATE",
     "oauth2.token.url": "https://auth.company.com/oauth/token",
     "oauth2.client.id": "${vault:secret/oauth2:client_id}",
-    "oauth2.client.secret": "${vault:secret/oauth2:client_secret}",
+    "oauth2.client.certificate.path": "${vault:secret/oauth2:certificate_path}",
+    "oauth2.client.certificate.password": "${vault:secret/oauth2:certificate_password}",
     "oauth2.client.scope": "read:api",
     
     // API Configurations
@@ -934,6 +2451,7 @@ Monitor connector performance:
 ## 📚 Additional Resources
 
 - [Enterprise Features Guide](./ENTERPRISE_FEATURES.md)
+- [OAuth2 Certificate Authentication Guide](./docs/OAUTH2_CERTIFICATE_AUTHENTICATION.md)
 - [API Reference Documentation](./API_REFERENCE.md)
 - [Performance Tuning Guide](./PERFORMANCE_TUNING.md)
 - [Security Best Practices](./SECURITY.md)

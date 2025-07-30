@@ -4,10 +4,15 @@ io/confluent/connect/http/unit/HttpSourceTaskODataOffsetTest.class
 io/confluent/connect/http/unit/JsonRecordConverterTest.class
 io/confluent/connect/http/integration/OptimizedSimplifiedEnterpriseIntegrationTest.class
 io/confluent/connect/http/unit/HttpSourceTaskODataOffsetTest$1.class
+io/confluent/connect/http/integration/OAuth2CertificateAuthenticationIntegrationTest.class
 io/confluent/connect/http/integration/OptimizedEnterpriseConnectorIntegrationTest.class
+io/confluent/connect/http/unit/OAuth2CertificateAuthenticationUnitTest.class
+io/confluent/connect/http/integration/OAuth2CertificateAuthenticationSimpleIntegrationTest.class
 io/confluent/connect/http/integration/ODataCursorPaginationTest.class
 io/confluent/connect/http/integration/EnterprisePerformanceIntegrationTest.class
 io/confluent/connect/http/unit/HttpSourceTaskODataOffsetTest$3.class
+io/confluent/connect/http/integration/OAuth2CertificateAuthenticationIntegrationTestClean.class
+io/confluent/connect/http/unit/HttpSourceTaskODataPollIntervalTest.class
 io/confluent/connect/http/unit/HttpApiClientTemplateTest.class
 io/confluent/connect/http/unit/AdvancedErrorHandlerTest$1.class
 io/confluent/connect/http/unit/FieldEncryptionManagerTest.class

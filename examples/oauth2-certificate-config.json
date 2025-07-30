@@ -1,0 +1,28 @@
+{
+  "name": "oauth2-certificate-http-source",
+  "config": {
+    "connector.class": "io.confluent.connect.http.HttpSourceConnector",
+    "tasks.max": "1",
+    "http.api.base.url": "https://api.example.com",
+    "apis.num": "1",
+    "api1.http.api.path": "/api/data",
+    "api1.topics": "oauth2-certificate-topic",
+    "http.api.1.endpoint": "/api/data",
+    "http.api.1.topic": "oauth2-certificate-topic",
+    "http.api.1.method": "GET",
+    "http.poll.interval.ms": "30000",
+    
+    "_comment": "OAuth2 Certificate-based Authentication Configuration",
+    "auth.type": "OAUTH2",
+    "oauth2.client.auth.mode": "CERTIFICATE",
+    "oauth2.token.url": "https://auth.example.com/oauth2/token",
+    "oauth2.client.id": "your-client-id",
+    "oauth2.client.certificate.path": "/path/to/your/certificate.pfx",
+    "oauth2.client.certificate.password": "your-certificate-password",
+    "oauth2.token.property": "access_token",
+    "oauth2.client.scope": "read write",
+    
+    "_comment2": "Optional: Custom token refresh settings",
+    "oauth2.token.refresh.buffer.seconds": "300"
+  }
+}

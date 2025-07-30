@@ -29,6 +29,8 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
     public static final String OAUTH2_CLIENT_SCOPE = "oauth2.client.scope";
     public static final String OAUTH2_CLIENT_AUTH_MODE = "oauth2.client.auth.mode";
     public static final String OAUTH2_TOKEN_REFRESH_INTERVAL_MINUTES = "oauth2.token.refresh.interval.minutes";
+    public static final String OAUTH2_CLIENT_CERTIFICATE_PATH = "oauth2.client.certificate.path";
+    public static final String OAUTH2_CLIENT_CERTIFICATE_PASSWORD = "oauth2.client.certificate.password";
     public static final String API_KEY_LOCATION = "api.key.location";
     public static final String API_KEY_NAME = "api.key.name";
     public static final String API_KEY_VALUE = "api.key.value";
@@ -106,7 +108,7 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
     }
     
     public enum OAuth2ClientAuthMode {
-        HEADER, URL
+        HEADER, URL, CERTIFICATE
     }
     
     public enum ReportErrorsAs {
@@ -225,7 +227,7 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
             OAUTH2_CLIENT_AUTH_MODE,
             ConfigDef.Type.STRING,
             OAuth2ClientAuthMode.HEADER.name(),
-            ConfigDef.ValidString.in(OAuth2ClientAuthMode.HEADER.name(), OAuth2ClientAuthMode.URL.name()),
+            ConfigDef.ValidString.in(OAuth2ClientAuthMode.HEADER.name(), OAuth2ClientAuthMode.URL.name(), OAuth2ClientAuthMode.CERTIFICATE.name()),
             ConfigDef.Importance.MEDIUM,
             "Specifies how to encode client_id and client_secret in the OAuth2 authorization request"
         );
@@ -237,6 +239,22 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
             ConfigDef.Range.between(1, 1440), // 1 minute to 24 hours
             ConfigDef.Importance.MEDIUM,
             "The interval in minutes for refreshing OAuth2 tokens. Defaults to 30 minutes"
+        );
+        
+        configDef.define(
+            OAUTH2_CLIENT_CERTIFICATE_PATH,
+            ConfigDef.Type.STRING,
+            null,
+            ConfigDef.Importance.MEDIUM,
+            "The file path to the PFX certificate for OAuth2 certificate-based authentication. Required when using CERTIFICATE auth mode."
+        );
+        
+        configDef.define(
+            OAUTH2_CLIENT_CERTIFICATE_PASSWORD,
+            ConfigDef.Type.PASSWORD,
+            null,
+            ConfigDef.Importance.MEDIUM,
+            "The password for the PFX certificate used in OAuth2 certificate-based authentication"
         );
         
         configDef.define(
@@ -566,8 +584,21 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
                 }
                 break;
             case OAUTH2:
-                if (getOauth2TokenUrl() == null || getOauth2ClientId() == null || getOauth2ClientSecret() == null) {
-                    throw new ConfigException("oauth2.token.url, oauth2.client.id, and oauth2.client.secret must be set for OAUTH2 auth");
+                OAuth2ClientAuthMode authMode = getOauth2ClientAuthMode();
+                if (getOauth2TokenUrl() == null || getOauth2ClientId() == null) {
+                    throw new ConfigException("oauth2.token.url and oauth2.client.id must be set for OAUTH2 auth");
+                }
+                
+                if (authMode == OAuth2ClientAuthMode.CERTIFICATE) {
+                    // Certificate-based authentication
+                    if (getOauth2ClientCertificatePath() == null) {
+                        throw new ConfigException("oauth2.client.certificate.path must be set for CERTIFICATE auth mode");
+                    }
+                } else {
+                    // Client secret-based authentication (HEADER or URL modes)
+                    if (getOauth2ClientSecret() == null) {
+                        throw new ConfigException("oauth2.client.secret must be set for " + authMode + " auth mode");
+                    }
                 }
                 break;
             case API_KEY:
@@ -637,6 +668,15 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
     
     public int getOauth2TokenRefreshIntervalMinutes() {
         return getInt(OAUTH2_TOKEN_REFRESH_INTERVAL_MINUTES);
+    }
+    
+    public String getOauth2ClientCertificatePath() {
+        return getString(OAUTH2_CLIENT_CERTIFICATE_PATH);
+    }
+    
+    public String getOauth2ClientCertificatePassword() {
+        return getPassword(OAUTH2_CLIENT_CERTIFICATE_PASSWORD) != null ? 
+               getPassword(OAUTH2_CLIENT_CERTIFICATE_PASSWORD).value() : null;
     }
     
     public ApiKeyLocation getApiKeyLocation() {

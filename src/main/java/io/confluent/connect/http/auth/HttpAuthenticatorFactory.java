@@ -33,14 +33,26 @@ public class HttpAuthenticatorFactory {
                 return new BearerTokenAuthenticator(config.getBearerToken());
             
             case OAUTH2:
-                return new OAuth2Authenticator(
-                    config.getOauth2TokenUrl(),
-                    config.getOauth2ClientId(),
-                    config.getOauth2ClientSecret(),
-                    config.getOauth2TokenProperty(),
-                    config.getOauth2ClientScope(),
-                    config.getOauth2ClientAuthMode()
-                );
+                HttpSourceConnectorConfig.OAuth2ClientAuthMode authMode = config.getOauth2ClientAuthMode();
+                if (authMode == HttpSourceConnectorConfig.OAuth2ClientAuthMode.CERTIFICATE) {
+                    return new OAuth2CertificateAuthenticator(
+                        config.getOauth2TokenUrl(),
+                        config.getOauth2ClientId(),
+                        config.getOauth2ClientCertificatePath(),
+                        config.getOauth2ClientCertificatePassword(),
+                        config.getOauth2TokenProperty(),
+                        config.getOauth2ClientScope()
+                    );
+                } else {
+                    return new OAuth2Authenticator(
+                        config.getOauth2TokenUrl(),
+                        config.getOauth2ClientId(),
+                        config.getOauth2ClientSecret(),
+                        config.getOauth2TokenProperty(),
+                        config.getOauth2ClientScope(),
+                        authMode
+                    );
+                }
             
             case API_KEY:
                 return new ApiKeyAuthenticator(
