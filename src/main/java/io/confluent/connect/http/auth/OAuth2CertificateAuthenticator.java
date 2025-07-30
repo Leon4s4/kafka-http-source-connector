@@ -312,7 +312,7 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
         }
         
         // For any unknown environment, default to strict security
-        log.warn("Unknown environment '{}' - defaulting to strict hostname verification", environment);
+        log.warn("Unknown environment '{}' - defaulting to strict security policies (including strict hostname verification)", environment);
         // Do not set hostnameVerifier - use default secure verification
     }
     
