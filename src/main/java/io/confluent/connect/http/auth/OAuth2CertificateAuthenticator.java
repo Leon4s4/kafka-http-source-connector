@@ -251,24 +251,19 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
      * with proper SSL/TLS security based on environment configuration
      */
     private OkHttpClient createHttpClientWithCertificate() {
+        char[] password = certificatePassword != null ? certificatePassword.toCharArray() : new char[0];
         try {
             // Load the client certificate for mTLS
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
-            char[] password = certificatePassword != null ? certificatePassword.toCharArray() : new char[0];
             KeyManager[] keyManagers;
-            try {
-                try (FileInputStream fis = new FileInputStream(certificatePath)) {
-                    keyStore.load(fis, password);
-                }
-                
-                // Initialize KeyManagerFactory with the certificate
-                KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-                keyManagerFactory.init(keyStore, password);
-                keyManagers = keyManagerFactory.getKeyManagers();
-            } finally {
-                // Clear the password array to remove sensitive data from memory
-                java.util.Arrays.fill(password, '\0');
+            try (FileInputStream fis = new FileInputStream(certificatePath)) {
+                keyStore.load(fis, password);
             }
+            
+            // Initialize KeyManagerFactory with the certificate
+            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            keyManagerFactory.init(keyStore, password);
+            keyManagers = keyManagerFactory.getKeyManagers();
             
             // Create appropriate trust managers based on environment and configuration
             TrustManager[] trustManagers = createTrustManagers();
