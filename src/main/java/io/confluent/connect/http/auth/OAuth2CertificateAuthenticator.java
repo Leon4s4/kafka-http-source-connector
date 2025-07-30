@@ -21,6 +21,7 @@ import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -65,7 +66,7 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
     
     private volatile String accessToken;
     private volatile Instant tokenExpiryTime;
-    private final AtomicBoolean tokenRefreshInProgress = new AtomicBoolean(false);
+    private AtomicBoolean tokenRefreshInProgress;
     
     // Default token expiry buffer (refresh 5 minutes before expiry)
     private static final long TOKEN_EXPIRY_BUFFER_SECONDS = 300;
@@ -108,7 +109,7 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
         
         this.objectMapper = new ObjectMapper();
         this.tokenLock = new ReentrantLock();
-        this.tokenRefreshInProgress = false;
+        this.tokenRefreshInProgress = new AtomicBoolean(false);
         
         // Initialize HTTP client with certificate-based SSL
         this.httpClient = createHttpClientWithCertificate();
@@ -149,20 +150,18 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
             log.warn("No OAuth2 access token available for authentication");
         }
     }
-    
-    private final Condition refreshComplete = tokenLock.newCondition();
 
     @Override
     public void refreshToken() throws Exception {
         tokenLock.lock();
         try {
             // Double-check if refresh is still needed after acquiring lock
-            while (tokenRefreshInProgress) {
+            if (tokenRefreshInProgress.get()) {
                 log.debug("Token refresh already in progress, waiting...");
-                refreshComplete.await();
+                return;
             }
             
-            tokenRefreshInProgress = true;
+            tokenRefreshInProgress.set(true);
             log.debug("Refreshing OAuth2 token from: {}", tokenUrl);
             
             // Build token request with client credentials grant
@@ -221,7 +220,7 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
             }
             
         } finally {
-            tokenRefreshInProgress = false;
+            tokenRefreshInProgress.set(false);
             tokenLock.unlock();
         }
     }
@@ -311,7 +310,7 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
         
         // For any unknown environment, default to strict security
         log.warn("Unknown environment '{}' - defaulting to strict hostname verification", environment);
-        clientBuilder.hostnameVerifier(OkHostnameVerifier.INSTANCE);
+        // Do not set hostnameVerifier - use default secure verification
     }
     
     /**
