@@ -65,7 +65,7 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
     
     private volatile String accessToken;
     private volatile Instant tokenExpiryTime;
-    private volatile boolean tokenRefreshInProgress;
+    private final AtomicBoolean tokenRefreshInProgress = new AtomicBoolean(false);
     
     // Default token expiry buffer (refresh 5 minutes before expiry)
     private static final long TOKEN_EXPIRY_BUFFER_SECONDS = 300;
