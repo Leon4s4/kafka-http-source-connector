@@ -150,14 +150,16 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
         }
     }
     
+    private final Condition refreshComplete = tokenLock.newCondition();
+
     @Override
     public void refreshToken() throws Exception {
         tokenLock.lock();
         try {
             // Double-check if refresh is still needed after acquiring lock
-            if (tokenRefreshInProgress) {
+            while (tokenRefreshInProgress) {
                 log.debug("Token refresh already in progress, waiting...");
-                return;
+                refreshComplete.await();
             }
             
             tokenRefreshInProgress = true;
