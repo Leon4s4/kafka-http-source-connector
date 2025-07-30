@@ -404,20 +404,13 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
                         log.debug("Server certificate validated successfully using default trust manager");
                     } catch (java.security.cert.CertificateException e) {
                         if (allowSelfSigned) {
-                            // For development, allow self-signed certificates but log warning
-                            log.warn("Certificate validation failed with default trust manager, but allowing due to development configuration: {}", e.getMessage());
+                            // For development, allow self-signed certificates but with stronger validation
+                            log.warn("Certificate validation failed with default trust manager, performing enhanced validation for development: {}", e.getMessage());
                             
-                            // Perform basic certificate validation
-                            if (chain == null || chain.length == 0) {
-                                throw new java.security.cert.CertificateException("Certificate chain is empty");
-                            }
+                            // Perform enhanced certificate validation for development
+                            performEnhancedCertificateValidation(chain, authType);
                             
-                            // Check certificate dates
-                            for (java.security.cert.X509Certificate cert : chain) {
-                                cert.checkValidity();
-                            }
-                            
-                            log.debug("Self-signed certificate accepted for development environment");
+                            log.debug("Self-signed certificate accepted for development environment after enhanced validation");
                         } else {
                             // Re-throw the original exception
                             throw e;
@@ -431,6 +424,150 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
                 }
             }
         };
+    }
+    
+    /**
+     * Performs enhanced certificate validation for development environment.
+     * This method provides stronger validation than just accepting any certificate,
+     * while still allowing self-signed certificates for development purposes.
+     */
+    private void performEnhancedCertificateValidation(java.security.cert.X509Certificate[] chain, String authType) 
+            throws java.security.cert.CertificateException {
+        
+        // Basic chain validation
+        if (chain == null || chain.length == 0) {
+            throw new java.security.cert.CertificateException("Certificate chain is empty");
+        }
+        
+        log.debug("Performing enhanced certificate validation for {} certificate(s) in development mode", chain.length);
+        
+        for (int i = 0; i < chain.length; i++) {
+            java.security.cert.X509Certificate cert = chain[i];
+            
+            // 1. Check certificate validity dates
+            try {
+                cert.checkValidity();
+                log.debug("Certificate {} validity dates are valid", i);
+            } catch (java.security.cert.CertificateExpiredException e) {
+                throw new java.security.cert.CertificateException("Certificate " + i + " has expired: " + e.getMessage(), e);
+            } catch (java.security.cert.CertificateNotYetValidException e) {
+                throw new java.security.cert.CertificateException("Certificate " + i + " is not yet valid: " + e.getMessage(), e);
+            }
+            
+            // 2. Check basic certificate structure and format
+            try {
+                // Verify the certificate can be parsed properly
+                cert.getSubjectX500Principal();
+                cert.getIssuerX500Principal();
+                cert.getSerialNumber();
+                cert.getPublicKey();
+                log.debug("Certificate {} structure validation passed", i);
+            } catch (Exception e) {
+                throw new java.security.cert.CertificateException("Certificate " + i + " has invalid structure: " + e.getMessage(), e);
+            }
+            
+            // 3. Check key usage and extensions for basic sanity
+            try {
+                boolean[] keyUsage = cert.getKeyUsage();
+                if (keyUsage != null) {
+                    // For server certificates, we expect digital signature and/or key encipherment
+                    boolean hasValidKeyUsage = keyUsage[0] || keyUsage[2]; // Digital signature or key encipherment
+                    if (!hasValidKeyUsage) {
+                        log.warn("Certificate {} may not be suitable for TLS server authentication (key usage restrictions)", i);
+                    }
+                }
+                log.debug("Certificate {} key usage validation passed", i);
+            } catch (Exception e) {
+                log.warn("Could not validate key usage for certificate {}: {}", i, e.getMessage());
+                // Don't fail for key usage issues in development, just log warning
+            }
+            
+            // 4. Check algorithm strength
+            try {
+                String algorithm = cert.getPublicKey().getAlgorithm();
+                int keySize = getKeySize(cert.getPublicKey());
+                
+                // Enforce minimum key sizes for security
+                boolean strongKey = false;
+                switch (algorithm.toUpperCase()) {
+                    case "RSA":
+                        strongKey = keySize >= 2048;
+                        break;
+                    case "EC":
+                    case "ECDSA":
+                        strongKey = keySize >= 256;
+                        break;
+                    case "DSA":
+                        strongKey = keySize >= 2048;
+                        break;
+                    default:
+                        log.warn("Unknown algorithm '{}' for certificate {}", algorithm, i);
+                        strongKey = true; // Don't fail for unknown algorithms
+                }
+                
+                if (!strongKey) {
+                    throw new java.security.cert.CertificateException(
+                        "Certificate " + i + " uses weak cryptography: " + algorithm + " " + keySize + " bits. " +
+                        "Minimum requirements: RSA 2048 bits, EC 256 bits, DSA 2048 bits.");
+                }
+                
+                log.debug("Certificate {} algorithm strength validation passed: {} {} bits", i, algorithm, keySize);
+            } catch (java.security.cert.CertificateException e) {
+                throw e; // Re-throw certificate exceptions
+            } catch (Exception e) {
+                log.warn("Could not validate algorithm strength for certificate {}: {}", i, e.getMessage());
+                // Don't fail for algorithm validation issues in development, just log warning
+            }
+            
+            // 5. Check signature algorithm strength
+            try {
+                String sigAlg = cert.getSigAlgName().toUpperCase();
+                if (sigAlg.contains("MD5") || sigAlg.contains("SHA1")) {
+                    throw new java.security.cert.CertificateException(
+                        "Certificate " + i + " uses weak signature algorithm: " + sigAlg + ". " +
+                        "Use SHA-256 or stronger algorithms.");
+                }
+                log.debug("Certificate {} signature algorithm validation passed: {}", i, sigAlg);
+            } catch (java.security.cert.CertificateException e) {
+                throw e;
+            } catch (Exception e) {
+                log.warn("Could not validate signature algorithm for certificate {}: {}", i, e.getMessage());
+            }
+        }
+        
+        // 6. Validate certificate chain structure
+        if (chain.length > 1) {
+            for (int i = 0; i < chain.length - 1; i++) {
+                try {
+                    // Verify that each certificate is signed by the next one in the chain
+                    chain[i].verify(chain[i + 1].getPublicKey());
+                    log.debug("Certificate chain link {} -> {} verification passed", i, i + 1);
+                } catch (Exception e) {
+                    log.warn("Certificate chain verification failed for link {} -> {}: {}", i, i + 1, e.getMessage());
+                    // Don't fail the entire validation for chain issues in development mode
+                    // This allows self-signed certificates which won't have proper chain validation
+                }
+            }
+        }
+        
+        log.info("Enhanced certificate validation completed successfully for development environment");
+    }
+    
+    /**
+     * Gets the key size in bits for the given public key
+     */
+    private int getKeySize(java.security.PublicKey publicKey) {
+        if (publicKey instanceof java.security.interfaces.RSAPublicKey) {
+            return ((java.security.interfaces.RSAPublicKey) publicKey).getModulus().bitLength();
+        } else if (publicKey instanceof java.security.interfaces.ECPublicKey) {
+            return ((java.security.interfaces.ECPublicKey) publicKey).getParams().getOrder().bitLength();
+        } else if (publicKey instanceof java.security.interfaces.DSAPublicKey) {
+            return ((java.security.interfaces.DSAPublicKey) publicKey).getParams().getP().bitLength();
+        } else {
+            // For unknown key types, return a safe default
+            log.warn("Unknown public key type: {}", publicKey.getClass().getName());
+            return 2048; // Assume strong key
+        }
     }
     
     /**

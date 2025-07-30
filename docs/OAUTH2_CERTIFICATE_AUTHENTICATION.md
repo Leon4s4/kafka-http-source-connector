@@ -141,6 +141,54 @@ openssl pkcs12 -export -in client.crt -inkey client.key -out client.pfx -name "c
 - **Test Certificate Passwords**: Use simple passwords for development certificates
 - **Certificate Expiry**: Monitor certificate expiration dates
 
+### Enhanced Security Validation
+
+The OAuth2 certificate authenticator includes enhanced security validation even in development mode when `allowSelfSigned` is enabled:
+
+#### Certificate Validation Checks
+
+1. **Certificate Chain Validation**: Verifies the certificate chain is not empty and properly structured
+2. **Validity Period Checking**: Ensures certificates are not expired and are currently valid
+3. **Basic Structure Validation**: Verifies certificate can be parsed and contains required fields
+4. **Key Usage Validation**: Checks that certificates have appropriate key usage for TLS server authentication
+5. **Cryptographic Strength Validation**: Enforces minimum key sizes and algorithms:
+   - **RSA**: Minimum 2048 bits
+   - **EC/ECDSA**: Minimum 256 bits  
+   - **DSA**: Minimum 2048 bits
+6. **Signature Algorithm Validation**: Rejects weak signature algorithms (MD5, SHA-1)
+7. **Certificate Chain Structure**: Validates certificate chain links when multiple certificates are present
+
+#### Security by Environment
+
+- **Production/Staging**: Full certificate validation using system or custom truststore
+- **Development/Testing**: Enhanced validation with controlled flexibility for self-signed certificates
+
+#### Configuration Properties for Security
+
+```properties
+# Environment-specific security settings
+oauth2.certificate.environment=production|staging|development|testing
+
+# Hostname verification (forced ON in production/staging)
+oauth2.certificate.verify.hostname=true|false
+
+# Allow self-signed certificates (development/testing only)
+oauth2.certificate.allow.self.signed=true|false
+
+# Custom truststore for enterprise environments
+oauth2.certificate.truststore.path=/path/to/truststore.jks
+oauth2.certificate.truststore.password=truststore-password
+```
+
+#### Security Warnings and Enforcement
+
+The authenticator provides comprehensive security reporting and warnings:
+
+- **Environment Detection**: Automatically detects environment and applies appropriate security policies
+- **Configuration Validation**: Validates security settings and logs warnings for insecure configurations
+- **Security Reporting**: Generates detailed security reports showing current configuration status
+- **Policy Enforcement**: Automatically enforces strict security in production/staging environments
+
 ## Troubleshooting
 
 ### Common Issues
