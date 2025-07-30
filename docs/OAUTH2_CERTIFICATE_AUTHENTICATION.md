@@ -63,7 +63,7 @@ openssl pkcs12 -export -in client.crt -inkey client.key -out client.pfx -name "c
     "connector.class": "io.confluent.connect.http.HttpSourceConnector",
     "tasks.max": "1",
     "http.api.base.url": "https://api.example.com",
-    "http.apis.num": "1",
+    "apis.num": "1",
     "api1.http.api.path": "/api/data",
     "api1.topics": "oauth2-certificate-topic",
     "http.api.1.endpoint": "/api/data",

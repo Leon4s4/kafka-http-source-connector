@@ -76,7 +76,7 @@ public class OAuth2CertificateAuthenticationSimpleIntegrationTest {
         config.put("connector.class", "io.confluent.connect.http.HttpSourceConnector");
         config.put("tasks.max", "1");
         config.put("http.api.base.url", "https://api.example.com");
-        config.put("http.apis.num", "1");
+        config.put("apis.num", "1");
         config.put("api1.http.api.path", "/api/data");
         config.put("api1.topics", "oauth2-cert-test-topic");
         config.put("http.api.1.endpoint", "/api/data");

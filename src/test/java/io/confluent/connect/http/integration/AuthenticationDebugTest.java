@@ -157,7 +157,7 @@ public class AuthenticationDebugTest {
         config.put("connector.class", "io.confluent.connect.http.HttpSourceConnector");
         config.put("tasks.max", "1");
         config.put("http.api.base.url", "http://localhost:" + mockApiServer.getPort());
-        config.put("http.apis.num", "1");  // Use the exact same format as the failing test
+        config.put("apis.num", "1");  // Use the exact same format as the failing test
         config.put("api1.http.api.path", "/api/data");
         config.put("api1.topics", "test-topic");
         config.put("http.api.1.endpoint", "/api/data");

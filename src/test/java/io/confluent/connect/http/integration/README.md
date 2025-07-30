@@ -200,7 +200,7 @@ tasks.max=1
 
 # API configuration
 http.api.base.url=https://api.example.com
-http.apis.num=1
+apis.num=1
 http.api.1.endpoint=/data
 http.api.1.topic=enterprise-data
 

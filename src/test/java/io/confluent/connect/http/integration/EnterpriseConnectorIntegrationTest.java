@@ -712,7 +712,7 @@ public class EnterpriseConnectorIntegrationTest {
         
         // Configure multiple APIs
         Map<String, String> multiApiConfig = createBaseConnectorConfig();
-        multiApiConfig.put("http.apis.num", "2");
+        multiApiConfig.put("apis.num", "2");
         
         // API 1 - Users
         multiApiConfig.put("api1.http.api.path", "/api/users");
@@ -751,7 +751,7 @@ public class EnterpriseConnectorIntegrationTest {
         
         // Configure multiple APIs with different settings
         Map<String, String> extendedConfig = createBaseConnectorConfig();
-        extendedConfig.put("http.apis.num", "3");
+        extendedConfig.put("apis.num", "3");
         
         // Configure 3 different APIs
         for (int i = 1; i <= 3; i++) {
@@ -1069,7 +1069,7 @@ public class EnterpriseConnectorIntegrationTest {
         
         // Configure API chaining
         Map<String, String> chainingConfig = createBaseConnectorConfig();
-        chainingConfig.put("http.apis.num", "2");
+        chainingConfig.put("apis.num", "2");
         
         // Parent API
         chainingConfig.put("api1.http.api.path", "/api/users");
