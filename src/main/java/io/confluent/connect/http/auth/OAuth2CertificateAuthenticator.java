@@ -320,8 +320,13 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
                 log.warn("DEVELOPMENT ONLY: Hostname verification disabled for {} environment", environment);
                 log.warn("This configuration is NOT suitable for production use!");
                 clientBuilder.hostnameVerifier((hostname, session) -> {
-                    log.debug("Accepting hostname: {} in {} environment (verification disabled)", hostname, environment);
-                    return true;
+                    boolean isAllowed = allowedHostnames.contains(hostname);
+                    if (isAllowed) {
+                        log.debug("Accepting hostname: {} in {} environment (allowed by configuration)", hostname, environment);
+                    } else {
+                        log.warn("Rejected hostname: {} in {} environment (not in allowed list)", hostname, environment);
+                    }
+                    return isAllowed;
                 });
             }
             return;
