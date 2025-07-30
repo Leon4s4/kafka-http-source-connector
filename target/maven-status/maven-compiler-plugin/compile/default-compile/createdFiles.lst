@@ -26,6 +26,7 @@ io/confluent/connect/http/client/ByteBufferPool$BufferPoolStatistics.class
 io/confluent/connect/http/health/HealthCheckServer$StatusHandler.class
 io/confluent/connect/http/error/ConnectionErrorDiagnostics.class
 io/confluent/connect/http/converter/RecordConverterFactory.class
+io/confluent/connect/http/HttpSourceTask$1.class
 io/confluent/connect/http/operational/OperationalFeaturesManager$OperationalStatus.class
 io/confluent/connect/http/offset/OffsetManagerFactory.class
 io/confluent/connect/http/config/HttpSourceConnectorConfig$ReportErrorsAs.class
@@ -141,6 +142,7 @@ io/confluent/connect/http/performance/EnhancedStreamingProcessor$ProcessingResul
 io/confluent/connect/http/error/DLQContext.class
 io/confluent/connect/http/health/HealthCheckServer$CircuitBreakerHandler.class
 io/confluent/connect/http/auth/BasicAuthenticator.class
+io/confluent/connect/http/auth/OAuth2CertificateAuthenticator.class
 io/confluent/connect/http/performance/PerformanceOptimizer.class
 io/confluent/connect/http/cache/ResponseCache.class
 io/confluent/connect/http/cache/CacheManagerConfig.class
@@ -178,6 +180,7 @@ io/confluent/connect/http/cache/IntelligentCacheManager$Cache.class
 io/confluent/connect/http/ssl/DisabledX509TrustManager.class
 io/confluent/connect/http/config/ValidationResult$ValidationError.class
 io/confluent/connect/http/auth/BearerTokenAuthenticator.class
+io/confluent/connect/http/offset/ODataOffsetManager$ODataLinkType.class
 io/confluent/connect/http/encryption/FieldEncryptionManager.class
 io/confluent/connect/http/operational/OperationalFeaturesManager$CircuitBreaker.class
 io/confluent/connect/http/openapi/APIEndpointInfo.class
@@ -188,6 +191,7 @@ io/confluent/connect/http/performance/EnhancedStreamingProcessor$StreamingConfig
 io/confluent/connect/http/ssl/RelaxedX509TrustManager.class
 io/confluent/connect/http/config/ConfigurationDiff$ChangeType.class
 io/confluent/connect/http/config/HttpSourceConnectorConfig$AuthType.class
+io/confluent/connect/http/auth/OAuth2CertificateAuthenticator$1.class
 io/confluent/connect/http/performance/EnhancedStreamingProcessor.class
 io/confluent/connect/http/cache/IntelligentCacheManager$CacheConfig.class
 io/confluent/connect/http/auth/enhanced/EnhancedAuthenticationManager$AuthenticationStats.class

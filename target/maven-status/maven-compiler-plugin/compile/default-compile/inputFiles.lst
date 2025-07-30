@@ -72,6 +72,7 @@
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/pagination/PaginationManager.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/cache/CacheManagerConfig.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/transformation/TransformationRule.java
+/Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/auth/OAuth2CertificateAuthenticator.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/converter/JsonRecordConverter.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/error/ErrorHandler.java
 /Users/Git/kafka-http-source-connector/src/main/java/io/confluent/connect/http/ssl/RelaxedHostnameVerifier.java
