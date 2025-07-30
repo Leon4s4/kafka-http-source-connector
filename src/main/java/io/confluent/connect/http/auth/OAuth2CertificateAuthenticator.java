@@ -255,6 +255,7 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
             // Load the client certificate for mTLS
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
             char[] password = certificatePassword != null ? certificatePassword.toCharArray() : new char[0];
+            KeyManager[] keyManagers;
             try {
                 try (FileInputStream fis = new FileInputStream(certificatePath)) {
                     keyStore.load(fis, password);
@@ -263,7 +264,7 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
                 // Initialize KeyManagerFactory with the certificate
                 KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
                 keyManagerFactory.init(keyStore, password);
-                KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
+                keyManagers = keyManagerFactory.getKeyManagers();
             } finally {
                 // Clear the password array to remove sensitive data from memory
                 java.util.Arrays.fill(password, '\0');
@@ -307,27 +308,6 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
             } else {
                 log.debug("Using strict hostname verification for {} environment", environment);
                 // Do not set hostnameVerifier - use default secure verification
-            }
-            return;
-        }
-        
-        // For development and testing environments, allow configuration flexibility
-        if ("development".equals(environment) || "testing".equals(environment)) {
-            if (verifyHostname) {
-                log.debug("Using strict hostname verification for {} environment", environment);
-                // Do not set hostnameVerifier - use default secure verification
-            } else {
-                log.warn("DEVELOPMENT ONLY: Hostname verification disabled for {} environment", environment);
-                log.warn("This configuration is NOT suitable for production use!");
-                clientBuilder.hostnameVerifier((hostname, session) -> {
-                    boolean isAllowed = allowedHostnames.contains(hostname);
-                    if (isAllowed) {
-                        log.debug("Accepting hostname: {} in {} environment (allowed by configuration)", hostname, environment);
-                    } else {
-                        log.warn("Rejected hostname: {} in {} environment (not in allowed list)", hostname, environment);
-                    }
-                    return isAllowed;
-                });
             }
             return;
         }
