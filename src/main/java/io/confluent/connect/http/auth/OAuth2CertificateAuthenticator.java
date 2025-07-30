@@ -287,6 +287,9 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
         } catch (Exception e) {
             log.error("Failed to create HTTP client with certificate authentication", e);
             throw new RuntimeException("Failed to initialize certificate-based authentication", e);
+        } finally {
+            // Clear the password array to remove sensitive data from memory
+            java.util.Arrays.fill(password, '\0');
         }
     }
     
