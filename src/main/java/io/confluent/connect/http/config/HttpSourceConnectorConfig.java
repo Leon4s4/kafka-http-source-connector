@@ -246,7 +246,7 @@ public class HttpSourceConnectorConfig extends AbstractConfig {
             ConfigDef.Type.STRING,
             null,
             ConfigDef.Importance.MEDIUM,
-            "The file path to the PFX certificate for OAuth2 certificate-based authentication"
+            "The file path to the PFX certificate for OAuth2 certificate-based authentication. Required when using CERTIFICATE auth mode."
         );
         
         configDef.define(
