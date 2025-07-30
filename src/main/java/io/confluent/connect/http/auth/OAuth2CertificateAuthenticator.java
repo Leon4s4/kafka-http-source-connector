@@ -263,7 +263,7 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
                 // Initialize KeyManagerFactory with the certificate
                 KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
                 keyManagerFactory.init(keyStore, password);
-                KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
+                keyManagers = keyManagerFactory.getKeyManagers();
             } finally {
                 // Clear the password array to remove sensitive data from memory
                 java.util.Arrays.fill(password, '\0');
