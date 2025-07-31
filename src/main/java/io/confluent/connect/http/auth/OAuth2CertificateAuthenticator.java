@@ -1,6 +1,5 @@
 package io.confluent.connect.http.auth;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -19,7 +18,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.security.SecureRandom;
-import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
@@ -44,7 +42,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *   <li><b>Development/Testing:</b> Configurable validation, optional self-signed certificate support</li>
  * </ul>
  */
-public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
+public class OAuth2CertificateAuthenticator extends AbstractOAuth2Authenticator {
     
     private static final Logger log = LoggerFactory.getLogger(OAuth2CertificateAuthenticator.class);
     
@@ -64,12 +62,7 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
     private final ObjectMapper objectMapper;
     private final ReentrantLock tokenLock;
     
-    private volatile String accessToken;
-    private volatile Instant tokenExpiryTime;
     private AtomicBoolean tokenRefreshInProgress;
-    
-    // Default token expiry buffer (refresh 5 minutes before expiry)
-    private static final long TOKEN_EXPIRY_BUFFER_SECONDS = 300;
     
     public OAuth2CertificateAuthenticator(String tokenUrl, String clientId, String certificatePath, 
                                          String certificatePassword, String tokenProperty, String scope) {
@@ -132,26 +125,6 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
     }
     
     @Override
-    public void authenticate(Request.Builder requestBuilder) {
-        // Check if token needs refresh
-        if (shouldRefreshToken()) {
-            try {
-                refreshToken();
-            } catch (Exception e) {
-                log.error("Failed to refresh OAuth2 token during authentication", e);
-                // Continue with existing token if refresh fails
-            }
-        }
-        
-        if (accessToken != null) {
-            requestBuilder.header("Authorization", "Bearer " + accessToken);
-            log.trace("Applied OAuth2 Bearer token authentication");
-        } else {
-            log.warn("No OAuth2 access token available for authentication");
-        }
-    }
-
-    @Override
     public void refreshToken() throws Exception {
         tokenLock.lock();
         try {
@@ -180,38 +153,7 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
             
             // Execute token request (certificate authentication happens at TLS level)
             try (Response response = httpClient.newCall(requestBuilder.build()).execute()) {
-                if (!response.isSuccessful()) {
-                    String errorBody = response.body() != null ? response.body().string() : "No response body";
-                    throw new IOException("Token request failed with status " + response.code() + ": " + errorBody);
-                }
-                
-                String responseBody = response.body().string();
-                JsonNode tokenResponse = objectMapper.readTree(responseBody);
-                
-                // Extract access token
-                JsonNode tokenNode = tokenResponse.get(tokenProperty);
-                if (tokenNode == null || tokenNode.isNull()) {
-                    throw new IOException("Access token not found in response. Expected property: " + tokenProperty);
-                }
-                
-                String newAccessToken = tokenNode.asText();
-                if (newAccessToken.isEmpty()) {
-                    throw new IOException("Access token is empty");
-                }
-                
-                // Extract token expiry (optional)
-                Instant newExpiryTime = null;
-                JsonNode expiresInNode = tokenResponse.get("expires_in");
-                if (expiresInNode != null && !expiresInNode.isNull()) {
-                    long expiresInSeconds = expiresInNode.asLong();
-                    newExpiryTime = Instant.now().plusSeconds(expiresInSeconds);
-                    log.debug("Token expires in {} seconds", expiresInSeconds);
-                }
-                
-                // Update token atomically
-                this.accessToken = newAccessToken;
-                this.tokenExpiryTime = newExpiryTime;
-                
+                processTokenResponse(response, tokenProperty, objectMapper);
                 log.info("OAuth2 certificate-based token refreshed successfully");
                 
             } catch (IOException e) {
@@ -226,11 +168,6 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
     }
     
     @Override
-    public boolean supportsTokenRefresh() {
-        return true;
-    }
-    
-    @Override
     public void close() {
         log.debug("Closing OAuth2CertificateAuthenticator");
         
@@ -240,9 +177,7 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
             httpClient.connectionPool().evictAll();
         }
         
-        // Clear token data
-        accessToken = null;
-        tokenExpiryTime = null;
+        clearTokenData();
         
         log.debug("OAuth2CertificateAuthenticator closed");
     }
@@ -294,53 +229,32 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
     }
     
     /**
-     * Configures hostname verification based on environment and security settings
+     * Configures hostname verification based on configuration settings
      */
     private void configureHostnameVerification(OkHttpClient.Builder clientBuilder) {
-        // For production and staging environments, enforce hostname verification
-        if ("production".equals(environment) || "staging".equals(environment)) {
-            if (!verifyHostname) {
-                // Force hostname verification in production/staging regardless of configuration
-                log.error("SECURITY ENFORCEMENT: Hostname verification forced ON in {} environment - overriding configuration", environment);
-                log.error("Hostname verification bypass is not allowed in production/staging environments for security reasons");
-                // Do not set hostnameVerifier - use default secure verification
-            } else {
-                log.debug("Using strict hostname verification for {} environment", environment);
-                // Do not set hostnameVerifier - use default secure verification
-            }
-            return;
+        if (verifyHostname) {
+            log.debug("Using strict hostname verification as configured");
+            // Do not set hostnameVerifier - use default secure verification
+        } else {
+            log.warn("SECURITY WARNING: Hostname verification is disabled per configuration. This is not recommended for production use.");
         }
-        
-        // For any unknown environment, default to strict security
-        log.warn("Unknown environment '{}' - defaulting to strict security policies (including strict hostname verification)", environment);
-        // Do not set hostnameVerifier - use default secure verification
     }
     
     /**
-     * Creates appropriate trust managers based on environment and configuration
+     * Creates appropriate trust managers based on configuration
      */
     private TrustManager[] createTrustManagers() throws Exception {
-        // For production and staging, use proper certificate validation
-        if ("production".equals(environment) || "staging".equals(environment)) {
-            return createProductionTrustManagers();
+        if (allowSelfSigned) {
+            log.warn("SECURITY WARNING: Self-signed certificates are allowed per configuration. This is not recommended for production use.");
+            return createPermissiveTrustManagers();
         }
-        
-        // For development/testing, allow more flexibility but with warnings
-        if ("development".equals(environment) || "testing".equals(environment)) {
-            if (allowSelfSigned) {
-                log.warn("Using permissive trust manager for {} environment - self-signed certificates allowed", environment);
-                return createDevelopmentTrustManagers();
-            }
-        }
-        
-        // Default to production-grade security
-        return createProductionTrustManagers();
+        return createStrictTrustManagers();
     }
     
     /**
-     * Creates production-grade trust managers with proper certificate validation
+     * Creates strict trust managers with proper certificate validation
      */
-    private TrustManager[] createProductionTrustManagers() throws Exception {
+    private TrustManager[] createStrictTrustManagers() throws Exception {
         if (truststorePath != null && !truststorePath.trim().isEmpty()) {
             // Use custom truststore if provided
             log.debug("Loading custom truststore from: {}", truststorePath);
@@ -354,11 +268,10 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(trustStore);
             
-            log.info("Using custom truststore for certificate validation in {} environment", environment);
+            log.info("Using custom truststore for certificate validation");
             return tmf.getTrustManagers();
         } else {
             // Use default system truststore
-            log.debug("Using default system truststore for certificate validation");
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init((KeyStore) null); // Use default truststore
             
@@ -367,11 +280,11 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
     }
     
     /**
-     * Creates development trust managers that allow self-signed certificates but with proper validation
+     * Creates permissive trust managers that allow self-signed certificates but with enhanced validation
      */
-    private TrustManager[] createDevelopmentTrustManagers() throws Exception {
+    private TrustManager[] createPermissiveTrustManagers() throws Exception {
         // First try to get the default trust managers
-        TrustManager[] defaultTrustManagers = createProductionTrustManagers();
+        TrustManager[] defaultTrustManagers = createStrictTrustManagers();
         X509TrustManager defaultTrustManager = (X509TrustManager) defaultTrustManagers[0];
         
         return new TrustManager[] {
@@ -392,13 +305,13 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
                         log.debug("Server certificate validated successfully using default trust manager");
                     } catch (java.security.cert.CertificateException e) {
                         if (allowSelfSigned) {
-                            // For development, allow self-signed certificates but with stronger validation
-                            log.warn("Certificate validation failed with default trust manager, performing enhanced validation for development: {}", e.getMessage());
+                            // Allow self-signed certificates but with enhanced validation
+                            log.warn("Certificate validation failed with default trust manager, performing enhanced validation: {}", e.getMessage());
                             
-                            // Perform enhanced certificate validation for development
+                            // Perform enhanced certificate validation
                             performEnhancedCertificateValidation(chain, authType);
                             
-                            log.debug("Self-signed certificate accepted for development environment after enhanced validation");
+                            log.debug("Self-signed certificate accepted after enhanced validation");
                         } else {
                             // Re-throw the original exception
                             throw e;
@@ -415,9 +328,9 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
     }
     
     /**
-     * Performs enhanced certificate validation for development environment.
+     * Performs enhanced certificate validation when self-signed certificates are allowed.
      * This method provides stronger validation than just accepting any certificate,
-     * while still allowing self-signed certificates for development purposes.
+     * while still allowing self-signed certificates when configured.
      */
     private void performEnhancedCertificateValidation(java.security.cert.X509Certificate[] chain, String authType) 
             throws java.security.cert.CertificateException {
@@ -427,7 +340,7 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
             throw new java.security.cert.CertificateException("Certificate chain is empty");
         }
         
-        log.debug("Performing enhanced certificate validation for {} certificate(s) in development mode", chain.length);
+        log.debug("Performing enhanced certificate validation for {} certificate(s)", chain.length);
         
         for (int i = 0; i < chain.length; i++) {
             java.security.cert.X509Certificate cert = chain[i];
@@ -532,13 +445,13 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
                     log.debug("Certificate chain link {} -> {} verification passed", i, i + 1);
                 } catch (Exception e) {
                     log.warn("Certificate chain verification failed for link {} -> {}: {}", i, i + 1, e.getMessage());
-                    // Don't fail the entire validation for chain issues in development mode
+                    // Don't fail the entire validation for chain issues when self-signed certificates are allowed
                     // This allows self-signed certificates which won't have proper chain validation
                 }
             }
         }
         
-        log.info("Enhanced certificate validation completed successfully for development environment");
+        log.info("Enhanced certificate validation completed successfully");
     }
     
     /**
@@ -559,75 +472,10 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
     }
     
     /**
-     * Checks if the current token should be refreshed based on expiry time
-     */
-    private boolean shouldRefreshToken() {
-        if (accessToken == null) {
-            return true;
-        }
-        
-        if (tokenExpiryTime == null) {
-            // No expiry info, assume token is still valid
-            return false;
-        }
-        
-        // Refresh if token will expire within the buffer time
-        Instant refreshTime = tokenExpiryTime.minusSeconds(TOKEN_EXPIRY_BUFFER_SECONDS);
-        return Instant.now().isAfter(refreshTime);
-    }
-    
-    /**
-     * Gets the current access token (for testing purposes)
-     */
-    public String getAccessToken() {
-        return accessToken;
-    }
-    
-    /**
-     * Gets the token expiry time (for testing purposes)
-     */
-    public Instant getTokenExpiryTime() {
-        return tokenExpiryTime;
-    }
-    
-    /**
      * Gets the current environment configuration
      */
     public String getEnvironment() {
         return environment;
-    }
-    
-    /**
-     * Checks if hostname verification is enabled
-     */
-    public boolean isHostnameVerificationEnabled() {
-        return verifyHostname;
-    }
-    
-    /**
-     * Checks if self-signed certificates are allowed
-     */
-    public boolean isSelfSignedAllowed() {
-        return allowSelfSigned;
-    }
-    
-    /**
-     * Gets the configured truststore path (may be null)
-     */
-    public String getTruststorePath() {
-        return truststorePath;
-    }
-    
-    /**
-     * Checks if hostname verification is actually enforced (considering environment overrides)
-     */
-    public boolean isHostnameVerificationEnforced() {
-        // Production and staging always enforce hostname verification
-        if ("production".equals(environment) || "staging".equals(environment)) {
-            return true;
-        }
-        // For other environments, use the configuration
-        return verifyHostname;
     }
     
     /**
@@ -636,18 +484,17 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
     public String getSecurityReport() {
         StringBuilder report = new StringBuilder();
         report.append("OAuth2CertificateAuthenticator Security Report:\n");
-        report.append("  Environment: ").append(environment).append("\n");
-        report.append("  Hostname Verification Configured: ").append(verifyHostname).append("\n");
-        report.append("  Hostname Verification Enforced: ").append(isHostnameVerificationEnforced()).append("\n");
-        report.append("  Self-Signed Certificates Allowed: ").append(allowSelfSigned).append("\n");
+        report.append("  Hostname Verification: ").append(verifyHostname ? "Enabled" : "Disabled").append("\n");
+        report.append("  Self-Signed Certificates: ").append(allowSelfSigned ? "Allowed" : "Not Allowed").append("\n");
         report.append("  Custom Truststore: ").append(truststorePath != null ? "Yes" : "No").append("\n");
         
-        if ("production".equals(environment) || "staging".equals(environment)) {
-            report.append("  Security Level: STRICT (Production/Staging)\n");
-        } else if ("development".equals(environment) || "testing".equals(environment)) {
-            report.append("  Security Level: FLEXIBLE (Development/Testing)\n");
+        // Determine security level based on configuration
+        if (verifyHostname && !allowSelfSigned) {
+            report.append("  Security Level: STRICT\n");
+        } else if (!verifyHostname || allowSelfSigned) {
+            report.append("  Security Level: PERMISSIVE\n");
         } else {
-            report.append("  Security Level: STRICT (Unknown Environment Default)\n");
+            report.append("  Security Level: MIXED\n");
         }
         
         return report.toString();
@@ -657,35 +504,18 @@ public class OAuth2CertificateAuthenticator implements HttpAuthenticator {
      * Validates the security configuration and logs warnings for insecure settings
      */
     private void validateSecurityConfiguration() {
-        if ("production".equals(environment)) {
-            if (!verifyHostname) {
-                log.error("SECURITY NOTICE: Hostname verification configuration disabled, but will be ENFORCED in production environment");
-            }
-            if (allowSelfSigned) {
-                log.error("SECURITY WARNING: Self-signed certificates are allowed in production environment!");
-            }
-            if (truststorePath == null) {
-                log.warn("Using default system truststore in production environment - consider using custom truststore");
-            }
-            log.info("Production environment detected - enforcing strict security policies");
-        } else if ("staging".equals(environment)) {
-            if (!verifyHostname) {
-                log.error("SECURITY NOTICE: Hostname verification configuration disabled, but will be ENFORCED in staging environment");
-            }
-            if (allowSelfSigned) {
-                log.warn("Self-signed certificates are allowed in staging environment");
-            }
-            log.info("Staging environment detected - enforcing strict security policies");
-        } else if ("development".equals(environment) || "testing".equals(environment)) {
-            if (!verifyHostname) {
-                log.warn("DEVELOPMENT: Hostname verification disabled - this configuration is NOT suitable for production");
-            }
-            if (allowSelfSigned) {
-                log.warn("DEVELOPMENT: Self-signed certificates allowed - this configuration is NOT suitable for production");
-            }
-            log.info("Development/Testing environment detected - flexible security settings enabled with warnings");
-        } else {
-            log.warn("Unknown environment '{}' - defaulting to strict security policies", environment);
+        if (!verifyHostname) {
+            log.warn("SECURITY WARNING: Hostname verification is disabled. This is not recommended for production use.");
         }
+        if (allowSelfSigned) {
+            log.warn("SECURITY WARNING: Self-signed certificates are allowed. This is not recommended for production use.");
+        }
+        if (truststorePath == null) {
+            log.debug("Using default system truststore for certificate validation");
+        } else {
+            log.info("Using custom truststore: {}", truststorePath);
+        }
+        
+        log.info("OAuth2 certificate authenticator initialized with security configuration - see security report for details");
     }
 }

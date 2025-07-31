@@ -1,6 +1,5 @@
 package io.confluent.connect.http.auth;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.confluent.connect.http.config.HttpSourceConnectorConfig;
 import okhttp3.Credentials;
@@ -12,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -20,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Authenticator for OAuth 2.0 Client Credentials grant flow.
  * Handles token acquisition, refresh, and automatic expiration management.
  */
-public class OAuth2Authenticator implements HttpAuthenticator {
+public class OAuth2Authenticator extends AbstractOAuth2Authenticator {
     
     private static final Logger log = LoggerFactory.getLogger(OAuth2Authenticator.class);
     
@@ -35,12 +33,7 @@ public class OAuth2Authenticator implements HttpAuthenticator {
     private final ObjectMapper objectMapper;
     private final ReentrantLock tokenLock;
     
-    private volatile String accessToken;
-    private volatile Instant tokenExpiryTime;
     private volatile boolean tokenRefreshInProgress;
-    
-    // Default token expiry buffer (refresh 5 minutes before expiry)
-    private static final long TOKEN_EXPIRY_BUFFER_SECONDS = 300;
     
     public OAuth2Authenticator(String tokenUrl, String clientId, String clientSecret, 
                               String tokenProperty, String scope, 
@@ -84,26 +77,6 @@ public class OAuth2Authenticator implements HttpAuthenticator {
     }
     
     @Override
-    public void authenticate(Request.Builder requestBuilder) {
-        // Check if token needs refresh
-        if (shouldRefreshToken()) {
-            try {
-                refreshToken();
-            } catch (Exception e) {
-                log.error("Failed to refresh OAuth2 token during authentication", e);
-                // Continue with existing token if refresh fails
-            }
-        }
-        
-        if (accessToken != null) {
-            requestBuilder.header("Authorization", "Bearer " + accessToken);
-            log.trace("Applied OAuth2 Bearer token authentication");
-        } else {
-            log.warn("No OAuth2 access token available for authentication");
-        }
-    }
-    
-    @Override
     public void refreshToken() throws Exception {
         tokenLock.lock();
         try {
@@ -142,38 +115,7 @@ public class OAuth2Authenticator implements HttpAuthenticator {
             
             // Execute token request
             try (Response response = httpClient.newCall(requestBuilder.build()).execute()) {
-                if (!response.isSuccessful()) {
-                    String errorBody = response.body() != null ? response.body().string() : "No response body";
-                    throw new IOException("Token request failed with status " + response.code() + ": " + errorBody);
-                }
-                
-                String responseBody = response.body().string();
-                JsonNode tokenResponse = objectMapper.readTree(responseBody);
-                
-                // Extract access token
-                JsonNode tokenNode = tokenResponse.get(tokenProperty);
-                if (tokenNode == null || tokenNode.isNull()) {
-                    throw new IOException("Access token not found in response. Expected property: " + tokenProperty);
-                }
-                
-                String newAccessToken = tokenNode.asText();
-                if (newAccessToken.isEmpty()) {
-                    throw new IOException("Access token is empty");
-                }
-                
-                // Extract token expiry (optional)
-                Instant newExpiryTime = null;
-                JsonNode expiresInNode = tokenResponse.get("expires_in");
-                if (expiresInNode != null && !expiresInNode.isNull()) {
-                    long expiresInSeconds = expiresInNode.asLong();
-                    newExpiryTime = Instant.now().plusSeconds(expiresInSeconds);
-                    log.debug("Token expires in {} seconds", expiresInSeconds);
-                }
-                
-                // Update token atomically
-                this.accessToken = newAccessToken;
-                this.tokenExpiryTime = newExpiryTime;
-                
+                processTokenResponse(response, tokenProperty, objectMapper);
                 log.info("OAuth2 token refreshed successfully");
                 
             } catch (IOException e) {
@@ -188,11 +130,6 @@ public class OAuth2Authenticator implements HttpAuthenticator {
     }
     
     @Override
-    public boolean supportsTokenRefresh() {
-        return true;
-    }
-    
-    @Override
     public void close() {
         log.debug("Closing OAuth2Authenticator");
         
@@ -203,41 +140,8 @@ public class OAuth2Authenticator implements HttpAuthenticator {
         }
         
         // Clear token data
-        accessToken = null;
-        tokenExpiryTime = null;
+        clearTokenData();
         
         log.debug("OAuth2Authenticator closed");
-    }
-    
-    /**
-     * Checks if the current token should be refreshed based on expiry time
-     */
-    private boolean shouldRefreshToken() {
-        if (accessToken == null) {
-            return true;
-        }
-        
-        if (tokenExpiryTime == null) {
-            // No expiry info, assume token is still valid
-            return false;
-        }
-        
-        // Refresh if token will expire within the buffer time
-        Instant refreshTime = tokenExpiryTime.minusSeconds(TOKEN_EXPIRY_BUFFER_SECONDS);
-        return Instant.now().isAfter(refreshTime);
-    }
-    
-    /**
-     * Gets the current access token (for testing purposes)
-     */
-    public String getAccessToken() {
-        return accessToken;
-    }
-    
-    /**
-     * Gets the token expiry time (for testing purposes)
-     */
-    public Instant getTokenExpiryTime() {
-        return tokenExpiryTime;
     }
 }
